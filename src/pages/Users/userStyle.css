@@ -1,0 +1,53 @@
+    /* Cards */
+    .card {
+        margin-bottom: 20px;
+        border: 1px solid #ccc !important;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+    table tr{
+    }
+    .count {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .warning {
+        color: red;
+    }
+
+    .table a {
+        text-decoration: none;
+    }
+
+    .table td {
+        padding: 10px;
+        vertical-align: middle;
+        border-top: none !important;
+        text-align: left;
+        border-bottom: none !important;
+
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background: #FFF;
+    }
+    .table-striped > tbody > tr:nth-of-type(odd) > * {
+        --bs-table-bg-type: transparent; /* Reset the background */
+        background-color: transparent !important;
+      }
+      
+
+    /* Cards */
+    .clear {
+        clear: both;
+    }
+
+    #users-list-container {
+        display: none;
+    }

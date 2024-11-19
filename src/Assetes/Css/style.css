@@ -1,0 +1,445 @@
+/* Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Open Sans:wght@400;500;700&display=swap');
+
+@font-face {
+   
+    /*---------- Open Sans ----------*/
+    font-family: 'Open Sans';
+    src: url('../fonts/openSans.woff2') format('woff2');
+  }
+  
+body {
+    /* background-color: #380000; */
+    color: #f0f2f5;
+    font: 15px 'Open Sans', sans-serif;
+    line-height: 20px;
+    word-wrap: break-word;
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    width: 100%;
+    display: block !important;
+}
+.bodyBg{
+    background-color: #f0f2f5;
+}
+.customWhiteBg{
+    background-color: #fff;
+}
+a {
+    color: #007bff !important;
+    text-decoration: none !important;
+    background-color: transparent !important;
+}
+.primaryColor{
+    color: #511515 !important;
+}
+p{
+        font-family: 'Open Sans', sans-serif;    
+}
+p {
+    line-height: 24px !important;
+    margin-bottom: 15px !important;
+}
+
+.container {
+    max-width: 1280px !important;
+}
+ul{
+    list-style-position: inside;
+    padding-left: 0;
+    list-style:none;
+}
+.navbar li.active a{
+    color:#511515 !important;
+}
+.navbar-light .navbar-nav .nav-link {
+    color: #333;
+}
+
+#page {
+    /* width: 97% !important; */
+    /* max-width: 1038px !important;  */
+}
+
+.container-custom {
+    max-width: 100%;
+    margin: 0 auto;
+    /* padding: 0 15px; */
+    background-color: #fff;
+
+}
+
+.inside-container {
+    max-width: 600px;
+    margin: auto;
+}
+
+label {
+    font-size: 15px !important;
+    line-height: 22px !important;
+    font-weight: 600;
+}
+
+li {
+    font-size: 14px;
+    color: #04243D;
+}
+
+li>a {
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: capitalize;
+    font-style: normal;
+    text-decoration: none;
+    /* line-height: var(--e-global-typography-529fd87-line-height); */
+    letter-spacing: -0.2px;
+    /* word-spacing: var(--e-global-typography-529fd87-word-spacing); */
+    color: var(--e-global-color-primary);
+    border-style: none;
+    border-radius: 0px 0px 0px 0px;
+    padding: 0px 15px 30px 5px;
+}
+
+.btn-primary {
+    color: #fff;
+    border-color: #511515 !important;
+    background-color: #511515 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    font-size: 13px;
+    padding: 10px 14px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn:focus:active {
+    color: #fff !important;
+    border-color: #fff !important;
+    background-color: #511515 !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.HeaderBGColor {
+    background-color: #fff !important;
+}
+
+.navbar-nav .nav-item:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover,
+.dropdown-item.active, 
+.dropdown-item:active {
+    color: #511515 !important;
+    background-color:transparent !important;
+}
+/*Modal*/
+.modal-dialog {
+    max-width: 50%;
+}
+.modal-dialog-centered {
+    min-height: calc(100% - 3rem);
+}
+/* Form Styles */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0px;
+    margin-right: 0px !important;
+    padding-right: 0px !important;
+    width: 220px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.form-group input {
+    margin-bottom: 0px;
+    width: 100px;
+}
+
+.form-group button {
+    width: 100px;
+    border-radius: 4px !important;
+}
+
+
+
+.carousel-item img {
+    width: 100%;
+    height: 45vh;
+    object-fit: cover;
+}
+
+.bannerHeight {
+    height: 45vh;
+    object-fit: cover;
+}
+.customnBannerHeight{
+    height: 45vh;
+    object-fit: fill;
+    width: 100%;
+}
+
+
+.row-padding {
+    padding: 15px 0;
+}
+
+.card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: none !important;
+    border-radius: 0px !important;
+    overflow: hidden;
+}
+
+.card-bg-img {
+    background: url('https://demo2.eightheme.com/zenith/wp-content/uploads/sites/24/2023/10/professional-designs-done-on-time-and-on-budget-2023-05-13-01-51-27-utc.jpg') center center no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    height: 100%;
+}
+
+.card p {
+    padding: 20px;
+    text-align: center;
+}
+
+.card-img-top {
+    width: 100%;
+    transition: transform 0.3s ease;
+}
+
+.card-img-top:hover {
+    transform: scale(1.1);
+}
+
+.card-shadow {
+    box-shadow: 0px 0px 10px 0px rgba(237, 237, 237, 0.84);
+    border-style: none;
+    background-color: #fff;
+}
+
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: left;
+    background-color: #fff !important;
+    border: none !important;
+    padding: 2rem !important;
+}
+
+.full-height {
+    height: 100vh;
+}
+
+.welcome-title-class {
+    /* padding-left: 25px; */
+    padding-right: 25px;
+    color: #823535;
+    /* font-weight: lighter; */
+    /* font-size: 22px; */
+    /*margin-left: 35px;*/
+
+}
+
+.header-post-title-class {
+    /* padding-left: 25px; */
+    padding-right: 25px;
+    color: #823535;
+    font-weight: lighter;
+    font-size: 22px;
+    margin-left: 35px;
+    font-weight: bold;
+
+    /* top banner inside set */
+    position: relative;
+    top: -150px;
+    z-index: 99;
+
+}
+
+.fancytitle {
+    color: #823535;
+    text-align: center;
+    font-size: 22px;
+    line-height: 32px;
+}
+
+/* Footer */
+footer {
+    background-color: #441211 !important;
+    padding: 10px 10px;
+    background-color: #F8F8F8;
+    border-top: 1px solid #EAEAEA;
+    color: #fff;
+}
+
+/* Footer */
+
+/* Homw */
+.cards-titles {
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-style: normal;
+    text-decoration: none;
+}
+
+.cards-headings {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 600;
+    text-transform: none;
+    font-style: normal;
+    text-decoration: none;
+    line-height: 1.1em;
+}
+.cards-Label {
+    color: #967842;
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: none;
+    font-style: normal;
+    text-decoration: none;
+    line-height: 34px;
+}
+
+.d-none{
+    display: block;
+
+}
+
+/* Publications  */
+.year-header {
+    margin-top: 20px;
+    color:#823535;
+}
+.pdf-row {
+    padding: 8px;
+    margin-bottom: 8px;
+    
+}
+/*  */
+
+@media (max-width: 500px) {
+    /*Modal*/
+    .modal-dialog {
+        max-width: 100%;
+    }
+
+}
+
+@media (max-width: 767px) {
+
+    .cards-titles {
+        font-size: 12px;
+    }
+    .cards-headings {
+        font-size: 22px;
+        line-height: 1.3em;
+    }
+    .d-none {
+        display: none !important;
+    }
+    .cards-Label{
+        font-size: 21px !important;
+        line-height: 1.2em;
+    }
+    .card-body {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        padding: 1rem !important;
+    }
+    .customnBannerHeight {
+        height: 25vh !important;
+
+    }
+    .header-post-title-class{
+        display: none;
+    }
+}
+
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .cards-titles {
+        font-size: 12px;
+    }
+    .cards-headings {
+        font-size: 29px;
+        line-height: 1.3em;
+    }
+    .cards-Label {
+        font-size: 22px;
+        line-height: 1.2em;
+    }
+    .d-none{
+        display: block !important;
+
+    }
+}
+@media (min-width: 1025px) and (max-width: 2560px) {
+    .d-none {
+        display: block !important;
+    }
+}
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+/* Media  */
+
+img,
+video {
+  height: 100px !important;
+  object-fit: cover;
+}
+
+.card {
+  position: relative;
+}
+.cardBorder{
+    border: 1px solid #ccc !important;
+}
+
+.card-body {
+  display: block;
+  text-align: center;
+}
+
+.edit-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #007bff; /* Change to your preferred color */
+}
+
+.card:hover .edit-icon {
+  display: block; /* Show the icon on hover */
+}
+/* Media */

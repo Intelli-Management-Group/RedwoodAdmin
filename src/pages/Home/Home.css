@@ -1,0 +1,49 @@
+/* Center the login container on the page */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f2f4f7; /* Light background color */
+}
+
+.login-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+}
+
+/* Style the heading */
+.centerLogo {
+   
+    text-align: center;
+}
+
+/* White background styling */
+.whiteBg {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Form control margin */
+.login-container .form-control {
+    margin-bottom: 15px;
+}
+
+/* Full-width button */
+.login-container .btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Footer text styling */
+.footer-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #888;
+}

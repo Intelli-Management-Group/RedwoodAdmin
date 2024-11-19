@@ -1,0 +1,65 @@
+/* App.css */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  .app-container {
+    display: flex; /* Flexbox layout to arrange the sidebar and main content side by side */
+    height: 100vh; /* Full viewport height */
+  }
+  
+  .sidebar {
+    width: 250px; /* Fixed width for the sidebar */
+    background-color: #343a40;
+    padding: 15px;
+    position: fixed;
+    top: 0;
+    left: -250px; /* Sidebar hidden by default */
+    height: 100%; /* Full height for the sidebar */
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar.show {
+    left: 0; /* Show sidebar when visible */
+  }
+  
+  .main-content {
+    margin-left: 0; /* No margin when sidebar is hidden */
+    transition: margin-left 0.3s ease; /* Smooth transition for shifting content */
+    padding: 20px;
+    flex: 1; /* Main content takes the remaining space */
+  }
+  
+  .main-content.shifted {
+    margin-left: 250px; /* Shift main content to the right when sidebar is visible */
+  }
+  
+  .navbar {
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .navbar .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .dashboard-content {
+    margin-top: 20px;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 200px; /* Smaller width for the sidebar on mobile */
+    }
+  }
+  

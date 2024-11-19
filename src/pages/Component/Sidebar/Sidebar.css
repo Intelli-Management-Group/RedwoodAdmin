@@ -1,0 +1,78 @@
+   /* Sidebar Styles */
+   .sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #343a40;
+    padding: 15px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    /* Initially hide the sidebar */
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.sidebar.show {
+    left: 0;
+    /* Slide the sidebar in on mobile devices */
+}
+
+.sidebar .nav-item a {
+    color: #ffffff;
+    margin: 10px 0;
+}
+
+.sidebar .nav-item a:hover {
+    background-color: #495057;
+    border-radius: 5px;
+}
+
+/* Sidebar Styles */
+
+/* Main Content Styles */
+.main-content {
+    padding: 20px;
+    /* width: 100%; */
+    margin-left: 0;
+    transition: all 0.3s ease;
+}
+
+/* Adjust main content margin when sidebar is shown */
+.main-content.shifted {
+    margin-left: 250px;
+    /* Space for sidebar on larger screens */
+}
+
+/* Navbar Styles */
+.navbar {
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.navbar .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Show Sidebar and Shift Content on Larger Screens */
+@media (min-width: 769px) {
+    .sidebar {
+        left: 0;
+        /* Show sidebar by default */
+    }
+
+    .main-content {
+        margin-left: 250px;
+        /* Adjust main content space */
+    }
+}
+
+/* Hide Content Shift on Mobile */
+@media (max-width: 768px) {
+    .main-content.shifted {
+        margin-left: 0;
+        /* Remove margin shift on mobile */
+    }
+}
