@@ -32,27 +32,27 @@ const Sidebar = ({ isVisible }) => {
       </div>
       <ul className="nav flex-column">
         <li className="nav-item">
-          <Link to="/dashboard" className="nav-link text-white">
+          <Link to="/dashboard" className="nav-link text-white Links">
             Dashboard
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/media" className="nav-link text-white">
+          <Link to="/media" className="nav-link text-white Links">
             Media
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/post" className="nav-link text-white">
+          <Link to="/post" className="nav-link text-white Links">
             Posts
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/pages" className="nav-link text-white">
+          <Link to="/pages" className="nav-link text-white Links">
             Pages
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/users" className="nav-link text-white">
+          <Link to="/users" className="nav-link text-white Links">
             Users
           </Link>
         </li>

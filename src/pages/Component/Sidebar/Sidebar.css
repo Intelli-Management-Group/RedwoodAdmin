@@ -17,14 +17,14 @@
     /* Slide the sidebar in on mobile devices */
 }
 
-.sidebar .nav-item a {
-    color: #ffffff;
-    margin: 10px 0;
+.Links {
+    color: #ffffff !important;
+    margin: 10px 0 !important;
 }
 
-.sidebar .nav-item a:hover {
-    background-color: #495057;
-    border-radius: 5px;
+.Links:hover {
+    background-color: #495057 !important;
+    border-radius: 5px !important;
 }
 
 /* Sidebar Styles */
