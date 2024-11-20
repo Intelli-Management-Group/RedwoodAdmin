@@ -444,3 +444,23 @@ video {
   display: block; /* Show the icon on hover */
 }
 /* Media */
+
+/* Upload Documnets */
+.upload-box {
+    border: 2px dashed #007bff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+}
+.upload-box:hover {
+    background-color: #f8f9fa;
+}
+.upload-box input[type="file"] {
+    display: none;
+}
+.upload-button {
+    margin-top: 10px;
+}
+/* Upload */

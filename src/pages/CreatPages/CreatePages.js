@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
-import Button from "../Component/ButtonComponents/ButtonComponents";
+import Button from '../Component/ButtonComponents/ButtonComponents';
 import 'react-quill/dist/quill.snow.css';
 import { useNavigate } from "react-router-dom";
 import { Form, Alert } from 'react-bootstrap';
@@ -10,45 +10,41 @@ import 'react-quill/dist/quill.snow.css';
 
 const CreatePages = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [thumbnail, setThumbnail] = useState(null);
-  const [content, setContent] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [documentType, setDocumentType] = useState("publications");
+  const [postingYear, setPostingYear] = useState("2024");
 
-  // Handle thumbnail validation and setting
-  const handleThumbnailChange = (e) => {
-    const file = e.target.files[0];
-    if (file && ['image/jpeg', 'image/png'].includes(file.type)) {
-      setThumbnail(file);
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.target.classList.add("drag-over");
+  };
+
+  const handleDragLeave = (event) => {
+    event.target.classList.remove("drag-over");
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+    if (files.length) {
+      setSelectedFile(files[0]);
+    }
+    event.target.classList.remove("drag-over");
+  };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (selectedFile) {
+      console.log("File uploaded:", selectedFile.name);
+      // Add logic to upload the file to the server
     } else {
-      alert('Invalid file type. Please upload a JPEG or PNG image.');
-      setThumbnail(null); // Clear the file
+      alert("Please select a file before submitting.");
     }
   };
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Log content to the console
-    console.log('Post Content:', content);
-
-    // Optionally, save content to local storage
-    localStorage.setItem('postContent', content);
-
-    // Show success message and clear the form
-    setSuccessMessage('Post created successfully!');
-    setTitle('');
-    setCategory('');
-    setThumbnail(null);
-    setContent('');
-
-    // Redirect to another page if desired
-    setTimeout(() => navigate('/pages'), 5000);
-  };
-
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -70,63 +66,83 @@ const CreatePages = () => {
             <Navbar toggleSidebar={toggleSidebar} />
 
             {/* Dashboard Content */}
-            <div className="dashboard-content">
-              <div className="container-fluid">
-                <div className="container mt-5">
-                  <h2 className="mb-4">Upload Documents</h2>
+            <div className="container-fluid">
+              <h2 className="mt-5 mb-3">Upload Documents</h2>
 
-                  {successMessage && <Alert variant="success">{successMessage}</Alert>}
-                  <div className="row">
-                    <div className="col-md-4 p-1">
-                      <Form.Label htmlFor="basic-url">Documents Type</Form.Label>
-                      <select id="postCategories" className="form-control" style={{ height: 'auto' }}>
-                        <option value="">Publications</option>
-                        <option value="news">Hedge Fund Reports</option>
-                        <option value="visit">Managed Account Reports</option>
-                      </select>
-                    </div>
-                    <div className="col-md-4 p-1">
-                      <Form.Label htmlFor="basic-url">Posting Years</Form.Label>
-                      <select id="postCategories" className="form-control" style={{ height: 'auto' }}>
-                        <option value="news">2015</option>
-                        <option value="visit">2016</option>
-                        <option value="visit">2017</option>
-                        <option value="visit">2018</option>
-                        <option value="visit">2019</option>
-                        <option value="visit">2020</option>
-                        <option value="visit">2021</option>
-                        <option value="visit">2022</option>
-                        <option value="visit">2023</option>
-                        <option value="visit">2024</option>
-                      </select>
-                    </div>
-                  </div>
-
-                    <Form.Group controlId="postThumbnail" className="mb-3">
-                      <Form.Label>drag and drop your PDF here on click to upload</Form.Label>
-                      <Form.Control
-                        type="file"
-                        onChange={handleThumbnailChange}
-                        accept="image/jpeg, image/png"
-                      />
-                      <Form.Text className="text-muted">Only JPEG/JPG and PNG are allowed.</Form.Text>
-                    </Form.Group>
-
-
-                    {/* <Button variant="primary" type="submit">
-                      Create Postdsdas
-                    </Button> */}
-                    <Button
-                      text="Upload"
-                      // onClick={handleNavigations}
-                      className="btn btn-primary"
-                      type="submit"
+              <form className="mt-5 mb-5" onSubmit={handleSubmit}>
+                <div className="form-group row">
+                  <div className="col-md-4">
+                    <label htmlFor="postType" className="col-form-label">
+                      Documents Type
+                    </label>
+                    <select
+                      id="postType"
+                      className="form-control"
+                      value={documentType}
+                      onChange={(e) => setDocumentType(e.target.value)}
                     >
-                      Upload
-                    </Button>
-
+                      <option value="publications">Publications</option>
+                      <option value="hedgeFundReports">Hedge Fund Reports</option>
+                      <option value="managedAccountReports">Managed Account Reports</option>
+                    </select>
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="postingYears" className="col-form-label">
+                      Posting Years
+                    </label>
+                    <select
+                      id="postingYears"
+                      className="form-control"
+                      value={postingYear}
+                      onChange={(e) => setPostingYear(e.target.value)}
+                    >
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const year = 2015 + i;
+                        return (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
                 </div>
-              </div>
+                <div
+                  className="upload-box mt-5 mb-5"
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  <label htmlFor="documentUpload" className="upload-label">
+                    <h4>
+                      {selectedFile ? selectedFile.name : "Drag and drop your PDF here or click to upload"}
+                    </h4>
+                  </label>
+                  <input
+                    type="file"
+                    id="documentUpload"
+                    className="form-control"
+                    accept="application/pdf"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                  <div className="upload-button">
+                    <Button
+                      text="Select PDF"
+                      className="btn-primary"
+                      type="submit"
+                      onClick={() => document.getElementById("documentUpload").click()}
+
+                    />
+                  </div>
+                  <small className="form-text text-muted ">Only PDF files are allowed.</small>
+                </div>
+                <Button
+                  text="Upload"
+                  className="btn-primary"
+                  type="submit"
+                />
+              </form>
             </div>
           </div>
         </div>
