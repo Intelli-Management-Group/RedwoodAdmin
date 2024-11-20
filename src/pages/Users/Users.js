@@ -47,7 +47,7 @@ const Users = () => {
           <Sidebar isVisible={isSidebarVisible} />
 
           {/* Main Content */}
-          <div className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
+          <div className={`main-content bodyBg ${isSidebarVisible ? 'shifted' : ''}`}>
             <Navbar toggleSidebar={toggleSidebar} />
 
             {/* Dashboard Content */}
