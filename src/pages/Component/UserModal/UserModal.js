@@ -45,7 +45,7 @@ function AddUserModal() {
           <Modal.Title>Add User</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
-          <Modal.Body>
+          <Modal.Body style={{height:400, overflow:'auto'}}>
             {/* Username */}
             <Form.Group controlId="username" className="mb-3">
               <Form.Label>Username</Form.Label>
