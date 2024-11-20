@@ -57,7 +57,7 @@ const CreatePost = () => {
     console.log('component mounted');
   }, []);
 
-  
+
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -103,15 +103,29 @@ const CreatePost = () => {
                       </Form.Control>
                     </Form.Group>
 
-                    <Form.Group controlId="postThumbnail" className="mb-3">
-                      <Form.Label>Select Post Thumbnail</Form.Label>
-                      <Form.Control
+                    {/*<Form.Group controlId="postThumbnail" className="mb-3">*/}
+                    {/*  <Form.Label>Select Post Thumbnail</Form.Label>*/}
+                    {/*  <Form.Control*/}
+                    {/*    type="file"*/}
+                    {/*    onChange={handleThumbnailChange}*/}
+                    {/*    accept="image/jpeg, image/png"*/}
+                    {/*  />*/}
+                    {/*  <Form.Text className="text-muted">Only JPEG/JPG and PNG are allowed.</Form.Text>*/}
+                    {/*</Form.Group>*/}
+
+                    <div controlId="postThumbnail" className="upload-box mt-5 mb-5"
+                         style={{border:"3px dashed #007bff", padding:"20px",textAlign:"center",borderRadius:"5px"}}>
+                      <h4>drag and drop your post thumbnail image  here or click to upload</h4>
+                      <br/>
+                      <Button
+                        text="Select Image"
+                        className="btn-primary"
                         type="file"
                         onChange={handleThumbnailChange}
                         accept="image/jpeg, image/png"
-                      />
-                      <Form.Text className="text-muted">Only JPEG/JPG and PNG are allowed.</Form.Text>
-                    </Form.Group>
+                      >Select image</Button>
+                      <div className="text-muted">Only JPEG/JPG and PNG are allowed.</div>
+                    </div>
 
                     <Form.Group controlId="postContent" className="mb-3">
                       <Form.Label>Post Content</Form.Label>

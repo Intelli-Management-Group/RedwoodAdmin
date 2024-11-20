@@ -4,6 +4,7 @@ import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
 import Image from '../Component/ImagesComponets/ImagesComponets';
+import Modal from 'react-bootstrap/Modal';
 
 const mediaItems = [
   {
@@ -46,11 +47,14 @@ const placeholderVideo = "https://www.shutterstock.com/image-vector/no-video-ava
 const placeholderDocument = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"; // Path to a placeholder image
 
 function Media() {
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [filteredItems, setFilteredItems] = useState(mediaItems);
   const [searchTerm, setSearchTerm] = useState('');
-
-
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -95,9 +99,47 @@ function Media() {
                       text="Add New Media File"
                       className="btn btn-primary"
                       type="button"
+                      onClick={handleShow}
                     >
-                      Add New Post
+                      Add New Media File
                     </Button>
+                    <Modal show={show} onHide={handleClose} style={{alignItems:"center"}}>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Upload New Media
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <label htmlFor="documentUpload" className="upload-label">
+                          <div>
+                            {selectedFile ? selectedFile.name : "Select Files"}
+                          </div>
+                        </label>
+                        <div className="upload-button">
+                          <Button
+                            text="Choose File"
+                            className="btn-primary"
+                            type="submit"
+
+                          />
+                          <span> No File Chosen</span>
+                        </div>
+
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button text="Close"
+                                className="btn-primary"
+                                type="submit"
+                                variant="secondary"
+                                onClick={handleClose}>
+                          Close
+                        </Button>
+                        <Button
+                          text="Upload"
+                          className="btn-primary"
+                          type="submit"
+                        />
+                      </Modal.Footer>
+                    </Modal>
                   </div>
                 </div>
                 <br />
