@@ -3,10 +3,7 @@ import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import 'react-quill/dist/quill.snow.css';
-import { useNavigate } from "react-router-dom";
-import { Form, Alert } from 'react-bootstrap';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+
 
 const CreatePages = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
