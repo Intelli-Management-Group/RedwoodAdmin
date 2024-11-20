@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Input = ({ label, id, type, value, onChange, name, error, required }) => {
+const Input = ({ label, id, type, value, onChange, name, error, required,placeholder }) => {
     return (
         <div className="col-md-12 mt-4">
             <label htmlFor={id}>{label}</label>
@@ -9,6 +9,7 @@ const Input = ({ label, id, type, value, onChange, name, error, required }) => {
                 type={type}
                 className={`form-control ${error ? "is-invalid" : ""}`}
                 name={name}
+                placeholder={placeholder}
                 value={value}
                 onChange={onChange}
                 required={required}
