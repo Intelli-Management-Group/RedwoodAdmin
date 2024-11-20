@@ -464,3 +464,36 @@ video {
     margin-top: 10px;
 }
 /* Upload */
+
+/* Dropdown  ICons*/
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%; /* or specify the width */
+  }
+  
+  .custom-select {
+    appearance: none; /* Removes default arrow */
+    -moz-appearance: none; /* Firefox */
+    -webkit-appearance: none; /* Safari and Chrome */
+    background: white; /* Set background color */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 30px 8px 10px; /* Adjust padding for arrow space */
+    width: 100%; /* Full width */
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .custom-select-wrapper::after {
+    content: "▼"; /* Unicode for down arrow */
+    font-size: 12px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent arrow from blocking clicks */
+    color: #999;
+  }
+  
+/* Dropdown  ICons*/

@@ -72,36 +72,40 @@ const CreatePages = () => {
                     <label htmlFor="postType" className="col-form-label">
                       Documents Type
                     </label>
-                    <select
-                      id="postType"
-                      className="form-control"
-                      value={documentType}
-                      onChange={(e) => setDocumentType(e.target.value)}
-                    >
-                      <option value="publications">Publications</option>
-                      <option value="hedgeFundReports">Hedge Fund Reports</option>
-                      <option value="managedAccountReports">Managed Account Reports</option>
-                    </select>
+                    <div className="custom-select-wrapper">
+                      <select
+                        id="postType"
+                        className="form-control custom-select"
+                        value={documentType}
+                        onChange={(e) => setDocumentType(e.target.value)}
+                      >
+                        <option value="publications">Publications</option>
+                        <option value="hedgeFundReports">Hedge Fund Reports</option>
+                        <option value="managedAccountReports">Managed Account Reports</option>
+                      </select>
+                    </div>
                   </div>
                   <div className="col-md-4">
                     <label htmlFor="postingYears" className="col-form-label">
                       Posting Years
                     </label>
-                    <select
-                      id="postingYears"
-                      className="form-control"
-                      value={postingYear}
-                      onChange={(e) => setPostingYear(e.target.value)}
-                    >
-                      {Array.from({ length: 10 }, (_, i) => {
-                        const year = 2015 + i;
-                        return (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        );
-                      })}
-                    </select>
+                    <div className="custom-select-wrapper">
+                      <select
+                        id="postingYears"
+                        className="form-control custom-select"
+                        value={postingYear}
+                        onChange={(e) => setPostingYear(e.target.value)}
+                      >
+                        {Array.from({ length: 10 }, (_, i) => {
+                          const year = 2015 + i;
+                          return (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <div
