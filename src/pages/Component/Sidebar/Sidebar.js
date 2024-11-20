@@ -9,6 +9,7 @@ const Sidebar = ({ isVisible }) => {
     <div
       className={`col-md-3 col-lg-2 bg-dark text-white p-3 sidebar ${isVisible ? 'show' : ''}`}
       style={{
+        width:250,
         position: 'fixed',
         top: 0,
         left: isVisible ? '0' : '-250px',
