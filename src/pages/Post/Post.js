@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
 const SkeletonRow = () => (
     <tr>
-        <td><div className="skeleton-box" style={{ width: '20px', height: '20px', color:'red' }} /></td>
+        <td><div className="skeleton-box" style={{ width: '20px', height: '20px', color: 'red' }} /></td>
         <td><div className="skeleton-box" style={{ width: '50px', height: '50px' }} /></td>
         <td><div className="skeleton-box" style={{ width: '150px', height: '20px' }} /></td>
         <td><div className="skeleton-box" style={{ width: '100px', height: '20px' }} /></td>
@@ -103,19 +103,19 @@ const Post = () => {
             setSelectedCheckboxes([]);
         }
     };
-    const handleCheckboxChange = (postId) => {
-        setSelectedPosts((prevSelected) => {
-            if (prevSelected.includes(postId.toString())) {
-                // Remove from selection
-                return prevSelected.filter((id) => id !== postId.toString());
-            } else {
-                // Add to selection
-                return [...prevSelected, postId.toString()];
-            }
-        });
-    };
-        // Check if all are selected
-        const areAllSelected =
+    const handleCheckboxChange = (postId, isChecked) => {
+        if (isChecked) {
+          // Add the postId to selectedCheckboxes if checked
+          setSelectedCheckboxes((prev) => [...prev, postId]);
+        } else {
+          // Remove the postId from selectedCheckboxes if unchecked
+          setSelectedCheckboxes((prev) =>
+            prev.filter((id) => id !== postId)
+          );
+        }
+      };
+    // Check if all are selected
+    const areAllSelected =
         posts.length > 0 && selectedCheckboxes.length === posts.length;
 
     return (
@@ -179,7 +179,7 @@ const Post = () => {
                                     </div>
 
                                     <div className="col-md-4 p-1">
-                                    <div className="search-input-wrapper">
+                                        <div className="search-input-wrapper">
                                             <input
                                                 type="text"
                                                 id="searchPages"

@@ -520,3 +520,25 @@ video {
   }
   
   /* Search Icons  */
+
+  /* Skeleton */
+  .skeleton-box {
+    background-color: #e0e0e0; /* Light grey background */
+    border-radius: 4px; /* Rounded corners */
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #e0e0e0; /* Start with light gray */
+    }
+    50% {
+        background-color: #f0f0f0; /* Lighter shade during pulse */
+    }
+    100% {
+        background-color: #e0e0e0; /* End with light gray */
+    }
+}
+
+
+  /* Skeleton */
