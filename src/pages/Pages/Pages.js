@@ -41,21 +41,21 @@ const Pages = () => {
                     </Button>
 
                 <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
-                  <div className="col-md-3 p-1">
+                  <div className="custom-select-wrapper col-md-3 p-1">
                     <select id="tableActions" className="form-control" style={{ height: 'auto' }}>
                       <option value="">Table Action...</option>
                       <option value="Delete">Delete</option>
                     </select>
                   </div>
 
-                  <div className="col-md-3 p-1">
+                  <div className="custom-select-wrapper col-md-3 p-1">
                     <select id="postCategories" className="form-control" style={{ height: 'auto' }}>
                       <option value="">All Categories</option>
                       <option value="news">News</option>
                       <option value="visit">Visit</option>
                     </select>
                   </div>
-                  <div className="col-md-3 p-1">
+                  <div className="custom-select-wrapper col-md-3 p-1">
                     <select id="postCategories" className="form-control" style={{ height: 'auto' }}>
                       <option value="">All Years</option>
                       <option value="news">2015</option>
@@ -73,12 +73,25 @@ const Pages = () => {
 
 
                   <div className="col-md-3 p-1">
-                    <input
-                      type="text"
-                      id="searchPages"
-                      className="form-control"
-                      placeholder="Search post..."
-                    />
+                    <div className="search-input-wrapper">
+                      <input
+                        type="text"
+                        id="searchPages"
+                        className="form-control search-input"
+                        placeholder="Search post..."
+                      />
+                      <svg
+                        className="search-icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="20"
+                        height="20"
+                      >
+                        <circle cx="10" cy="10" r="7" stroke="black" strokeWidth="2" fill="none" />
+                        <line x1="15" y1="15" x2="20" y2="20" stroke="black" strokeWidth="2" />
+                      </svg>
+
+                    </div>
                   </div>
                 </div>
 
