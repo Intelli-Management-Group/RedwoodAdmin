@@ -2,12 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Open Sans:wght@400;500;700&display=swap');
 
 @font-face {
-   
+
     /*---------- Open Sans ----------*/
     font-family: 'Open Sans';
     src: url('../fonts/openSans.woff2') format('woff2');
-  }
-  
+}
+
 body {
     /* background-color: #380000; */
     color: #f0f2f5;
@@ -19,24 +19,30 @@ body {
     width: 100%;
     display: block !important;
 }
-.bodyBg{
+
+.bodyBg {
     background-color: #f0f2f5;
     min-height: 100vh;
 }
-.customWhiteBg{
+
+.customWhiteBg {
     background-color: #fff;
 }
+
 a {
     color: #007bff !important;
     text-decoration: none !important;
     background-color: transparent !important;
 }
-.primaryColor{
+
+.primaryColor {
     color: #511515 !important;
 }
-p{
-        font-family: 'Open Sans', sans-serif;    
+
+p {
+    font-family: 'Open Sans', sans-serif;
 }
+
 p {
     line-height: 24px !important;
     margin-bottom: 15px !important;
@@ -45,14 +51,17 @@ p {
 .container {
     max-width: 1280px !important;
 }
-ul{
+
+ul {
     list-style-position: inside;
     padding-left: 0;
-    list-style:none;
+    list-style: none;
 }
-.navbar li.active a{
-    color:#511515 !important;
+
+.navbar li.active a {
+    color: #511515 !important;
 }
+
 .navbar-light .navbar-nav .nav-link {
     color: #333;
 }
@@ -134,18 +143,21 @@ li>a {
 
 .dropdown-item:focus,
 .dropdown-item:hover,
-.dropdown-item.active, 
+.dropdown-item.active,
 .dropdown-item:active {
     color: #511515 !important;
-    background-color:transparent !important;
+    background-color: transparent !important;
 }
+
 /*Modal*/
 .modal-dialog {
     max-width: 50%;
 }
+
 .modal-dialog-centered {
     min-height: calc(100% - 3rem);
 }
+
 /* Form Styles */
 .form-row {
     display: flex;
@@ -184,7 +196,8 @@ li>a {
     height: 45vh;
     object-fit: cover;
 }
-.customnBannerHeight{
+
+.customnBannerHeight {
     height: 45vh;
     object-fit: fill;
     width: 100%;
@@ -318,6 +331,7 @@ footer {
     text-decoration: none;
     line-height: 1.1em;
 }
+
 .cards-Label {
     color: #967842;
     font-size: 24px;
@@ -328,7 +342,7 @@ footer {
     line-height: 34px;
 }
 
-.d-none{
+.d-none {
     display: block;
 
 }
@@ -336,16 +350,19 @@ footer {
 /* Publications  */
 .year-header {
     margin-top: 20px;
-    color:#823535;
+    color: #823535;
 }
+
 .pdf-row {
     padding: 8px;
     margin-bottom: 8px;
-    
+
 }
+
 /*  */
 
 @media (max-width: 500px) {
+
     /*Modal*/
     .modal-dialog {
         max-width: 100%;
@@ -358,17 +375,21 @@ footer {
     .cards-titles {
         font-size: 12px;
     }
+
     .cards-headings {
         font-size: 22px;
         line-height: 1.3em;
     }
+
     .d-none {
         display: none !important;
     }
-    .cards-Label{
+
+    .cards-Label {
         font-size: 21px !important;
         line-height: 1.2em;
     }
+
     .card-body {
         flex: 1 !important;
         display: flex !important;
@@ -376,11 +397,13 @@ footer {
         justify-content: center !important;
         padding: 1rem !important;
     }
+
     .customnBannerHeight {
         height: 25vh !important;
 
     }
-    .header-post-title-class{
+
+    .header-post-title-class {
         display: none;
     }
 }
@@ -390,24 +413,29 @@ footer {
     .cards-titles {
         font-size: 12px;
     }
+
     .cards-headings {
         font-size: 29px;
         line-height: 1.3em;
     }
+
     .cards-Label {
         font-size: 22px;
         line-height: 1.2em;
     }
-    .d-none{
+
+    .d-none {
         display: block !important;
 
     }
 }
+
 @media (min-width: 1025px) and (max-width: 2560px) {
     .d-none {
         display: block !important;
     }
 }
+
 .navbar-expand-lg .navbar-nav .nav-link {
     padding-right: 20px;
     padding-left: 20px;
@@ -417,32 +445,36 @@ footer {
 
 img,
 video {
-  height: 100px !important;
-  object-fit: cover;
+    height: 100px !important;
+    object-fit: cover;
 }
 
 .card {
-  position: relative;
+    position: relative;
 }
-.cardBorder{
+
+.cardBorder {
     border: 1px solid #ccc !important;
 }
 
 .card-body {
-  display: block;
-  text-align: center;
+    display: block;
+    text-align: center;
 }
 
 .edit-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #007bff; /* Change to your preferred color */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #007bff;
+    /* Change to your preferred color */
 }
 
 .card:hover .edit-icon {
-  display: block; /* Show the icon on hover */
+    display: block;
+    /* Show the icon on hover */
 }
+
 /* Media */
 
 /* Upload Documnets */
@@ -454,91 +486,124 @@ video {
     margin-bottom: 20px;
     transition: background-color 0.3s;
 }
+
 .upload-box:hover {
     background-color: #f8f9fa;
 }
+
 .upload-box input[type="file"] {
     display: none;
 }
+
 .upload-button {
     margin-top: 10px;
 }
+
 /* Upload */
 
 /* Dropdown  ICons*/
 .custom-select-wrapper {
     position: relative;
     display: inline-block;
-    width: 100%; /* or specify the width */
-  }
-  
-  .custom-select {
-    appearance: none; /* Removes default arrow */
-    -moz-appearance: none; /* Firefox */
-    -webkit-appearance: none; /* Safari and Chrome */
-    background: white; /* Set background color */
+    width: 100%;
+    /* or specify the width */
+}
+
+.custom-select {
+    appearance: none;
+    /* Removes default arrow */
+    -moz-appearance: none;
+    /* Firefox */
+    -webkit-appearance: none;
+    /* Safari and Chrome */
+    background: white;
+    /* Set background color */
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 8px 30px 8px 10px; /* Adjust padding for arrow space */
-    width: 100%; /* Full width */
+    padding: 8px 30px 8px 10px;
+    /* Adjust padding for arrow space */
+    width: 100%;
+    /* Full width */
     font-size: 14px;
     cursor: pointer;
-  }
-  
-  .custom-select-wrapper::after {
-    content: "▼"; /* Unicode for down arrow */
+}
+
+.custom-select-wrapper::after {
+    content: "▼";
+    /* Unicode for down arrow */
     font-size: 12px;
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    pointer-events: none; /* Prevent arrow from blocking clicks */
+    pointer-events: none;
+    /* Prevent arrow from blocking clicks */
     color: #999;
-  }
-  
+}
+
 /* Dropdown  ICons*/
 
 /* Search Icons */
 .search-input-wrapper {
     position: relative;
     display: inline-block;
-    width: 100%; /* Adjust width if needed */
-  }
-  
-  .search-input {
-    width: 100%; /* Makes the input take full width */
-    padding-right: 30px; /* Creates space for the icon */
-  }
-  
-  .search-icon {
-    position: absolute;
-    right: 10px; /* Positions the icon to the right */
-    top: 50%;
-    transform: translateY(-50%); /* Vertically centers the icon */
-    pointer-events: none; /* Ensures that the icon doesn't block the input field */
-    fill: #888; /* Change the color of the icon */
-  }
-  
-  /* Search Icons  */
+    width: 100%;
+    /* Adjust width if needed */
+}
 
-  /* Skeleton */
-  .skeleton-box {
-    background-color: #e0e0e0; /* Light grey background */
-    border-radius: 4px; /* Rounded corners */
+.search-input {
+    width: 100%;
+    /* Makes the input take full width */
+    padding-right: 30px;
+    /* Creates space for the icon */
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    /* Positions the icon to the right */
+    top: 50%;
+    transform: translateY(-50%);
+    /* Vertically centers the icon */
+    pointer-events: none;
+    /* Ensures that the icon doesn't block the input field */
+    fill: #888;
+    /* Change the color of the icon */
+}
+
+/* Search Icons  */
+
+/* Skeleton */
+.skeleton-box {
+    background-color: #e0e0e0;
+    /* Light grey background */
+    border-radius: 4px;
+    /* Rounded corners */
     animation: pulse 1.5s infinite ease-in-out;
 }
 
 @keyframes pulse {
     0% {
-        background-color: #e0e0e0; /* Start with light gray */
+        background-color: #e0e0e0;
+        /* Start with light gray */
     }
+
     50% {
-        background-color: #f0f0f0; /* Lighter shade during pulse */
+        background-color: #f0f0f0;
+        /* Lighter shade during pulse */
     }
+
     100% {
-        background-color: #e0e0e0; /* End with light gray */
+        background-color: #e0e0e0;
+        /* End with light gray */
     }
 }
 
 
-  /* Skeleton */
+/* Skeleton */
+/* CK EDITIOR */
+.ck.ck-editor__main>.ck-editor__editable {
+    min-height: 350px !important;
+}
+
+/* CK EDITIOR */

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from '../Component/ButtonComponents/ButtonComponents';
-import 'react-quill/dist/quill.snow.css';
 
 
 const CreatePages = () => {
