@@ -5,6 +5,8 @@ import Button from "../Component/ButtonComponents/ButtonComponents";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 const Post = () => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
@@ -236,13 +238,13 @@ const Post = () => {
                                     <div className="col-md-10">
                                         <h3>Post</h3>
                                     </div>
-                                    <div className="col-md-2 d-flex justify-content-end">
-                                        <button
-                                            onClick={redirectToCreatePage}
-                                            className="btn btn-primary"
-                                        >
-                                            Add New Post
-                                        </button>
+                                    <div className="col-md-2 d-flex justify-content-end">                                
+                                        <Button
+                                        text="Add New Post"
+                                        onClick={redirectToCreatePage}
+                                        className="btn btn-primary"
+                                        type="button"
+                                    />
                                     </div>
                                 </div>
 
@@ -349,12 +351,20 @@ const Post = () => {
                                                     <td>{post.title}</td>
                                                     <td>{post.category}</td>
                                                     <td>
-                                                        <button
-                                                            className="btn btn-primary ml-3"
+                                                        
+                                                        <Button
+                                                            text="Edit"
                                                             onClick={redirectToCreatePage}
-                                                        >
-                                                            Edit
-                                                        </button>
+                                                            className={"btn btn-primary me-2"}
+                                                            type="button"
+                                                        />
+                                                          <Button
+                                                            text="Delete"
+                                                            // onClick={redirectToCreatePage}
+                                                            className={"btn btn-secondary"}
+                                                            type="button"
+                                                        />
+                                                        
                                                     </td>
                                                 </tr>
                                             ))
