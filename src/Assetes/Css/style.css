@@ -497,3 +497,26 @@ video {
   }
   
 /* Dropdown  ICons*/
+
+/* Search Icons */
+.search-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%; /* Adjust width if needed */
+  }
+  
+  .search-input {
+    width: 100%; /* Makes the input take full width */
+    padding-right: 30px; /* Creates space for the icon */
+  }
+  
+  .search-icon {
+    position: absolute;
+    right: 10px; /* Positions the icon to the right */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically centers the icon */
+    pointer-events: none; /* Ensures that the icon doesn't block the input field */
+    fill: #888; /* Change the color of the icon */
+  }
+  
+  /* Search Icons  */
