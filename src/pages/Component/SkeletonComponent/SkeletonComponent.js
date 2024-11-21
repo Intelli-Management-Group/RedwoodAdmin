@@ -2,7 +2,7 @@
 import React from 'react';
 
 
-const Skeleton = ({ type = "text", width, height }) => {
+const Skeleton = ({  }) => {
   
   
     return (
