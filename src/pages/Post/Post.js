@@ -7,6 +7,8 @@ import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 const Post = () => {
     const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [postsPerPage, setPostsPerPage] = useState(5);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [posts, setPosts] = useState([]);
@@ -16,6 +18,26 @@ const Post = () => {
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
 
 
+    // Calculate the posts to display on the current page
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+    // Pagination logic
+    const totalPosts = posts.length;
+    const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
@@ -32,13 +54,99 @@ const Post = () => {
                 {
                     id: 1,
                     image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-                    title: "Sunshine Action for elderly people",
+                    title: "Post Title 1",
                     category: "Latest News"
                 },
                 {
                     id: 2,
-                    image: "http://localhost/redwood/wp-content/uploads/2017/06/Mastercard-e1498551571139-150x150.jpg",
-                    title: "Sunshine Action for hundreds of homeless people",
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+                    title: "Post Title 2",
+                    category: "Visit"
+                },
+                {
+                    id: 3,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+                    title: "Post Title 3",
+                    category: "Latest News"
+                },
+                {
+                    id: 4,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+                    title: "Post Title 4",
+                    category: "Visit"
+                },
+
+                {
+                    id: 5,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
+                    title: "Post Title 5",
+                    category: "Latest News"
+                },
+                {
+                    id: 6,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+                    title: "Post Title 6",
+                    category: "Visit"
+                },
+                {
+                    id: 7,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+                    title: "Post Title 7",
+                    category: "Latest News"
+                },
+                {
+                    id: 8,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+                    title: "Post Title 8",
+                    category: "Visit"
+                },
+                {
+                    id: 9,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
+                    title: "Post Title 9",
+                    category: "Latest News"
+                },
+                {
+                    id: 10,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+                    title: "Post Title 10",
+                    category: "Visit"
+                },
+                {
+                    id: 11,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+                    title: "Post Title 11",
+                    category: "Latest News"
+                },
+                {
+                    id: 12,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+                    title: "Post Title 12",
+                    category: "Visit"
+                },
+
+                {
+                    id: 13,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
+                    title: "Post Title 13",
+                    category: "Latest News"
+                },
+                {
+                    id: 14,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+                    title: "Post Title 14",
+                    category: "Visit"
+                },
+                {
+                    id: 15,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+                    title: "Post Title 15",
+                    category: "Latest News"
+                },
+                {
+                    id: 16,
+                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+                    title: "Post Title 16",
                     category: "Visit"
                 }
             ]);
@@ -97,15 +205,15 @@ const Post = () => {
     };
     const handleCheckboxChange = (postId, isChecked) => {
         if (isChecked) {
-          // Add the postId to selectedCheckboxes if checked
-          setSelectedCheckboxes((prev) => [...prev, postId]);
+            // Add the postId to selectedCheckboxes if checked
+            setSelectedCheckboxes((prev) => [...prev, postId]);
         } else {
-          // Remove the postId from selectedCheckboxes if unchecked
-          setSelectedCheckboxes((prev) =>
-            prev.filter((id) => id !== postId)
-          );
+            // Remove the postId from selectedCheckboxes if unchecked
+            setSelectedCheckboxes((prev) =>
+                prev.filter((id) => id !== postId)
+            );
         }
-      };
+    };
     // Check if all are selected
     const areAllSelected =
         posts.length > 0 && selectedCheckboxes.length === posts.length;
@@ -212,13 +320,13 @@ const Post = () => {
                                     </thead>
                                     <tbody>
                                         {isLoading ? (
-                                           <>
-                                           <Skeleton type="row" />
-                                           <Skeleton type="row" />
-                                           <Skeleton type="row" />
-                                       </>
-                                        ) : posts.length > 0 ? (
-                                            posts.map((post) => (
+                                            <>
+                                                <Skeleton type="row" />
+                                                <Skeleton type="row" />
+                                                <Skeleton type="row" />
+                                            </>
+                                        ) : currentPosts.length > 0 ? (
+                                            currentPosts.map((post) => (
                                                 <tr key={post.id}>
                                                     <td>
                                                         <input
@@ -257,6 +365,28 @@ const Post = () => {
                                         )}
                                     </tbody>
                                 </table>
+                                <div className="pagination-controls text-end">
+                                    <Button
+                                        text="Previous"
+                                        onClick={handlePrevPage}
+                                        className={currentPage === 1 ? "btn btn-secondary" : "btn-primary"}
+                                        type="button"
+                                        disabled={currentPage === 1}
+
+                                    />
+
+                                    <span className="ps-1 pe-1">
+                                        Page {currentPage} of {totalPages}
+                                    </span>
+                                    <Button
+                                        text="Next"
+                                        onClick={handleNextPage}
+                                        className="btn btn-secondary"
+                                        type="button"
+                                        disabled={currentPage === totalPages}
+                                    />
+                                </div>
+
                             </div>
                         </div>
                     </div>
