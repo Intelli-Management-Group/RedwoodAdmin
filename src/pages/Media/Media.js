@@ -103,7 +103,7 @@ function Media() {
                     >
                       Add New Media File
                     </Button>
-                    <Modal show={show} onHide={handleClose} style={{alignItems:"center"}}>
+                    <Modal show={show} onHide={handleClose} style={{marginTop:"15%"}}>
                       <Modal.Header closeButton>
                         <Modal.Title>Upload New Media
                         </Modal.Title>
