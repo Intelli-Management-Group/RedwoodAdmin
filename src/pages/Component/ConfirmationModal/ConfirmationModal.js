@@ -1,12 +1,13 @@
 import React from "react";
 import "./ConfirmationDialog.css"; // Styles for centering and appearance
+import Button from "../ButtonComponents/ButtonComponents";
 
-const ConfirmationDialog = ({ 
-    isVisible, 
-    title, 
-    message, 
-    onConfirm, 
-    onCancel 
+const ConfirmationDialog = ({
+    isVisible,
+    title,
+    message,
+    onConfirm,
+    onCancel
 }) => {
     if (!isVisible) return null;
 
@@ -16,8 +17,18 @@ const ConfirmationDialog = ({
                 <h4 className="dialog-title">{title}</h4>
                 <p className="dialog-message">{message}</p>
                 <div className="dialog-actions">
-                    <button className="btn btn-danger" onClick={onConfirm}>Confirm</button>
-                    <button className="btn btn-secondary" onClick={onCancel}>Cancel</button>
+                    <Button
+                        text="Confirm"
+                        onClick={onConfirm}
+                        className="btn-primary"
+                        type="submit"
+                    />
+                     <Button
+                        text="Cancel"
+                        onClick={onCancel}
+                        className="btn btn-secondary"
+                        type="submit"
+                    />
                 </div>
             </div>
         </div>
