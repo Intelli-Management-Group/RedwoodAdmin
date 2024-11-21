@@ -4,15 +4,7 @@ import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
-const SkeletonRow = () => (
-    <tr>
-        <td><div className="skeleton-box" style={{ width: '20px', height: '20px', color: 'red' }} /></td>
-        <td><div className="skeleton-box" style={{ width: '50px', height: '50px' }} /></td>
-        <td><div className="skeleton-box" style={{ width: '150px', height: '20px' }} /></td>
-        <td><div className="skeleton-box" style={{ width: '100px', height: '20px' }} /></td>
-        <td><div className="skeleton-box" style={{ width: '80px', height: '30px' }} /></td>
-    </tr>
-);
+import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 const Post = () => {
     const navigate = useNavigate();
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -220,11 +212,11 @@ const Post = () => {
                                     </thead>
                                     <tbody>
                                         {isLoading ? (
-                                            <>
-                                                <SkeletonRow />
-                                                <SkeletonRow />
-                                                <SkeletonRow />
-                                            </>
+                                           <>
+                                           <Skeleton type="row" />
+                                           <Skeleton type="row" />
+                                           <Skeleton type="row" />
+                                       </>
                                         ) : posts.length > 0 ? (
                                             posts.map((post) => (
                                                 <tr key={post.id}>
