@@ -179,13 +179,24 @@ const Post = () => {
                                     </div>
 
                                     <div className="col-md-4 p-1">
-                                        <div className="search-input-wrapper">
+                                    <div className="search-input-wrapper">
                                             <input
                                                 type="text"
                                                 id="searchPages"
                                                 className="form-control search-input"
                                                 placeholder="Search post..."
                                             />
+                                            <svg
+                                                className="search-icon"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                width="20"
+                                                height="20"
+                                            >
+                                                <circle cx="10" cy="10" r="7" stroke="black" strokeWidth="2" fill="none" />
+                                                <line x1="15" y1="15" x2="20" y2="20" stroke="black" strokeWidth="2" />
+                                            </svg>
+
                                         </div>
                                     </div>
                                 </div>
