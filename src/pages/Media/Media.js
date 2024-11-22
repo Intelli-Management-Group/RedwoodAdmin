@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
 import Modal from 'react-bootstrap/Modal';
+import MediaServices from '../../Services/MediaServices';
+import { ToastContainer, toast } from 'react-toastify';
 
 const mediaItems = [
   {
@@ -49,12 +51,13 @@ function Media() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [filteredItems, setFilteredItems] = useState(mediaItems);
   const [searchTerm, setSearchTerm] = useState('');
-
-
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [mediaList, setMediaList] = useState([])
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState({
     src: "",
@@ -62,6 +65,31 @@ function Media() {
     title: "",
     url: "",
   });
+  useEffect(()=>{
+    getMediaList()
+  },[])
+
+  async function getMediaList(){
+    try {
+   
+      const formdata = new FormData();
+      formdata.append("pageSize", "10");
+      const resp = await MediaServices.getMediaList(formdata);
+      if (resp?.status_code === 200) {
+        console.log(resp)
+        // resp?.        
+        setTimeout(() => handleClose(), 3000);
+      } else {
+        toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
+    } finally {
+      // setUploadLoading(false);
+    }
+
+  }
 
   const handleViewClick = (item) => {
     setModalContent({
@@ -94,8 +122,51 @@ function Media() {
       setFilteredItems(mediaItems.filter((item) => item.type === type));
     }
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; 
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file)); 
+    }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    setUploadLoading(true);
+  
+    if (!selectedFile) {
+      toast.error("Please select an image to upload.", { position: "top-center", autoClose: 3000 });
+      setUploadLoading(false);
+      return;
+    }
+  
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+  
+      const resp = await MediaServices.MediaUpload(formData);
+  
+      if (resp?.status_code === 200) {
+        toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
+        
+        setSelectedFile(null);
+        setPreviewUrl("");
+  
+        setTimeout(() => handleClose(), 3000);
+      } else {
+        toast.error("Upload failed. Please try again.", { position: "top-center", autoClose: 3000 });
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      toast.error("An error occurred during upload. Please try again.", { position: "top-center", autoClose: 3000 });
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+  
 
-console.log(modalContent)
+  
+
+  console.log(modalContent)
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -125,41 +196,60 @@ console.log(modalContent)
                     </Button>
                     <Modal show={show} onHide={handleClose} style={{ marginTop: "15%" }}>
                       <Modal.Header closeButton>
-                        <Modal.Title>Upload New Media
-                        </Modal.Title>
+                        <Modal.Title>Upload New Media</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <label htmlFor="documentUpload" className="upload-label">
-                          <div>
-                            {selectedFile ? selectedFile.name : "Select Files"}
+                        {uploadLoading ? (
+                          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "150px" }}>
+                            <div className="spinner-border text-primary-color" role="status">
+                              <span className="visually-hidden">Loading...</span>
+                            </div>
                           </div>
-                        </label>
-                        <div className="upload-button">
-                          <Button
-                            text="Choose File"
-                            className="btn-primary"
-                            type="submit"
-
-                          />
-                          <span> No File Chosen</span>
-                        </div>
+                        ) : (
+                          <form>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              onChange={handleFileChange}
+                            />
+                            {previewUrl && (
+                              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                                <img
+                                  src={previewUrl}
+                                  alt="Preview"
+                                  style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                                />
+                              </div>
+                            )}
+                          </form>
+                        )}
 
                       </Modal.Body>
                       <Modal.Footer>
-                        <Button text="Close"
+                        {/* Close Button */}
+                        <Button
+                          text="Close"
                           className="btn-primary"
-                          type="submit"
+                          type="button"
                           variant="secondary"
-                          onClick={handleClose}>
+                          onClick={handleClose}
+                        >
                           Close
                         </Button>
+
+                        {/* Upload Button */}
                         <Button
                           text="Upload"
                           className="btn-primary"
-                          type="submit"
-                        />
+                          type="button" // Use "type='button'" to prevent automatic form submission
+                          onClick={handleSubmit} // Trigger the upload on click
+                        >
+                          Upload
+                        </Button>
                       </Modal.Footer>
                     </Modal>
+
                   </div>
                 </div>
                 <br />
@@ -299,18 +389,18 @@ console.log(modalContent)
                         <Modal.Body>
                           <div className='row'>
                             <div className='col-md-4'>
-                            {modalContent.type === "images" && (
+                              {modalContent.type === "images" && (
                                 <img
-                                src={modalContent.src || placeholderImage}
-                                className="card-img-top"
-                                alt={modalContent.title || "Media"}
-                                style={{
-                                  width: "100%",
-                                  height: "200px",
-                                  objectFit: "contain",
-                                }}
-                                onError={(e) => (e.target.src = placeholderImage)}
-                              />
+                                  src={modalContent.src || placeholderImage}
+                                  className="card-img-top"
+                                  alt={modalContent.title || "Media"}
+                                  style={{
+                                    width: "100%",
+                                    height: "200px",
+                                    objectFit: "contain",
+                                  }}
+                                  onError={(e) => (e.target.src = placeholderImage)}
+                                />
                               )}
                               {modalContent.type === "video" && (
                                 <video controls style={{ width: "100%" }}>
@@ -328,7 +418,7 @@ console.log(modalContent)
 
                             </div>
                             <div className='col-md-8'>
-                            <h6>File URL:</h6>
+                              <h6>File URL:</h6>
                               <a
                                 href={modalContent.url}
                                 target="_blank"
@@ -340,47 +430,7 @@ console.log(modalContent)
                             </div>
 
                           </div>
-                          {/* <div className="d-flex">
-                            <div style={{ flex: 1, marginRight: "20px" }}>
-                              {modalContent.type === "images" && (
-                                <img
-                                src={modalContent.src || placeholderImage}
-                                className="card-img-top"
-                                alt={modalContent.title || "Media"}
-                                style={{
-                                  width: "100%",
-                                  height: "200px",
-                                  objectFit: "contain",
-                                }}
-                                onError={(e) => (e.target.src = placeholderImage)}
-                              />
-                              )}
-                              {modalContent.type === "video" && (
-                                <video controls style={{ width: "100%" }}>
-                                  <source src={modalContent.src} type="video/mp4" />
-                                  Your browser does not support the video tag.
-                                </video>
-                              )}
-                              {modalContent.type === "document" && (
-                                <img
-                                  src={modalContent.src} // Assuming the thumbnail is shown
-                                  alt={modalContent.title || "Document"}
-                                  style={{ width: "100%", height: "auto", objectFit: "contain" }}
-                                />
-                              )}
-                            </div>
 
-                            <div style={{ flex: 1 }}>
-                              <h6>File URL:</h6>
-                              <a
-                                href={modalContent.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {modalContent.url}
-                              </a>
-                            </div>
-                          </div> */}
                         </Modal.Body>
                         <Modal.Footer>
                           <Button variant="secondary" onClick={handleCloseModal}>
@@ -388,6 +438,8 @@ console.log(modalContent)
                           </Button>
                         </Modal.Footer>
                       </Modal>
+                      <ToastContainer />
+
                     </div>
                   </div>
                 </div>
