@@ -5,6 +5,7 @@ import Button from "../Component/ButtonComponents/ButtonComponents";
 import Modal from 'react-bootstrap/Modal';
 import MediaServices from '../../Services/MediaServices';
 import { ToastContainer, toast } from 'react-toastify';
+import Skeleton from '../Component/SkeletonComponent/SkeletonComponent';
 
 const mediaItems = [
   {
@@ -51,7 +52,7 @@ function Media() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [selectedFile, setSelectedFile] = useState(null); 
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [filteredItems, setFilteredItems] = useState(mediaItems);
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,19 +60,21 @@ function Media() {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [mediaList, setMediaList] = useState([])
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true)
   const [modalContent, setModalContent] = useState({
     src: "",
     type: "",
     title: "",
     url: "",
   });
-  useEffect(()=>{
+  useEffect(() => {
+    setLoading(true)
     getMediaList()
-  },[])
+  }, [])
 
-  async function getMediaList(){
+  async function getMediaList() {
     try {
-   
+
       const formdata = new FormData();
       formdata.append("pageSize", "50");
       const resp = await MediaServices.getMediaList(formdata);
@@ -87,17 +90,17 @@ function Media() {
       console.error("Error uploading images:", error);
       toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
     } finally {
-      // setUploadLoading(false);
+      setLoading(false)
     }
 
   }
 
   const handleViewClick = (item) => {
     setModalContent({
-      src: item.src,
-      type: item.type,
-      title: item.title,
-      url: item.src,
+      src: item.path,
+      type: item.category,
+      title: item.name,
+      url: item.path,
     });
     setShowModal(true);
   };
@@ -124,34 +127,34 @@ function Media() {
     }
   };
   const handleFileChange = (e) => {
-    const file = e.target.files[0]; 
+    const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file)); 
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setUploadLoading(true);
-  
+
     if (!selectedFile) {
       toast.error("Please select an image to upload.", { position: "top-center", autoClose: 3000 });
       setUploadLoading(false);
       return;
     }
-  
+
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
-  
+
       const resp = await MediaServices.MediaUpload(formData);
-  
+
       if (resp?.status_code === 200) {
         toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
-        
+
         setSelectedFile(null);
         setPreviewUrl("");
-  
+
         setTimeout(() => handleClose(), 3000);
       } else {
         toast.error("Upload failed. Please try again.", { position: "top-center", autoClose: 3000 });
@@ -163,9 +166,9 @@ function Media() {
       setUploadLoading(false);
     }
   };
-  
 
-  
+
+
 
   console.log(modalContent)
   return (
@@ -214,15 +217,51 @@ function Media() {
                               multiple
                               onChange={handleFileChange}
                             />
-                            {previewUrl && (
-                              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                                <img
-                                  src={previewUrl}
-                                  alt="Preview"
-                                  style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                                />
-                              </div>
-                            )}
+                            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                              {selectedFile && (
+                                <div>
+                                  {/* Check for Image files */}
+                                  {selectedFile.type.startsWith("image/") && (
+                                    <img
+                                      src={previewUrl}
+                                      alt="Image Preview"
+                                      style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                                    />
+                                  )}
+
+                                  {/* Check for Video files */}
+                                  {selectedFile.type.startsWith("video/") && (
+                                    <video
+                                      src={previewUrl}
+                                      controls
+                                      style={{ width: "100px", height: "100px" }}
+                                    />
+                                  )}
+
+                                  {/* Check for PDF files */}
+                                  {selectedFile.type === "application/pdf" && (
+                                    <div
+                                      style={{
+                                        width: "100px",
+                                        height: "100px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        backgroundColor: "#f0f0f0",
+                                      }}
+                                    >
+                                      <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" // Placeholder PDF icon
+                                        alt="PDF Preview"
+                                        style={{ width: "40px", height: "40px" }}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+
                           </form>
                         )}
 
@@ -320,6 +359,86 @@ function Media() {
                   </nav>
                   <br />
                   <div className="container">
+                    {/* <div
+                      className="row p-2"
+                      id="mediaItems"
+                      style={{
+                        backgroundColor: "#fff",
+                        border: "1px solid #ccc",
+                        height: "400px",
+                        overflowY: "auto",
+                      }}
+
+                    >
+                      {loading ? (
+                        <>
+                          <Skeleton type="row" columns={4} />
+                          <Skeleton type="row" columns={4} />
+                          <Skeleton type="row" columns={4} />
+                          <Skeleton type="row" columns={4} />
+                          <Skeleton type="row" columns={4} />
+                          <Skeleton type="row" columns={4} />
+                        </>
+                      ) : (
+                        <>
+                          {mediaList.map((item) => (
+                            <div className="col-md-3 media-item" key={item.id} data-type={item.type}>
+                              <div className="card cardBorder mb-4">
+
+
+                                {item.category === "image" && (
+                                  <img
+                                    src={item.path || placeholderImage}
+                                    className="card-img-top"
+                                    alt={item.alt || "Placeholder Image"}
+                                    style={{
+                                      width: "100%",
+                                      height: "200px",
+                                      objectFit: "contain",
+                                    }}
+                                    onError={(e) => (e.target.src = placeholderImage)}
+                                  />
+                                )}
+                                {item.category === "video" && (
+                                  <video className="card-img-top" controls>
+                                    <source
+                                      src={item.path || placeholderImage}
+                                      type="video/mp4"
+                                      onError={(e) => (e.target.src = placeholderVideo)}
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                )}
+                                {item.category === "application" && (
+                                  <a href={item.path} target="_blank" rel="noopener noreferrer">
+                                    <img
+                                      src={'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg'}
+                                      className="card-img-top"
+                                      alt="Document Thumbnail"
+                                      style={{ width: "100%" }}
+                                      onError={(e) => (e.target.src = placeholderDocument)}
+                                    />
+                                  </a>
+                                )}
+                                <div className="card-body">
+                                  <h6 className="card-title">
+                                    {item.name ? item.name.split('.').slice(0, -1).join('.') : "Untitled"}
+                                  </h6>
+                                  <Button
+                                    variant="primary"
+                                    className="btn btn-primary ms-auto w-auto me-2"
+                                    type="button"
+                                    text="View"
+                                    onClick={() => handleViewClick(item)}
+                                  />
+                                </div>
+
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </div> */}
                     <div
                       className="row p-2"
                       id="mediaItems"
@@ -330,119 +449,144 @@ function Media() {
                         overflowY: "auto",
                       }}
                     >
-                      {mediaList.map((item) => (
-                        <div className="col-md-3 media-item" key={item.id} data-type={item.type}>
-                          <div className="card cardBorder mb-4">
-                            {item.category === "image" && (
-                              <img
-                                src={item.path || placeholderImage}
-                                className="card-img-top"
-                                alt={item.alt || "Placeholder Image"}
-                                style={{
-                                  width: "100%",
-                                  height: "200px",
-                                  objectFit: "contain",
-                                }}
-                                onError={(e) => (e.target.src = placeholderImage)}
-                              />
-                            )}
-                            {item.isVideo && (
-                              <video className="card-img-top" controls>
-                                <source
-                                  src={item.src}
-                                  type="video/mp4"
-                                  onError={(e) => (e.target.src = placeholderVideo)}
-                                />
-                                Your browser does not support the video tag.
-                              </video>
-                            )}
-                            {item.category === "application" && (
-                              <a href={item.src} target="_blank" rel="noopener noreferrer">
-                                <img
-                                  src={item.thumbnail || placeholderDocument}
-                                  className="card-img-top"
-                                  alt="Document Thumbnail"
-                                  style={{ width: "100%" }}
-                                  onError={(e) => (e.target.src = placeholderDocument)}
-                                />
-                              </a>
-                            )}
-                            <div className="card-body">
-                              <h5 className="card-title">{item.title || "Untitled"}</h5>
-                              {/* <button className="btn btn-primary mt-2">View</button> */}
-                              <Button
-                                variant="primary"
-                                className="btn btn-primary ms-auto w-auto me-2"
-                                type="button"
-                                text="View"
-                                onClick={() => handleViewClick(item)}
-                              />
+                      {loading ? (
+                        <>
+                          {/* Skeleton Loader */}
+                          {Array.from({ length: 12 }).map((_, index) => (
+                            <div key={index} className="col-md-3 media-item">
+                              <div className="card cardBorder mb-4">
+                                {/* Skeleton Image */}
+                                <div className="skeleton-box" style={{ width: "100%", height: "200px", backgroundColor: "#ddd" }}></div>
+
+                                {/* Skeleton Card Body */}
+                                <div className="card-body">
+                                  <div className="skeleton-box" style={{ width: "60%", height: "20px", backgroundColor: "#ddd" }}></div>
+                                  <div className="skeleton-box" style={{ width: "40%", height: "30px", backgroundColor: "#ddd", marginTop: "10px" }}></div>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Modal */}
-                      <Modal show={showModal} onHide={handleCloseModal} centered>
-                        <Modal.Header closeButton>
-                          <Modal.Title>{modalContent.title || "Details"}</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          <div className='row'>
-                            <div className='col-md-4'>
-                              {modalContent.type === "images" && (
-                                <img
-                                  src={modalContent.src || placeholderImage}
-                                  className="card-img-top"
-                                  alt={modalContent.title || "Media"}
-                                  style={{
-                                    width: "100%",
-                                    height: "200px",
-                                    objectFit: "contain",
-                                  }}
-                                  onError={(e) => (e.target.src = placeholderImage)}
-                                />
-                              )}
-                              {modalContent.type === "video" && (
-                                <video controls style={{ width: "100%" }}>
-                                  <source src={modalContent.src} type="video/mp4" />
-                                  Your browser does not support the video tag.
-                                </video>
-                              )}
-                              {modalContent.type === "document" && (
-                                <img
-                                  src={modalContent.src} // Assuming the thumbnail is shown
-                                  alt={modalContent.title || "Document"}
-                                  style={{ width: "100%", height: "auto", objectFit: "contain" }}
-                                />
-                              )}
-
+                          ))}
+                        </>
+                      ) : (
+                        <>
+                          {mediaList.map((item) => (
+                            <div className="col-md-3 media-item" key={item.id} data-type={item.type}>
+                              <div className="card cardBorder mb-4">
+                                {item.category === "image" && (
+                                  <img
+                                    src={item.path || placeholderImage}
+                                    className="card-img-top"
+                                    alt={item.alt || "Placeholder Image"}
+                                    style={{
+                                      width: "100%",
+                                      height: "200px",
+                                      objectFit: "contain",
+                                    }}
+                                    onError={(e) => (e.target.src = placeholderImage)}
+                                  />
+                                )}
+                                {item.category === "video" && (
+                                  <video className="card-img-top" controls>
+                                    <source
+                                      src={item.path || placeholderImage}
+                                      type="video/mp4"
+                                      onError={(e) => (e.target.src = placeholderVideo)}
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                )}
+                                {item.category === "application" && (
+                                  <a href={item.path} target="_blank" rel="noopener noreferrer">
+                                    <img
+                                      src={'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg'}
+                                      className="card-img-top"
+                                      alt="Document Thumbnail"
+                                      style={{ width: "100%" }}
+                                      onError={(e) => (e.target.src = placeholderDocument)}
+                                    />
+                                  </a>
+                                )}
+                                <div className="card-body">
+                                  <h6 className="card-title">
+                                    {item.name ? item.name.split('.').slice(0, -1).join('.') : "Untitled"}
+                                  </h6>
+                                  <Button
+                                    variant="primary"
+                                    className="btn btn-primary ms-auto w-auto me-2"
+                                    type="button"
+                                    text="View"
+                                    onClick={() => handleViewClick(item)}
+                                  />
+                                </div>
+                              </div>
                             </div>
-                            <div className='col-md-8'>
-                              <h6>File URL:</h6>
-                              <a
-                                href={modalContent.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {modalContent.url}
-                              </a>
-
-                            </div>
-
-                          </div>
-
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button variant="secondary" onClick={handleCloseModal}>
-                            Close
-                          </Button>
-                        </Modal.Footer>
-                      </Modal>
-                      <ToastContainer />
-
+                          ))}
+                        </>
+                      )}
                     </div>
+
                   </div>
+
+                  {/* Modal */}
+                  <Modal show={showModal} onHide={handleCloseModal} centered>
+                    <Modal.Header closeButton>
+                      <Modal.Title>{modalContent.title || "Details"}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <div className='row'>
+                        <div className='col-md-4'>
+                          {modalContent.type === "image" && (
+                            <img
+                              src={modalContent.src || placeholderImage}
+                              className="card-img-top"
+                              alt={modalContent.title || "Media"}
+                              style={{
+                                width: "100%",
+                                height: "200px",
+                                objectFit: "contain",
+                              }}
+                              onError={(e) => (e.target.src = placeholderImage)}
+                            />
+                          )}
+                          {modalContent.type === "video" && (
+                            <video controls style={{ width: "100%" }}>
+                              <source src={modalContent.src} type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          )}
+                          {modalContent.type === "application" && (
+                            <img
+                              src={'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg'}
+                              alt={modalContent.title || "Document"}
+                              style={{ width: "100%", height: "auto", objectFit: "contain" }}
+                            />
+                          )}
+
+                        </div>
+                        <div className='col-md-8'>
+                          <h6>File URL:</h6>
+                          <a
+                            href={modalContent.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {modalContent.url}
+                          </a>
+
+                        </div>
+
+                      </div>
+
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" onClick={handleCloseModal}>
+                        Close
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
+                  <ToastContainer />
+
+
                 </div>
               </div>
             </div>
