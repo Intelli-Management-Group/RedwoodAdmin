@@ -73,11 +73,12 @@ function Media() {
     try {
    
       const formdata = new FormData();
-      formdata.append("pageSize", "10");
+      formdata.append("pageSize", "50");
       const resp = await MediaServices.getMediaList(formdata);
       if (resp?.status_code === 200) {
         console.log(resp)
         // resp?.        
+        setMediaList(resp?.list?.data)
         setTimeout(() => handleClose(), 3000);
       } else {
         toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
@@ -209,7 +210,7 @@ function Media() {
                           <form>
                             <input
                               type="file"
-                              accept="image/*"
+                              accept="image/*,video/*,.pdf"
                               multiple
                               onChange={handleFileChange}
                             />
@@ -329,12 +330,12 @@ function Media() {
                         overflowY: "auto",
                       }}
                     >
-                      {filteredItems.map((item) => (
+                      {mediaList.map((item) => (
                         <div className="col-md-3 media-item" key={item.id} data-type={item.type}>
                           <div className="card cardBorder mb-4">
-                            {item.isImage && (
+                            {item.category === "image" && (
                               <img
-                                src={item.src || placeholderImage}
+                                src={item.path || placeholderImage}
                                 className="card-img-top"
                                 alt={item.alt || "Placeholder Image"}
                                 style={{
@@ -355,7 +356,7 @@ function Media() {
                                 Your browser does not support the video tag.
                               </video>
                             )}
-                            {item.isDocument && (
+                            {item.category === "application" && (
                               <a href={item.src} target="_blank" rel="noopener noreferrer">
                                 <img
                                   src={item.thumbnail || placeholderDocument}
