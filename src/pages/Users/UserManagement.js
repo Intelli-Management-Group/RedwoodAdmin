@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
@@ -12,6 +12,7 @@ import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const UserManagement = () => {
     const location = useLocation();
+    const [isLoading, setIsLoading] = useState(true);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
     const [selectedUser, setSelectedUser] = useState(null);
@@ -42,6 +43,11 @@ const UserManagement = () => {
         setIsModalVisible(false); // Hide the modal
         setSelectedUser(null); // Clear the selected user data
     };
+    useEffect(()=>{
+        setTimeout(()=>{
+            setIsLoading(false)
+        },2000)
+    })
 
     return (
 
@@ -130,36 +136,49 @@ const UserManagement = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {filteredUsers.map((user) => (
-                                            <tr key={user.username}>
-                                                <td>
-                                                    <input
-                                                        type="checkbox"
-                                                        className="user-select"
-                                                    // checked={selectedCheckboxes.includes(post.id)}
-                                                    // onChange={(e) =>
-                                                    //     handleCheckboxChange(post.id, e.target.checked)
-                                                    // }
-                                                    />
-                                                </td>
-                                                <td>{user.username}</td>
-                                                <td>{user.name}</td>
-                                                <td>{user.email}</td>
-                                                <td>{user.role}</td>
-                                                <td>{user.status}</td>
-                                                <td>
-                                                    <button className="btn btn-sm btn-primary" onClick={() => openUserModal(user)}>
-                                                        <FontAwesomeIcon icon={faPencilSquare} size="lg" />
-                                                    </button>
+                                        {isLoading ? (
+                                            <>
+                                                <>
+                                                    <Skeleton columns={7} /> {/* 5 columns for the Post table */}
+                                                    <Skeleton columns={7} />
+                                                    <Skeleton columns={7} />
+                                                </>
+                                            </>
+                                        ) : filteredUsers.length > 0 ? (
+                                            filteredUsers.map((user) => (
+                                                <tr key={user.username}>
+                                                    <td>
+                                                        <input
+                                                            type="checkbox"
+                                                            className="user-select"
+                                                        // checked={selectedCheckboxes.includes(post.id)}
+                                                        // onChange={(e) =>
+                                                        //     handleCheckboxChange(post.id, e.target.checked)
+                                                        // }
+                                                        />
+                                                    </td>
+                                                    <td>{user.username}</td>
+                                                    <td>{user.name}</td>
+                                                    <td>{user.email}</td>
+                                                    <td>{user.role}</td>
+                                                    <td>{user.status}</td>
+                                                    <td>
+                                                        <button className="btn btn-sm btn-primary" onClick={() => openUserModal(user)}>
+                                                            <FontAwesomeIcon icon={faPencilSquare} size="lg" />
+                                                        </button>
 
-                                                    <button
-                                                        className="btn btn-sm btn-danger ms-2"
-                                                        onClick={''}
-                                                    >
-                                                        <FontAwesomeIcon icon={faTrash} size="lg" />
-                                                    </button></td>
+                                                        <button
+                                                            className="btn btn-sm btn-danger ms-2"
+                                                            onClick={''}
+                                                        >
+                                                            <FontAwesomeIcon icon={faTrash} size="lg" />
+                                                        </button></td>
+                                                </tr>
+                                            ))) : (
+                                            <tr>
+                                                <td colSpan="5">No user available yet.</td>
                                             </tr>
-                                        ))}
+                                        )}
                                     </tbody>
                                 </table>
                             </div>

@@ -152,7 +152,7 @@ const Post = () => {
                     category: "Visit"
                 }
             ]);
-            setIsLoading(false);
+            // setIsLoading(false);
         }, 2000);
     }, []);
     const handleTableAction = (action) => {
