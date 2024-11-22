@@ -56,6 +56,28 @@ function Media() {
   const [filteredItems, setFilteredItems] = useState(mediaItems);
   const [searchTerm, setSearchTerm] = useState('');
 
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    src: "",
+    type: "",
+    title: "",
+    url: "",
+  });
+
+  const handleViewClick = (item) => {
+    setModalContent({
+      src: item.src,
+      type: item.type,
+      title: item.title,
+      url: item.src,
+    });
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
@@ -75,7 +97,7 @@ function Media() {
     }
   };
 
-
+console.log(modalContent)
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -103,7 +125,7 @@ function Media() {
                     >
                       Add New Media File
                     </Button>
-                    <Modal show={show} onHide={handleClose} style={{marginTop:"15%"}}>
+                    <Modal show={show} onHide={handleClose} style={{ marginTop: "15%" }}>
                       <Modal.Header closeButton>
                         <Modal.Title>Upload New Media
                         </Modal.Title>
@@ -127,10 +149,10 @@ function Media() {
                       </Modal.Body>
                       <Modal.Footer>
                         <Button text="Close"
-                                className="btn-primary"
-                                type="submit"
-                                variant="secondary"
-                                onClick={handleClose}>
+                          className="btn-primary"
+                          type="submit"
+                          variant="secondary"
+                          onClick={handleClose}>
                           Close
                         </Button>
                         <Button
@@ -264,13 +286,110 @@ function Media() {
                                 className="btn btn-primary ms-auto w-auto me-2"
                                 type="button"
                                 text="View"
-                              // onClick={() => handleFilter("all")}
+                                onClick={() => handleViewClick(item)}
                               />
                             </div>
                           </div>
                         </div>
                       ))}
 
+                      {/* Modal */}
+                      <Modal show={showModal} onHide={handleCloseModal} centered>
+                        <Modal.Header closeButton>
+                          <Modal.Title>{modalContent.title || "Details"}</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <div className='row'>
+                            <div className='col-md-4'>
+                            {modalContent.type === "images" && (                              
+                                <img
+                                src={modalContent.src || placeholderImage}
+                                className="card-img-top"
+                                alt={modalContent.title || "Media"}
+                                style={{
+                                  width: "100%",
+                                  height: "200px",
+                                  objectFit: "contain",
+                                }}
+                                onError={(e) => (e.target.src = placeholderImage)}
+                              />
+                              )}
+                              {modalContent.type === "video" && (
+                                <video controls style={{ width: "100%" }}>
+                                  <source src={modalContent.src} type="video/mp4" />
+                                  Your browser does not support the video tag.
+                                </video>
+                              )}
+                              {modalContent.type === "document" && (
+                                <img
+                                  src={modalContent.src} // Assuming the thumbnail is shown
+                                  alt={modalContent.title || "Document"}
+                                  style={{ width: "100%", height: "auto", objectFit: "contain" }}
+                                />
+                              )}
+
+                            </div>
+                            <div className='col-md-8'>
+                            <h6>File URL:</h6>
+                              <a
+                                href={modalContent.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {modalContent.url}
+                              </a>
+
+                            </div>
+
+                          </div>
+                          {/* <div className="d-flex">
+                            <div style={{ flex: 1, marginRight: "20px" }}>
+                              {modalContent.type === "images" && (                              
+                                <img
+                                src={modalContent.src || placeholderImage}
+                                className="card-img-top"
+                                alt={modalContent.title || "Media"}
+                                style={{
+                                  width: "100%",
+                                  height: "200px",
+                                  objectFit: "contain",
+                                }}
+                                onError={(e) => (e.target.src = placeholderImage)}
+                              />
+                              )}
+                              {modalContent.type === "video" && (
+                                <video controls style={{ width: "100%" }}>
+                                  <source src={modalContent.src} type="video/mp4" />
+                                  Your browser does not support the video tag.
+                                </video>
+                              )}
+                              {modalContent.type === "document" && (
+                                <img
+                                  src={modalContent.src} // Assuming the thumbnail is shown
+                                  alt={modalContent.title || "Document"}
+                                  style={{ width: "100%", height: "auto", objectFit: "contain" }}
+                                />
+                              )}
+                            </div>
+
+                            <div style={{ flex: 1 }}>
+                              <h6>File URL:</h6>
+                              <a
+                                href={modalContent.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {modalContent.url}
+                              </a>
+                            </div>
+                          </div> */}
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="secondary" onClick={handleCloseModal}>
+                            Close
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
                     </div>
                   </div>
                 </div>
