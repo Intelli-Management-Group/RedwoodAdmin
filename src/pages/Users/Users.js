@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../Users/userStyle.css"
 import AddUserModal from "../Component/UserModal/UserModal";
 import Skeleton from "../Component/UserSkeleton/UserSkeleton";
@@ -76,86 +76,17 @@ const Users = () => {
             {/* Dashboard Content */}
             <div className="dashboard-content">
               <div className="container-fluid">
-                {/* <div className="card border" >
-                  <div className="card-header row mt-5 align-items-center">
-                    <div className="col-md-10">
-                      <h1>Users Overview
-                      </h1>
-                    </div>
-                    <div className="col-md-2 d-flex justify-content-end">
-                      <Button
-                        text="Add User"
-                        className="btn btn-primary"
-                        type="button"
-                      >
-                        Add User
-                      </Button>
-                    </div>
-
-                  </div>
-                  <div className="card-body" style={{lineHeight:"2.5"}}>
-                    <table>
-                      <tbody style={{  textOverflow: "30px;"}}>
-                      <tr>
-                        <td>
-                          <a className="" href="#">500</a>
-                          <a className="" href="#">Users</a>
-                        </td>
-                        <td>
-                          <a className="" href="#">100</a>
-                          <a className="" href="#">Pending Review</a>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <a className="" href="#">200</a>
-                          <a className="" href="#">Approved</a>
-                        </td>
-                        <td>
-                          <a className="" href="#">50</a>
-                          <a className="" href="#">Awaiting Email Confirmation</a>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <a className="" href="#">50</a>
-                          <a className="" href="#">Rejected</a>
-                        </td>
-                        <td>
-                          <a className="" href="#">10</a>
-                          <a className="" href="#">Inactive</a>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div> */}
                 <div className="card mb-4" id="users-overview-card">
                   <div className="card-header d-flex justify-content-between">
                     <h2>Users Overview</h2>
                     <span>
-                      {/* <button
-                        id="open-add-user-modal"
-                        className="btn btn-secondary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addUserModal"
-                        onClick={openModal}
-                      >
-                        Add User
-                      </button> */}
-                      <AddUserModal
-                        show={isModalVisible}
-                        onHide={closeModal} // Pass the close function to handle modal closing
+                      <Button
+                        text="Add User"
+                        onClick={() => setIsModalVisible(true)}
+                        className={"btn btn-primary me-2"}
+                        type="button"
                       />
+
                     </span>
                   </div>
                   <div className="card-body">
@@ -171,17 +102,17 @@ const Users = () => {
                           <tr key={user.id}>
                             <td>
                             <span>
-                              <a
-                                href={`/admin/users?status=all`}
+                              <Link
+                                to={`/usersManagement?status=all`}
                                 className="filter-link"
                               >
                                 Users
-                              </a>
+                              </Link>
                             </span>
                               <span className="ps-1">
                               <a
                                 className="count filter-link"
-                                href={`/admin/users?status=all`}
+                                href={`/usersManagement?status=all`}
                               >
                                 {userCounts.all}
                               </a>
@@ -191,7 +122,7 @@ const Users = () => {
                             <td>
                             <span>
                               <a
-                                href={`/admin/users?status=pending`}
+                                href={`/usersManagement?status=pending`}
                                 className="filter-link"
                               >
                                 Pending Review
@@ -200,7 +131,7 @@ const Users = () => {
                               <span className="ps-1">
                               <a
                                 className="count filter-link"
-                                href={`/admin/users?status=pending`}
+                                href={`/usersManagement?status=pending`}
                               >
                                 {userCounts.pending}
                               </a>
@@ -224,7 +155,7 @@ const Users = () => {
                             <td>
                             <span>
                               <a
-                                href={`/admin/users?status=approved`}
+                                href={`/usersManagement?status=approved`}
                                 className="filter-link"
                               >
                                 Approved
@@ -233,7 +164,7 @@ const Users = () => {
                               <span className="ps-1">
                               <a
                                 className="count filter-link"
-                                href={`/admin/users?status=approved`}
+                                href={`/usersManagement?status=approved`}
                               >
                                 {userCounts.approved}
                               </a>
@@ -243,7 +174,7 @@ const Users = () => {
                             <td>
                             <span >
                               <a
-                                href={`/admin/users?status=awaiting_email_confirmation`}
+                                href={`/usersManagement?status=awaiting_email_confirmation`}
                                 className="filter-link"
                               >
                                 Awaiting Email Confirmation
@@ -252,7 +183,7 @@ const Users = () => {
                               <span className="ps-1">
                               <a
                                 className="count filter-link"
-                                href={`/admin/users?status=awaiting_email_confirmation`}
+                                href={`/usersManagement?status=awaiting_email_confirmation`}
                               >
                                 {userCounts.awaiting_email_confirmation}
                               </a>
@@ -276,7 +207,7 @@ const Users = () => {
                             <td className="text-left">
                             <span>
                               <a
-                                href={`/admin/users?status=rejected`}
+                                href={`/usersManagement?status=rejected`}
                                 className="filter-link"
                               >
                                 Rejected
@@ -285,7 +216,7 @@ const Users = () => {
                               <span className="ps-1">
                               <a
                                 className="count filter-link"
-                                href={`/admin/users?status=rejected`}
+                                href={`/usersManagement?status=rejected`}
                               >
                                 {userCounts.rejected}
                               </a>
@@ -295,7 +226,7 @@ const Users = () => {
                             <td>
                             <span>
                               <a
-                                href={`/admin/users?status=inactive`}
+                                href={`/usersManagement?status=inactive`}
                                 className="filter-link"
                               >
                                 Inactive
@@ -304,7 +235,7 @@ const Users = () => {
                               <span className="ps-1">
                               <a
                                 className="count filter-link"
-                                href={`/admin/users?status=inactive`}
+                                href={`/usersManagement?status=inactive`}
                               >
                                 {userCounts.inactive}
                               </a>
@@ -324,12 +255,17 @@ const Users = () => {
                 </div>
               </div>
             </div>
-            {isModalVisible && (
+            {/* {isModalVisible && (
               <AddUserModal
                 show={isModalVisible}
                 onHide={closeModal} // Pass the close function to handle modal closing
               />
-            )}
+            )} */}
+            <AddUserModal
+              show={isModalVisible}
+              onHide={() => setIsModalVisible(false)}
+            // userData={selectedUser}
+            />
           </div>
         </div>
       </div>

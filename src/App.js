@@ -13,6 +13,7 @@ import CreatePost from './pages/CreatePost/CreatePost';
 import Pages from "./pages/Pages/Pages";
 import Users from "./pages/Users/Users";
 import CreatePages from "./pages/CreatPages/CreatePages";
+import UserManagement from './pages/Users/UserManagement';
 
 function App() {
   return (
@@ -60,6 +61,14 @@ function App() {
             element={
               <AuthProtectedRoute>
                 <Users />
+              </AuthProtectedRoute>
+            }
+          />
+           <Route
+            path="/usersManagement"
+            element={
+              <AuthProtectedRoute>
+                <UserManagement />
               </AuthProtectedRoute>
             }
           />
