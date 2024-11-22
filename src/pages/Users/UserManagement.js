@@ -3,8 +3,6 @@ import { useLocation } from "react-router-dom";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
-import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import AddUserModal from "../Component/UserModal/UserModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

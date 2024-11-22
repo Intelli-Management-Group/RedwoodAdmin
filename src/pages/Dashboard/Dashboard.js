@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
-
 import './Dashboard.css';
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
@@ -34,7 +32,7 @@ function Dashboard() {
                 </div>
             </div>
         </React.Fragment>
-      
+
 
     );
 }

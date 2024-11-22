@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
-import Image from '../Component/ImagesComponets/ImagesComponets';
 import Modal from 'react-bootstrap/Modal';
 
 const mediaItems = [
@@ -301,7 +299,7 @@ console.log(modalContent)
                         <Modal.Body>
                           <div className='row'>
                             <div className='col-md-4'>
-                            {modalContent.type === "images" && (                              
+                            {modalContent.type === "images" && (
                                 <img
                                 src={modalContent.src || placeholderImage}
                                 className="card-img-top"
@@ -344,7 +342,7 @@ console.log(modalContent)
                           </div>
                           {/* <div className="d-flex">
                             <div style={{ flex: 1, marginRight: "20px" }}>
-                              {modalContent.type === "images" && (                              
+                              {modalContent.type === "images" && (
                                 <img
                                 src={modalContent.src || placeholderImage}
                                 className="card-img-top"

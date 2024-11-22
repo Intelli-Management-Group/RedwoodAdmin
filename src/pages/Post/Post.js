@@ -5,8 +5,7 @@ import Button from "../Component/ButtonComponents/ButtonComponents";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+
 const Post = () => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
@@ -238,7 +237,7 @@ const Post = () => {
                                     <div className="col-md-10">
                                         <h3>Post</h3>
                                     </div>
-                                    <div className="col-md-2 d-flex justify-content-end">                                
+                                    <div className="col-md-2 d-flex justify-content-end">
                                         <Button
                                         text="Add New Post"
                                         onClick={redirectToCreatePage}
@@ -351,7 +350,7 @@ const Post = () => {
                                                     <td>{post.title}</td>
                                                     <td>{post.category}</td>
                                                     <td>
-                                                        
+
                                                         <Button
                                                             text="Edit"
                                                             onClick={redirectToCreatePage}
@@ -364,7 +363,7 @@ const Post = () => {
                                                             className={"btn btn-secondary"}
                                                             type="button"
                                                         />
-                                                        
+
                                                     </td>
                                                 </tr>
                                             ))

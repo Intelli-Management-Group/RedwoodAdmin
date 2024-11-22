@@ -3,7 +3,6 @@ import './Home.css';
 import '../../Assetes/Css/style.css'
 import { Link } from 'react-router-dom';
 import Logo from "../../Assetes/images/logo.png"
-import Image from '../Component/ImagesComponets/ImagesComponets';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from '../Component/ButtonComponents/ButtonComponents';
@@ -35,7 +34,7 @@ const Home = () => {
                         />
                     </Link>
                 </div>
-                <form onSubmit={handleLogin}>        
+                <form onSubmit={handleLogin}>
                     <Input
                         label="Your Name"
                         id="user_name"

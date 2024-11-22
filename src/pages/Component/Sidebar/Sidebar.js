@@ -1,7 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Logo from "../../../Assetes/images/logo.png"
-import Image from '../ImagesComponets/ImagesComponets';
 import "../Sidebar/Sidebar.css"
 
 const Sidebar = ({ isVisible }) => {
