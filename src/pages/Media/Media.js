@@ -198,7 +198,8 @@ function Media() {
                     >
                       Add New Media File
                     </Button>
-                    <Modal show={show} onHide={handleClose} style={{ marginTop: "15%" }}>
+                    {/* onHide={handleClose} OutSide click when modal close */}
+                    <Modal show={show}  style={{marginTop:'5%' }}>
                       <Modal.Header closeButton>
                         <Modal.Title>Upload New Media</Modal.Title>
                       </Modal.Header>
@@ -210,64 +211,130 @@ function Media() {
                             </div>
                           </div>
                         ) : (
-                          <form>
-                            <input
-                              type="file"
-                              accept="image/*,video/*,.pdf"
-                              multiple
-                              onChange={handleFileChange}
-                            />
-                            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                              {selectedFile && (
-                                <div>
-                                  {/* Check for Image files */}
-                                  {selectedFile.type.startsWith("image/") && (
+                          <form style={{ width: "100%", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          {/* Hidden File Input */}
+                          <input
+                            type="file"
+                            id="fileInput"
+                            accept="image/*,video/*,.pdf"
+                            multiple
+                            style={{ display: "none" }}
+                            onChange={handleFileChange}
+                          />
+                        
+                          {/* Preview Section */}
+                          <div style={{ display: "flex", gap: "10px", marginTop: "10px", flexWrap: "wrap", justifyContent: "center" }}>
+                            {selectedFile && (
+                              <div style={{ width: "120px", textAlign: "center", position: "relative" }}>
+                                {/* Image Preview */}
+                                {selectedFile.type.startsWith("image/") && (
+                                  <img
+                                    src={previewUrl}
+                                    alt="Image Preview"
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                      borderRadius: "8px",
+                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    }}
+                                  />
+                                )}
+                        
+                                {/* Video Preview */}
+                                {selectedFile.type.startsWith("video/") && (
+                                  <video
+                                    src={previewUrl}
+                                    controls
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      borderRadius: "8px",
+                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    }}
+                                  />
+                                )}
+                        
+                                {/* PDF Preview */}
+                                {selectedFile.type === "application/pdf" && (
+                                  <div
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      backgroundColor: "#f0f0f0",
+                                      borderRadius: "8px",
+                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    }}
+                                  >
                                     <img
-                                      src={previewUrl}
-                                      alt="Image Preview"
-                                      style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                                      src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
+                                      alt="PDF Preview"
+                                      style={{ width: "40px", height: "40px" }}
                                     />
-                                  )}
-
-                                  {/* Check for Video files */}
-                                  {selectedFile.type.startsWith("video/") && (
-                                    <video
-                                      src={previewUrl}
-                                      controls
-                                      style={{ width: "100px", height: "100px" }}
-                                    />
-                                  )}
-
-                                  {/* Check for PDF files */}
-                                  {selectedFile.type === "application/pdf" && (
-                                    <div
-                                      style={{
-                                        width: "100px",
-                                        height: "100px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        backgroundColor: "#f0f0f0",
-                                      }}
-                                    >
-                                      <img
-                                        src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" // Placeholder PDF icon
-                                        alt="PDF Preview"
-                                        style={{ width: "40px", height: "40px" }}
-                                      />
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-
-
-                          </form>
+                                  </div>
+                                )}
+                        
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedFile(null); 
+                                    setPreviewUrl(""); 
+                                  }}
+                                  style={{
+                                    position: "absolute",
+                                    top: "0",
+                                    right: "0",
+                                    backgroundColor: "#ff0000",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "50%",
+                                    width: "25px",
+                                    height: "25px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  X
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        
+                          <label
+                            htmlFor="fileInput"
+                            style={{
+                              padding: "10px 20px",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              cursor: "pointer",
+                              fontSize: "16px",
+                              textAlign: "center",
+                              display: "inline-block",
+                              transition: "background-color 0.3s ease",
+                              marginBottom: "20px",
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+                            onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
+                            className="btn btn-primary mt-3"
+                          >
+                            Choose File(s)
+                          </label>
+                        
+                          <p style={{ marginTop: "20px", color: "#888", fontSize: "14px" }}>
+                            You can upload images, videos, or PDFs. Multiple files are supported.
+                          </p>
+                        </form>
                         )}
 
                       </Modal.Body>
                       <Modal.Footer>
-                        {/* Close Button */}
                         <Button
                           text="Close"
                           className="btn-primary"
@@ -278,12 +345,11 @@ function Media() {
                           Close
                         </Button>
 
-                        {/* Upload Button */}
                         <Button
                           text="Upload"
                           className="btn-primary"
-                          type="button" // Use "type='button'" to prevent automatic form submission
-                          onClick={handleSubmit} // Trigger the upload on click
+                          type="button" 
+                          onClick={handleSubmit} 
                         >
                           Upload
                         </Button>
