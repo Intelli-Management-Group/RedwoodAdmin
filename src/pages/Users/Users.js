@@ -5,6 +5,7 @@ import Button from "../Component/ButtonComponents/ButtonComponents";
 import { useNavigate } from "react-router-dom";
 import "../Users/userStyle.css"
 import AddUserModal from "../Component/UserModal/UserModal";
+import Skeleton from "../Component/UserSkeleton/UserSkeleton";
 
 const userCounts = {
   all: 120,
@@ -19,6 +20,10 @@ const Users = () => {
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
+  const [user, setuser] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+
 
   // Function to open the modal
   const openModal = () => {
@@ -39,6 +44,24 @@ const Users = () => {
   const redirectToCreatePage = () => {
     navigate('/post/create');
   };
+  useEffect(() => {
+    // Simulate data fetch
+    setTimeout(() => {
+      setuser([
+        {
+          all: 120,
+          pending: 25,
+          approved: 80,
+          awaiting_email_confirmation: 10,
+          rejected: 3,
+          inactive: 2,
+        }
+      ]);
+      setIsLoading(false);
+    }, 2000);
+  }, []);
+
+
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -138,8 +161,15 @@ const Users = () => {
                   <div className="card-body">
                     <table id="um-users-overview-table" className="table table-striped">
                       <tbody>
-                        <tr>
-                          <td>
+                      {isLoading ? (
+                        <>
+                          <Skeleton type="row" />
+
+                        </>
+                      ) : user.length > 0 ? (
+                        user.map((user) => (
+                          <tr key={user.id}>
+                            <td>
                             <span>
                               <a
                                 href={`/admin/users?status=all`}
@@ -148,7 +178,7 @@ const Users = () => {
                                 Users
                               </a>
                             </span>
-                            <span className="ps-1">
+                              <span className="ps-1">
                               <a
                                 className="count filter-link"
                                 href={`/admin/users?status=all`}
@@ -157,8 +187,8 @@ const Users = () => {
                               </a>
 
                             </span>
-                          </td>
-                          <td>
+                            </td>
+                            <td>
                             <span>
                               <a
                                 href={`/admin/users?status=pending`}
@@ -167,7 +197,7 @@ const Users = () => {
                                 Pending Review
                               </a>
                             </span>
-                            <span className="ps-1">
+                              <span className="ps-1">
                               <a
                                 className="count filter-link"
                                 href={`/admin/users?status=pending`}
@@ -176,10 +206,22 @@ const Users = () => {
                               </a>
 
                             </span>
-                          </td>
-                        </tr>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
                         <tr>
-                          <td>
+                          <td colSpan="5">No user available yet.</td>
+                        </tr>
+                      )}
+                      {isLoading ? (
+                        <>
+                          <Skeleton type="row" />
+                        </>
+                      ) : user.length > 0 ? (
+                        user.map((user) => (
+                          <tr key={user.id}>
+                            <td>
                             <span>
                               <a
                                 href={`/admin/users?status=approved`}
@@ -188,7 +230,7 @@ const Users = () => {
                                 Approved
                               </a>
                             </span>
-                            <span className="ps-1">
+                              <span className="ps-1">
                               <a
                                 className="count filter-link"
                                 href={`/admin/users?status=approved`}
@@ -197,8 +239,8 @@ const Users = () => {
                               </a>
 
                             </span>
-                          </td>
-                          <td>
+                            </td>
+                            <td>
                             <span >
                               <a
                                 href={`/admin/users?status=awaiting_email_confirmation`}
@@ -207,7 +249,7 @@ const Users = () => {
                                 Awaiting Email Confirmation
                               </a>
                             </span>
-                            <span className="ps-1">
+                              <span className="ps-1">
                               <a
                                 className="count filter-link"
                                 href={`/admin/users?status=awaiting_email_confirmation`}
@@ -216,10 +258,22 @@ const Users = () => {
                               </a>
 
                             </span>
-                          </td>
-                        </tr>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
                         <tr>
-                          <td className="text-left">
+                          <td colSpan="5">No user available yet.</td>
+                        </tr>
+                      )}
+                      {isLoading ? (
+                        <>
+                          <Skeleton type="row" />
+                        </>
+                      ) : user.length > 0 ? (
+                        user.map((user) => (
+                          <tr key={user.id}>
+                            <td className="text-left">
                             <span>
                               <a
                                 href={`/admin/users?status=rejected`}
@@ -228,7 +282,7 @@ const Users = () => {
                                 Rejected
                               </a>
                             </span>
-                            <span className="ps-1">
+                              <span className="ps-1">
                               <a
                                 className="count filter-link"
                                 href={`/admin/users?status=rejected`}
@@ -237,8 +291,8 @@ const Users = () => {
                               </a>
 
                             </span>
-                          </td>
-                          <td>
+                            </td>
+                            <td>
                             <span>
                               <a
                                 href={`/admin/users?status=inactive`}
@@ -247,7 +301,7 @@ const Users = () => {
                                 Inactive
                               </a>
                             </span>
-                            <span className="ps-1">
+                              <span className="ps-1">
                               <a
                                 className="count filter-link"
                                 href={`/admin/users?status=inactive`}
@@ -256,8 +310,14 @@ const Users = () => {
                               </a>
 
                             </span>
-                          </td>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5">No user available yet.</td>
                         </tr>
+                      )}
                       </tbody>
                     </table>
                   </div>
