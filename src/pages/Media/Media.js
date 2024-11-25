@@ -49,7 +49,7 @@ const placeholderDocument = "https://upload.wikimedia.org/wikipedia/commons/thum
 
 function Media() {
   const [currentPage, setCurrentPage] = useState(1);
-  const mediaPerPage =(10)
+  const mediaPerPage = (10)
   const [hasMore, setHasMore] = useState(true);
 
   const [show, setShow] = useState(false);
@@ -184,6 +184,11 @@ function Media() {
       fetchMedia(currentPage + 1);
     }
   };
+  const jumpToFirstItem = () => {
+    setCurrentPage(1)
+    fetchMedia(1);
+  };
+
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -600,18 +605,29 @@ function Media() {
                               </div>
                             </div>
                           ))}
-                          {hasMore && (
-                            <div className="text-center">
-                              <Button
-                                variant="primary"
-                                className="btn btn-primary ms-auto w-auto me-2"
-                                type="button"
-                                text={loading ? "Loading..." : "Load More"}
-                                onClick={gotoNextPage}
-                                disabled={loading} // Disable the button while loading
-                              />
-                            </div>
-                          )}
+                          <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
+                            {hasMore && (
+                              <div className="text-center">
+                                <Button
+                                  variant="primary"
+                                  className="btn btn-primary ms-auto w-auto me-2"
+                                  type="button"
+                                  text={loading ? "Loading..." : "Load More"}
+                                  onClick={gotoNextPage}
+                                  disabled={loading} // Disable the button while loading
+                                />
+                              </div>
+                            )} {currentPage !== 1 && (
+                              <div className="text-center">
+                                <button
+                                  className="btn btn-secondary ms-auto w-auto me-2"
+                                  onClick={jumpToFirstItem}
+                                >
+                                  Jump to First Loaded Item
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </>
                       )}
                     </div>
