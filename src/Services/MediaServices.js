@@ -6,6 +6,9 @@ const MediaServices = {
       },
     getMediaList: async(body) =>{
       return requests.post("/media/list", body);
+    },
+    deleteMedia:async(id) =>{
+      return requests.get(`/media/${id}/delete`);
     }
 }
 export default MediaServices;

@@ -65,6 +65,7 @@ function Media() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true)
   const [modalContent, setModalContent] = useState({
+    id:"",
     src: "",
     type: "",
     title: "",
@@ -105,10 +106,33 @@ function Media() {
       setLoading(false);
     }
   };
+  const deleteMedia = async (id) => {
+    try {
+      const resp = await MediaServices.deleteMedia(id);
+      if (resp?.status_code === 200) {
+        console.log(resp);
+        toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
+        setTimeout(() => 
+          setLoading(true),
+          setShowModal(false),
+          fetchMedia(currentPage),
+         3000);
+
+      } else {
+        toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const handleViewClick = (item) => {
     setModalContent({
+      id: item?.id,
       src: item.path,
       type: item.category,
       title: item.name,
@@ -187,6 +211,9 @@ function Media() {
   const jumpToFirstItem = () => {
     setCurrentPage(1)
     fetchMedia(1);
+  };
+  const handleDelete = () => {
+    deleteMedia(modalContent?.id)
   };
 
   return (
@@ -679,7 +706,15 @@ function Media() {
                           >
                             {modalContent.url}
                           </a>
-
+                          <div>
+                            <Button
+                              variant="primary"
+                              className="btn btn-danger btn-sm mt-2"
+                              type="button"
+                              text="Delete"
+                              onClick={() => handleDelete()}
+                            />
+                          </div>
                         </div>
 
                       </div>
