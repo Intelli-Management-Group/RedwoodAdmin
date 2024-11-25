@@ -65,7 +65,7 @@ function Media() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true)
   const [modalContent, setModalContent] = useState({
-    id:"",
+    id: "",
     src: "",
     type: "",
     title: "",
@@ -112,11 +112,11 @@ function Media() {
       if (resp?.status_code === 200) {
         console.log(resp);
         toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
-        setTimeout(() => 
+        setTimeout(() =>
           setLoading(true),
           setShowModal(false),
           fetchMedia(currentPage),
-         3000);
+          3000);
 
       } else {
         toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
@@ -621,13 +621,15 @@ function Media() {
                                   <h6 className="card-title">
                                     {item.name ? item.name.split('.').slice(0, -1).join('.') : "Untitled"}
                                   </h6>
-                                  <Button
-                                    variant="primary"
-                                    className="btn btn-primary ms-auto w-auto me-2"
-                                    type="button"
-                                    text="View"
-                                    onClick={() => handleViewClick(item)}
-                                  />
+                                  <div className="d-flex flex-column flex-md-row justify-content-md-center justify-content-center">
+                                    <Button
+                                      variant="primary"
+                                      className="btn btn-primary w-auto me-2"
+                                      type="button"
+                                      text="View"
+                                      onClick={() => handleViewClick(item)}
+                                    />
+                                  </div>
                                 </div>
                               </div>
                             </div>
