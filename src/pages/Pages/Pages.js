@@ -206,7 +206,7 @@ const Pages = () => {
                 </div>
 
 
-                <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
+                <table className="table table-striped " id="user-data-table" style={{ border: '1px solid #ccc' }}>
                   <thead>
                     <tr>
                       <th><input type="checkbox" id="select-all" /></th>

@@ -234,10 +234,10 @@ const Post = () => {
                         <div className="dashboard-content">
                             <div className="container-fluid">
                                 <div className="row mt-5 align-items-center">
-                                    <div className="col-md-10">
+                                    <div className="col-3">
                                         <h3>Post</h3>
                                     </div>
-                                    <div className="col-md-2 d-flex justify-content-end">
+                                    <div className="col-9 d-flex justify-content-end">
                                         <Button
                                         text="Add New Post"
                                         onClick={redirectToCreatePage}

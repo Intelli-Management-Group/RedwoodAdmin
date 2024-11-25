@@ -112,7 +112,7 @@ function Media() {
       if (resp?.status_code === 200) {
         console.log(resp);
         toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
-        setTimeout(() => 
+        setTimeout(() =>
           setLoading(true),
           setShowModal(false),
           fetchMedia(currentPage),
@@ -231,10 +231,10 @@ function Media() {
             <div className="dashboard-content">
               <div className="container-fluid">
                 <div className="row mt-5 align-items-center customWhiteBg pt-3 pb-3">
-                  <div className="col-md-9">
+                  <div className="col-4">
                     <h3>Media</h3>
                   </div>
-                  <div className="col-md-3 d-flex justify-content-end">
+                  <div className="col-8 d-flex justify-content-end">
                     <Button
                       text="Add New Media File"
                       className="btn btn-primary"
@@ -410,7 +410,7 @@ function Media() {
                       <div className="col-md-8">
                         <Button
                           variant="primary"
-                          className="btn btn-outline-secondary ms-auto w-auto me-2"
+                          className="btn btn-outline-secondary ms-auto w-auto me-2 media-btn"
                           type="button"
                           text="All"
                           onClick={() => handleFilter("all")}

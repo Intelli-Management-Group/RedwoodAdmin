@@ -2,7 +2,7 @@ import React from 'react';
 
 const Navbar = ({ toggleSidebar }) => {
   return (
-    <nav className="navbar navbar-expand-lg customWhiteBg shadow-sm">
+    <nav className="navbar navbar-expand-lg customWhiteBg shadow-sm p-2">
       <a className="navbar-brand ps-2" href="#">My Admin</a>
       <button
         className="navbar-toggler"
