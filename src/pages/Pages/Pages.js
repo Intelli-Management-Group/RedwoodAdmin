@@ -24,7 +24,7 @@ const Pages = () => {
   };
   useEffect(() => {
     setLoading(true)
-    fetchPages(currentPage,documentType);
+    fetchPages(currentPage, documentType);
   }, []);
   const redirectToCreatePage = () => {
     navigate('/uploadDocument');
@@ -35,7 +35,7 @@ const Pages = () => {
       // formdata.append("page", page);
       // formdata.append("pageSize", perPageRecords);
 
-      const resp = await PageServices.getPageList({page,perPageRecords,documentType });
+      const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
       if (resp?.status_code === 200) {
         console.log(resp);
 
@@ -49,6 +49,27 @@ const Pages = () => {
         // setHasMore(resp?.list?.next_page_url !== null);
 
         // setTimeout(() => handleClose(), 3000);
+      } else {
+        toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const deletePages = async (id) => {
+    try {
+      const resp = await PageServices.deletePages(id);
+      if (resp?.status_code === 200) {
+        console.log(resp);
+        toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
+        setTimeout(() =>
+          setLoading(true),
+          fetchPages(currentPage, documentType),
+          3000);
+
       } else {
         toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
       }
@@ -76,7 +97,7 @@ const Pages = () => {
           year: "2021"
         },
         {
-          id: 2,
+          id: 3,
           title: "Portfolio Summary – July 2024",
           type: "Managed Account Reports",
           year: "2021"
@@ -96,7 +117,10 @@ const Pages = () => {
       );
     }
   };
-
+  const handleDelete = (id) => {
+    console.log("page.id", id)
+    deletePages(id)
+  };
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -216,12 +240,23 @@ const Pages = () => {
                           <td>{page.type}</td>
                           <td>{page.year}</td>
                           <td>
-                            <button
-                              className="btn btn-primary ml-3"
+
+                            <Button
+                              variant="primary"
+                              className="btn btn-primary btn-sm me-2"
+                              type="button"
+                              text="Edit"
                               onClick={redirectToCreatePage}
-                            >
-                              Edit
-                            </button>
+
+                            />
+                            <Button
+                              variant="primary"
+                              className="btn btn-danger btn-sm ms-1"
+                              type="button"
+                              text="Delete"
+                              onClick={() => handleDelete(page.id)}
+                            />
+
                           </td>
                         </tr>
                       ))
@@ -232,6 +267,8 @@ const Pages = () => {
                     )}
                   </tbody>
                 </table>
+                <ToastContainer />
+
               </div>
             </div>
           </div>
