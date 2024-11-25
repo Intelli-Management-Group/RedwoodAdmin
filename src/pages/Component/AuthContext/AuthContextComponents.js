@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Retrieve authentication status from local storage or other persistent storage if needed
-    const authStatus = localStorage.getItem('isAuthenticated') === 'true';
+    const authStatus = localStorage.getItem('isAuthenticated') === isAuthenticated;
     setIsAuthenticated(authStatus);
   }, []);
 

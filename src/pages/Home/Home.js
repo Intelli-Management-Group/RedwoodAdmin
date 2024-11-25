@@ -1,25 +1,67 @@
 import React, { useState } from 'react';
 import './Home.css';
 import '../../Assetes/Css/style.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from "../../Assetes/images/logo.png"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import Input from '../Component/InputComponents/InputComponents';
+import AdminServices from '../../Services/AdminServices';
 
 const Home = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
 
-    const handleLogin = (event) => {
+    const handleLogin = async (event) => {
         event.preventDefault();
 
         if (email.trim() && password.trim()) {
-            toast.success('Login successful!', { position: "top-center", autoClose: 3000 });
+            try {
+                // Prepare the login data
+                const loginData = {
+                    email: email,
+                    password: password,
+                };
+
+                // Call the Admin Login API
+                const response = await AdminServices.adminLogin(loginData); // Adjust API call as needed
+
+                if (response?.status_code === 200) {
+                    // Assuming the API sends back a token or user info
+                    const { token, user } = response;
+
+                    // Save the token in localStorage or context
+                    localStorage.setItem("authToken", token);
+
+                    toast.success("Login successful!", {
+                        position: "top-center",
+                        autoClose: 3000,
+                    });
+
+                    // Redirect to the admin dashboard or home page
+                    setTimeout(() => navigate("/dashboard"), 1500);
+                } else {
+                    toast.error(response?.message || "Invalid email or password", {
+                        position: "top-center",
+                        autoClose: 3000,
+                    });
+                }
+            } catch (error) {
+                console.error("Login Error:", error);
+                toast.error("An error occurred during login. Please try again.", {
+                    position: "top-center",
+                    autoClose: 3000,
+                });
+            }
         } else {
-            toast.error('Please enter both email and password.', { position: "top-center", autoClose: 3000 });
+            toast.error("Please enter both email and password.", {
+                position: "top-center",
+                autoClose: 3000,
+            });
         }
     };
     return (
