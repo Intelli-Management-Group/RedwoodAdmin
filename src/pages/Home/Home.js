@@ -3,12 +3,12 @@ import './Home.css';
 import '../../Assetes/Css/style.css'
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from "../../Assetes/images/logo.png"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import Input from '../Component/InputComponents/InputComponents';
 import AdminServices from '../../Services/AdminServices';
 import { useAuth } from '../Component/AuthContext/AuthContextComponents';
+import { ToastContainer } from 'react-toastify';
+import {notifyError, notifySuccess} from "../Component/ToastComponents/ToastComponents";
 
 const Home = () => {
 
@@ -38,29 +38,17 @@ const Home = () => {
 
                     login();
 
-                    toast.success("Login successful!", {
-                        position: "top-center",
-                        autoClose: 3000,
-                    });
+                    notifySuccess("Login successful!");
                     setTimeout(() => navigate("/dashboard"), 1500);
                 } else {
-                    toast.error(response?.message || "Invalid email or password", {
-                        position: "top-center",
-                        autoClose: 3000,
-                    });
+                    notifyError(response?.message || "Invalid email or password",);
                 }
             } catch (error) {
                 console.error("Login Error:", error);
-                toast.error("An error occurred during login. Please try again.", {
-                    position: "top-center",
-                    autoClose: 3000,
-                });
+                notifyError("An error occurred during login. Please try again.",);
             }
         } else {
-            toast.error("Please enter both email and password.", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            notifyError("Please enter both email and password.",);
         }
     };
     return (
@@ -107,7 +95,7 @@ const Home = () => {
                     Don't have an account? <a href="#">Sign up</a>
                 </div>
             </div>
-            <ToastContainer />
+            <ToastContainer/>
         </div>
 
     );
