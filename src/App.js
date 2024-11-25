@@ -14,6 +14,7 @@ import Pages from "./pages/Pages/Pages";
 import Users from "./pages/Users/Users";
 import CreatePages from "./pages/CreatPages/CreatePages";
 import UserManagement from './pages/Users/UserManagement';
+import UserProfile from './pages/Profile/Profile';
 
 function App() {
   return (
@@ -85,6 +86,14 @@ function App() {
             element={
               <AuthProtectedRoute>
                 <CreatePages />
+              </AuthProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <AuthProtectedRoute>
+                <UserProfile />
               </AuthProtectedRoute>
             }
           />

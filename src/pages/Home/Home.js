@@ -31,9 +31,10 @@ const Home = () => {
                 const response = await AdminServices.adminLogin(loginData);
 
                 if (response?.status_code === 200) {
-                    const { token } = response;
+                    const { token,user } = response;
 
                     localStorage.setItem("authToken", token);
+                    localStorage.setItem('userData', JSON.stringify(user));
 
                     login();
 

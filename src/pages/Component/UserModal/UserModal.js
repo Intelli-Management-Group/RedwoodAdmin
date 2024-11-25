@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap"; // Import React Bootstrap components
+import { ToastContainer, toast } from 'react-toastify';
+import AdminServices from "../../../Services/AdminServices";
 
 function AddUserModal({ show, onHide, userData }) {
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     username: "",
-    email: "",
     name: "",
-    role: "Administrator",
+    email: "",
+    role: "User",
     password: "",
     confirmPassword: "",
-    sendEmail: false
+    sendEmail: false,
   });
 
   // Pre-fill form fields when userData changes
@@ -35,14 +39,75 @@ function AddUserModal({ show, onHide, userData }) {
       [name]: type === "checkbox" ? checked : value
     });
   };
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Call a function to save the data or perform an API call
+  const validateForm = () => {
+    if (!formData.username.trim()) return "Username is required.";
+    if (!formData.name.trim()) return "Name is required.";
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
+      return "A valid email address is required.";
+    if (!formData.password.trim() || formData.password.length < 6)
+      return "Password must be at least 6 characters long.";
+    if (formData.password !== formData.confirmPassword)
+      return "Passwords do not match.";
+    return null;
   };
 
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Validate the form
+    const validationError = validateForm();
+    if (validationError) {
+      toast.error(validationError, { position: "top-center", autoClose: 3000 });
+      setLoading(false);
+      return;
+    }
+    console.log("formData", formData)
+    try {
+      const formdata = new FormData();
+      formdata.append("email", formData?.email);
+      formdata.append("password", formData?.password);
+      formdata.append("confirmPassword", formData?.confirmPassword);
+      formdata.append("username", formData?.username);
+      formdata.append("name", formData?.name);
+      formdata.append("role", formData?.role);
+      formdata.append("send_user_notification", "1");
+      // Call API to register user
+      const response = await AdminServices.addUser(formdata);
+      console.log("res",response)
+      if (response?.status_code === 200) {
+        toast.success(response.message || "User registered successfully!", {
+          position: "top-center",
+          autoClose: 3000,
+        });
+        setFormData({
+          username: "",
+          name: "",
+          email: "",
+          role: "User",
+          password: "",
+          confirmPassword: "",
+          sendEmail: false,
+        });
+        // 
+        setTimeout(() => onHide(), 3000);
+
+
+        // if (onSave) onSave(); // Optional callback for parent component
+        // onHide();
+      } else {
+        throw new Error(response.message || "Something went wrong!");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to register user.", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
@@ -61,6 +126,17 @@ function AddUserModal({ show, onHide, userData }) {
               required
             />
           </Form.Group>
+          {/* Name */}
+          <Form.Group controlId="name" className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
           {/* Email */}
           <Form.Group controlId="email" className="mb-3">
@@ -74,17 +150,7 @@ function AddUserModal({ show, onHide, userData }) {
             />
           </Form.Group>
 
-          {/* Name */}
-          <Form.Group controlId="name" className="mb-3">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+
 
           {/* Role */}
           <Form.Group controlId="role" className="mb-3">
@@ -98,6 +164,8 @@ function AddUserModal({ show, onHide, userData }) {
             >
               <option value="Administrator">Administrator</option>
               <option value="Editor">Editor</option>
+              <option value="User">Member/USer</option>
+
               {/* Add other roles here */}
             </Form.Control>
           </Form.Group>
@@ -147,6 +215,8 @@ function AddUserModal({ show, onHide, userData }) {
           </Button>
         </Modal.Footer>
       </Form>
+      <ToastContainer />
+
     </Modal>
   );
 }
