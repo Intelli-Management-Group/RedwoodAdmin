@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from '../Component/ButtonComponents/ButtonComponents';
-
+import PageServices from "../../Services/PageServices";
+import { ToastContainer, toast } from 'react-toastify';
 
 const CreatePages = () => {
+  const [loading, setLoading] = useState(false);
+
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [documentType, setDocumentType] = useState("publications");
@@ -12,34 +15,87 @@ const CreatePages = () => {
 
   const handleDragOver = (event) => {
     event.preventDefault();
-    event.target.classList.add("drag-over");
+    event.stopPropagation();
   };
-
   const handleDragLeave = (event) => {
-    event.target.classList.remove("drag-over");
+    event.preventDefault();
+    event.stopPropagation();
   };
-
   const handleDrop = (event) => {
     event.preventDefault();
-    const files = event.dataTransfer.files;
-    if (files.length) {
-      setSelectedFile(files[0]);
+    event.stopPropagation();
+
+    const file = event.dataTransfer.files[0];
+    if (file && file.type === 'application/pdf') {
+      setSelectedFile(file);
+    } else {
+      alert('Only PDF files are allowed.');
     }
-    event.target.classList.remove("drag-over");
   };
 
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setSelectedFile(file);
+    } else {
+      alert('Only PDF files are allowed.');
+    }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (selectedFile) {
-      console.log("File uploaded:", selectedFile.name);
-      // Add logic to upload the file to the server
-    } else {
-      alert("Please select a file before submitting.");
+    setLoading(true);
+
+    const validationError = validateForm(selectedFile, documentType, postingYear);
+    if (validationError) {
+      toast.error(validationError, { position: "top-center", autoClose: 3000 });
+      setLoading(false);
+      return;
     }
+
+    try {
+      const formdata = new FormData();
+      formdata.append("file", selectedFile?.name);
+      formdata.append("type", documentType);
+      formdata.append("year", postingYear);
+
+      const resp = await PageServices.uploadPages(formdata);
+
+      if (resp?.status_code === 200) {
+        console.log(resp);
+        resetFormFields();
+        toast.success(resp?.message || "File uploaded successfully!", {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      } else {
+        toast.error(resp?.message || "Please try again.", {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("An error occurred during file upload. Please try again.", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const validateForm = (file, type, year) => {
+    if (!file) return "Please select a file before submitting.";
+    if (!type || type.trim() === "") return "Please select a valid document type.";
+    if (!year || isNaN(year) || year <= 0) return "Please provide a valid posting year.";
+    return null;
+  };
+
+  const resetFormFields = () => {
+    setSelectedFile(null);
+    setDocumentType("publications");
+    setPostingYear("2024");
   };
 
   const toggleSidebar = () => {
@@ -107,12 +163,10 @@ const CreatePages = () => {
                     </div>
                   </div>
                 </div>
-                <div
-                  className="upload-box mt-5 mb-5"
+                <div className="upload-box mt-5 mb-5"
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                >
+                  onDrop={handleDrop}>
                   <label htmlFor="documentUpload" className="upload-label">
                     <h4>
                       {selectedFile ? selectedFile.name : "Drag and drop your PDF here or click to upload"}
@@ -130,24 +184,29 @@ const CreatePages = () => {
                     <Button
                       text="Select PDF"
                       className="btn-primary"
-                      type="submit"
+                      type="button"
                       onClick={() => document.getElementById("documentUpload").click()}
-
                     />
                   </div>
-                  <small className="form-text text-muted ">Only PDF files are allowed.</small>
+                  <small className="form-text text-muted">Only PDF files are allowed.</small>
                 </div>
-                <Button
-                  text="Upload"
-                  className="btn-primary"
-                  type="submit"
-                />
+                <div className="text-center">
+                  <Button
+                    text={loading ? "Submitting..." : "Submit"}
+                    className="btn-primary"
+                    type="submit"
+                    disabled={loading}
+                  />
+                  {/* {loading && <div className="spinner-border text-primary" role="status"></div>} */}
+                </div>
               </form>
             </div>
+            <ToastContainer />
+
           </div>
         </div>
-      </div>
-    </React.Fragment>
+      </div >
+    </React.Fragment >
   );
 };
 
