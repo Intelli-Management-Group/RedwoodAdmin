@@ -48,6 +48,9 @@ const placeholderVideo = "https://www.shutterstock.com/image-vector/no-video-ava
 const placeholderDocument = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"; // Path to a placeholder image
 
 function Media() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const mediaPerPage =(10)
+  const [hasMore, setHasMore] = useState(true);
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -58,7 +61,7 @@ function Media() {
   const [searchTerm, setSearchTerm] = useState('');
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
-  const [mediaList, setMediaList] = useState([])
+  const [mediaList, setMediaList] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true)
   const [modalContent, setModalContent] = useState({
@@ -69,19 +72,28 @@ function Media() {
   });
   useEffect(() => {
     setLoading(true)
-    getMediaList()
+    fetchMedia(currentPage);
   }, [])
 
-  async function getMediaList() {
+  const fetchMedia = async (page) => {
     try {
-
       const formdata = new FormData();
-      formdata.append("pageSize", "50");
+      formdata.append("page", page);
+      formdata.append("pageSize", mediaPerPage);
+
       const resp = await MediaServices.getMediaList(formdata);
       if (resp?.status_code === 200) {
-        console.log(resp)
-        // resp?.        
-        setMediaList(resp?.list?.data)
+        console.log(resp);
+
+        if (page === 1) {
+          setMediaList(resp?.list?.data || []);
+        } else {
+          setMediaList((prevList) => [...prevList, ...resp?.list?.data]);
+        }
+
+        setCurrentPage(resp?.list?.current_page);
+        setHasMore(resp?.list?.next_page_url !== null);
+
         setTimeout(() => handleClose(), 3000);
       } else {
         toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
@@ -90,10 +102,10 @@ function Media() {
       console.error("Error uploading images:", error);
       toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
+  };
 
-  }
 
   const handleViewClick = (item) => {
     setModalContent({
@@ -167,10 +179,11 @@ function Media() {
     }
   };
 
-
-
-
-  console.log(modalContent)
+  const gotoNextPage = () => {
+    if (hasMore) {
+      fetchMedia(currentPage + 1);
+    }
+  };
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -199,7 +212,7 @@ function Media() {
                       Add New Media File
                     </Button>
                     {/* onHide={handleClose} OutSide click when modal close */}
-                    <Modal show={show}  style={{marginTop:'5%' }}>
+                    <Modal show={show} style={{ marginTop: '5%' }}>
                       <Modal.Header closeButton>
                         <Modal.Title>Upload New Media</Modal.Title>
                       </Modal.Header>
@@ -212,125 +225,125 @@ function Media() {
                           </div>
                         ) : (
                           <form style={{ width: "100%", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                          {/* Hidden File Input */}
-                          <input
-                            type="file"
-                            id="fileInput"
-                            accept="image/*,video/*,.pdf"
-                            multiple
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                          />
-                        
-                          {/* Preview Section */}
-                          <div style={{ display: "flex", gap: "10px", marginTop: "10px", flexWrap: "wrap", justifyContent: "center" }}>
-                            {selectedFile && (
-                              <div style={{ width: "120px", textAlign: "center", position: "relative" }}>
-                                {/* Image Preview */}
-                                {selectedFile.type.startsWith("image/") && (
-                                  <img
-                                    src={previewUrl}
-                                    alt="Image Preview"
-                                    style={{
-                                      width: "100px",
-                                      height: "100px",
-                                      objectFit: "cover",
-                                      borderRadius: "8px",
-                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                            {/* Hidden File Input */}
+                            <input
+                              type="file"
+                              id="fileInput"
+                              accept="image/*,video/*,.pdf"
+                              multiple
+                              style={{ display: "none" }}
+                              onChange={handleFileChange}
+                            />
+
+                            {/* Preview Section */}
+                            <div style={{ display: "flex", gap: "10px", marginTop: "10px", flexWrap: "wrap", justifyContent: "center" }}>
+                              {selectedFile && (
+                                <div style={{ width: "120px", textAlign: "center", position: "relative" }}>
+                                  {/* Image Preview */}
+                                  {selectedFile.type.startsWith("image/") && (
+                                    <img
+                                      src={previewUrl}
+                                      alt="Image Preview"
+                                      style={{
+                                        width: "100px",
+                                        height: "100px",
+                                        objectFit: "cover",
+                                        borderRadius: "8px",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                      }}
+                                    />
+                                  )}
+
+                                  {/* Video Preview */}
+                                  {selectedFile.type.startsWith("video/") && (
+                                    <video
+                                      src={previewUrl}
+                                      controls
+                                      style={{
+                                        width: "100px",
+                                        height: "100px",
+                                        borderRadius: "8px",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                      }}
+                                    />
+                                  )}
+
+                                  {/* PDF Preview */}
+                                  {selectedFile.type === "application/pdf" && (
+                                    <div
+                                      style={{
+                                        width: "100px",
+                                        height: "100px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        backgroundColor: "#f0f0f0",
+                                        borderRadius: "8px",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                      }}
+                                    >
+                                      <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
+                                        alt="PDF Preview"
+                                        style={{ width: "40px", height: "40px" }}
+                                      />
+                                    </div>
+                                  )}
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedFile(null);
+                                      setPreviewUrl("");
                                     }}
-                                  />
-                                )}
-                        
-                                {/* Video Preview */}
-                                {selectedFile.type.startsWith("video/") && (
-                                  <video
-                                    src={previewUrl}
-                                    controls
                                     style={{
-                                      width: "100px",
-                                      height: "100px",
-                                      borderRadius: "8px",
-                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                    }}
-                                  />
-                                )}
-                        
-                                {/* PDF Preview */}
-                                {selectedFile.type === "application/pdf" && (
-                                  <div
-                                    style={{
-                                      width: "100px",
-                                      height: "100px",
+                                      position: "absolute",
+                                      top: "0",
+                                      right: "0",
+                                      backgroundColor: "#ff0000",
+                                      color: "#fff",
+                                      border: "none",
+                                      borderRadius: "50%",
+                                      width: "25px",
+                                      height: "25px",
                                       display: "flex",
                                       justifyContent: "center",
                                       alignItems: "center",
-                                      backgroundColor: "#f0f0f0",
-                                      borderRadius: "8px",
-                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                      cursor: "pointer",
+                                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                      fontSize: "14px",
                                     }}
                                   >
-                                    <img
-                                      src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
-                                      alt="PDF Preview"
-                                      style={{ width: "40px", height: "40px" }}
-                                    />
-                                  </div>
-                                )}
-                        
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setSelectedFile(null); 
-                                    setPreviewUrl(""); 
-                                  }}
-                                  style={{
-                                    position: "absolute",
-                                    top: "0",
-                                    right: "0",
-                                    backgroundColor: "#ff0000",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "50%",
-                                    width: "25px",
-                                    height: "25px",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    cursor: "pointer",
-                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                    fontSize: "14px",
-                                  }}
-                                >
-                                  X
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        
-                          <label
-                            htmlFor="fileInput"
-                            style={{
-                              padding: "10px 20px",
-                              color: "#fff",
-                              borderRadius: "5px",
-                              cursor: "pointer",
-                              fontSize: "16px",
-                              textAlign: "center",
-                              display: "inline-block",
-                              transition: "background-color 0.3s ease",
-                              marginBottom: "20px",
-                            }}
-                            onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
-                            onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
-                            className="btn btn-primary mt-3"
-                          >
-                            Choose File(s)
-                          </label>
-                        
-                          <p style={{ marginTop: "20px", color: "#888", fontSize: "14px" }}>
-                            You can upload images, videos, or PDFs. Multiple files are supported.
-                          </p>
-                        </form>
+                                    X
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            <label
+                              htmlFor="fileInput"
+                              style={{
+                                padding: "10px 20px",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                                textAlign: "center",
+                                display: "inline-block",
+                                transition: "background-color 0.3s ease",
+                                marginBottom: "20px",
+                              }}
+                              onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+                              onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
+                              className="btn btn-primary mt-3"
+                            >
+                              Choose File(s)
+                            </label>
+
+                            <p style={{ marginTop: "20px", color: "#888", fontSize: "14px" }}>
+                              You can upload images, videos, or PDFs. Multiple files are supported.
+                            </p>
+                          </form>
                         )}
 
                       </Modal.Body>
@@ -348,8 +361,8 @@ function Media() {
                         <Button
                           text="Upload"
                           className="btn-primary"
-                          type="button" 
-                          onClick={handleSubmit} 
+                          type="button"
+                          onClick={handleSubmit}
                         >
                           Upload
                         </Button>
@@ -587,6 +600,18 @@ function Media() {
                               </div>
                             </div>
                           ))}
+                          {hasMore && (
+                            <div className="text-center">
+                              <Button
+                                variant="primary"
+                                className="btn btn-primary ms-auto w-auto me-2"
+                                type="button"
+                                text={loading ? "Loading..." : "Load More"}
+                                onClick={gotoNextPage}
+                                disabled={loading} // Disable the button while loading
+                              />
+                            </div>
+                          )}
                         </>
                       )}
                     </div>
