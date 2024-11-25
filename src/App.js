@@ -15,6 +15,7 @@ import Users from "./pages/Users/Users";
 import CreatePages from "./pages/CreatPages/CreatePages";
 import UserManagement from './pages/Users/UserManagement';
 import UserProfile from './pages/Profile/Profile';
+import UploadMedia from './pages/UploadMedia/UploadMedia';
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
             element={
               <AuthProtectedRoute>
                 <Media />
+              </AuthProtectedRoute>
+            }
+          />
+              <Route
+            path="/upload-media"
+            element={
+              <AuthProtectedRoute>
+                <UploadMedia />
               </AuthProtectedRoute>
             }
           />
