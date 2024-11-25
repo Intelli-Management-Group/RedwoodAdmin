@@ -53,7 +53,7 @@ function Media() {
   const [hasMore, setHasMore] = useState(true);
 
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  // const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -169,6 +169,12 @@ function Media() {
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
+  const handleClose = () => {
+  
+    setShow(false);
+  
+    toast.dismiss(); 
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUploadLoading(true);
@@ -191,7 +197,7 @@ function Media() {
         setSelectedFile(null);
         setPreviewUrl("");
 
-        setTimeout(() => handleClose(), 3000);
+        setTimeout(() => handleClose, 3000);
       } else {
         toast.error("Upload failed. Please try again.", { position: "top-center", autoClose: 3000 });
       }
