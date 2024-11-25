@@ -498,6 +498,9 @@ video {
 .upload-button {
     margin-top: 10px;
 }
+.media-item{
+ display: grid;
+}
 
 /* Upload */
 

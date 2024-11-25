@@ -244,7 +244,7 @@ function Media() {
                       Add New Media File
                     </Button>
                     {/* onHide={handleClose} OutSide click when modal close */}
-                    <Modal show={show} style={{ marginTop: '5%' }}>
+                    <Modal show={show} onHide={handleClose} style={{ marginTop: '5%' }}>
                       <Modal.Header closeButton>
                         <Modal.Title>Upload New Media</Modal.Title>
                       </Modal.Header>
