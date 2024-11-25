@@ -8,11 +8,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import Input from '../Component/InputComponents/InputComponents';
 import AdminServices from '../../Services/AdminServices';
+import { useAuth } from '../Component/AuthContext/AuthContextComponents';
 
 const Home = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useAuth();
     const navigate = useNavigate();
 
 
@@ -21,28 +23,24 @@ const Home = () => {
 
         if (email.trim() && password.trim()) {
             try {
-                // Prepare the login data
                 const loginData = {
-                    email: email,
-                    password: password,
+                    email,
+                    password,
                 };
 
-                // Call the Admin Login API
-                const response = await AdminServices.adminLogin(loginData); // Adjust API call as needed
+                const response = await AdminServices.adminLogin(loginData);
 
                 if (response?.status_code === 200) {
-                    // Assuming the API sends back a token or user info
-                    const { token, user } = response;
+                    const { token } = response;
 
-                    // Save the token in localStorage or context
                     localStorage.setItem("authToken", token);
+
+                    login();
 
                     toast.success("Login successful!", {
                         position: "top-center",
                         autoClose: 3000,
                     });
-
-                    // Redirect to the admin dashboard or home page
                     setTimeout(() => navigate("/dashboard"), 1500);
                 } else {
                     toast.error(response?.message || "Invalid email or password", {

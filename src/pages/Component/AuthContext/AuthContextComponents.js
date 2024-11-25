@@ -8,18 +8,18 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Retrieve authentication status from local storage or other persistent storage if needed
-    const authStatus = localStorage.getItem('isAuthenticated') === isAuthenticated;
+    const authStatus = localStorage.getItem('authToken') === 'true';
     setIsAuthenticated(authStatus);
   }, []);
 
   const login = () => {
     setIsAuthenticated(true);
-    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('authToken', 'true');
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('authToken');
   };
 
   return (
