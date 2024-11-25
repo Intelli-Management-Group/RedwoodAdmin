@@ -1,15 +1,13 @@
-// src/pages/Component/AuthContext/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // Initially null to indicate "loading"
+  
   useEffect(() => {
-    // Retrieve authentication status from local storage or other persistent storage if needed
-    const authStatus = localStorage.getItem('authToken') === 'true';
-    setIsAuthenticated(authStatus);
+    const authToken = localStorage.getItem('authToken');
+    setIsAuthenticated(authToken === 'true'); // Update state based on localStorage
   }, []);
 
   const login = () => {
@@ -21,6 +19,11 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     localStorage.removeItem('authToken');
   };
+
+  if (isAuthenticated === null) {
+    // Show a loading spinner or placeholder while checking authentication
+    return <div>Loading...</div>;
+  }
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
