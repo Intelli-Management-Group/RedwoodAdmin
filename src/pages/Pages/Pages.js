@@ -24,41 +24,41 @@ const Pages = () => {
   };
   useEffect(() => {
     setLoading(true)
-    fetchPages(currentPage, documentType);
+    // fetchPages(currentPage, documentType);
   }, []);
   const redirectToCreatePage = () => {
     navigate('/uploadDocument');
   };
-  const fetchPages = async (page, documentType) => {
-    try {
-      // const formdata = new FormData();
-      // formdata.append("page", page);
-      // formdata.append("pageSize", perPageRecords);
+  // const fetchPages = async (page, documentType) => {
+  //   try {
+  //     // const formdata = new FormData();
+  //     // formdata.append("page", page);
+  //     // formdata.append("pageSize", perPageRecords);
 
-      const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
-      if (resp?.status_code === 200) {
-        console.log(resp);
+  //     const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
+  //     if (resp?.status_code === 200) {
+  //       console.log(resp);
 
-        if (page === 1) {
-          // setMediaList(resp?.list?.data || []);
-        } else {
-          // setMediaList((prevList) => [...prevList, ...resp?.list?.data]);
-        }
+  //       if (page === 1) {
+  //         // setMediaList(resp?.list?.data || []);
+  //       } else {
+  //         // setMediaList((prevList) => [...prevList, ...resp?.list?.data]);
+  //       }
 
-        // setCurrentPage(resp?.list?.current_page);
-        // setHasMore(resp?.list?.next_page_url !== null);
+  //       // setCurrentPage(resp?.list?.current_page);
+  //       // setHasMore(resp?.list?.next_page_url !== null);
 
-        // setTimeout(() => handleClose(), 3000);
-      } else {
-        toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
-      }
-    } catch (error) {
-      console.error("Error uploading images:", error);
-      toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
-    } finally {
-      setLoading(false);
-    }
-  };
+  //       // setTimeout(() => handleClose(), 3000);
+  //     } else {
+  //       toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading images:", error);
+  //     toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const deletePages = async (id) => {
     try {
       const resp = await PageServices.deletePages(id);
@@ -67,7 +67,7 @@ const Pages = () => {
         toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
         setTimeout(() =>
           setLoading(true),
-          fetchPages(currentPage, documentType),
+          // fetchPages(currentPage, documentType),
           3000);
 
       } else {
