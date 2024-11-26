@@ -40,11 +40,13 @@ const Pages = () => {
       fetchPagesWithFilter(currentPage, documentType, postingYear, searchString);
     }
   }, [documentType, postingYear, searchString])
+
   const logFormData = (formData) => {
     for (const [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
   };
+
   const fetchPagesWithFilter = async (page, documentType, year, search) => {
     try {
       const formData = new FormData();
@@ -79,6 +81,7 @@ const Pages = () => {
       setIsLoading(false);
     }
   };
+
   const fetchPages = async (page, documentType) => {
     try {
       const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
@@ -103,6 +106,7 @@ const Pages = () => {
       setIsLoading(false);
     }
   };
+
   const deletePages = async (id) => {
     try {
       const resp = await PageServices.deletePages(id);
@@ -124,18 +128,53 @@ const Pages = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    // Simulate data fetch
-    setTimeout(() => {
+  
+  const handleActionChange = async (action) => {
+    if (action === "Delete") {
+      try {
+        if (selectedCheckboxes.length === 0) {
+          notifyError("No items selected for deletion.");
+          return;
+        }
+        const formData = new FormData();
 
-    }, 2000);
-  }, []);
+        const idsAsString = selectedCheckboxes.join(",");
+
+        formData.append("ids", idsAsString);
+        const resp = await PageServices.multiDeletePages(formData);
+        if (resp?.status_code === 200) {
+          notifySuccess(resp?.message,);
+          setTimeout(() =>
+            setLoading(true),
+            fetchPages(currentPage, documentType),
+            3000);
+
+        } else {
+          notifyError("Please try again.",);
+        }
+      } catch (error) {
+        console.error("Error uploading images:", error);
+        notifyError("An error occurred during fetch Data. Please try again.",);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+  const handleSelectAll = (isChecked) => {
+    if (isChecked) {
+      // Select all
+      const allPostIds = page.map((post) => post.id);
+      setSelectedCheckboxes(allPostIds);
+    } else {
+      // Deselect all
+      setSelectedCheckboxes([]);
+    }
+  };
+
   const handleCheckboxChange = (pageId, isChecked) => {
     if (isChecked) {
-      // Add the postId to selectedCheckboxes if checked
       setSelectedCheckboxes((prev) => [...prev, pageId]);
     } else {
-      // Remove the postId from selectedCheckboxes if unchecked
       setSelectedCheckboxes((prev) =>
         prev.filter((id) => id !== pageId)
       );
@@ -151,6 +190,8 @@ const Pages = () => {
     fetchPages(pageNumber, documentType);
 
   };
+  const areAllSelected =
+    page.length > 0 && selectedCheckboxes.length === page.length;
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -176,7 +217,12 @@ const Pages = () => {
 
                 <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
                   <div className="custom-select-wrapper col-md-3 p-1">
-                    <select id="tableActions" className="form-control" style={{ height: 'auto' }}>
+                    <select
+                      id="tableActions"
+                      className="form-control"
+                      style={{ height: "auto" }}
+                      onChange={(e) => handleActionChange(e.target.value)}
+                    >
                       <option value="">Table Action...</option>
                       <option value="Delete">Delete</option>
                     </select>
@@ -244,7 +290,14 @@ const Pages = () => {
                 <table className="table table-striped " id="user-data-table" style={{ border: '1px solid #ccc' }}>
                   <thead>
                     <tr>
-                      <th><input type="checkbox" id="select-all" /></th>
+                      <th>
+                        <input
+                          type="checkbox"
+                          id="select-all"
+                          checked={areAllSelected}
+                          onChange={(e) => handleSelectAll(e.target.checked)}
+                        />
+                      </th>
                       <th>Document Title</th>
                       <th>Document types</th>
                       <th>Years</th>

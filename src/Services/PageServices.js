@@ -27,6 +27,10 @@ const PageServices = {
 
   deletePages: async (id) => {
     return requests.get(`/page/${id}/delete`);
+  },
+  multiDeletePages:async (body) =>{
+    return requests.post(`/page/multiple-delete`,body);
+
   }
 
 }
