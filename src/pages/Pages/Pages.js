@@ -5,7 +5,8 @@ import Button from "../Component/ButtonComponents/ButtonComponents";
 import { useNavigate } from "react-router-dom";
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import PageServices from "../../Services/PageServices";
-import { ToastContainer, toast } from 'react-toastify';
+import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
+import Pagination from "react-js-pagination";
 
 const Pages = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Pages = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setpage] = useState([]);
+  const [totalRecords, setTotalRecords] = useState()
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [documentType, setDocumentType] = useState("all");
 
@@ -23,59 +25,57 @@ const Pages = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
   useEffect(() => {
-    setLoading(true)
-    // fetchPages(currentPage, documentType);
+    setIsLoading(true);
+
+    fetchPages(currentPage, documentType);
   }, []);
   const redirectToCreatePage = () => {
     navigate('/uploadDocument');
   };
-  // const fetchPages = async (page, documentType) => {
-  //   try {
-  //     // const formdata = new FormData();
-  //     // formdata.append("page", page);
-  //     // formdata.append("pageSize", perPageRecords);
+// useEffect(()=>{
 
-  //     const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
-  //     if (resp?.status_code === 200) {
-  //       console.log(resp);
+// },[])
+  const fetchPages = async (page, documentType) => {
+    try {
+      const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
+      if (resp?.status_code === 200) {
+        console.log(resp);
 
-  //       if (page === 1) {
-  //         // setMediaList(resp?.list?.data || []);
-  //       } else {
-  //         // setMediaList((prevList) => [...prevList, ...resp?.list?.data]);
-  //       }
-
-  //       // setCurrentPage(resp?.list?.current_page);
-  //       // setHasMore(resp?.list?.next_page_url !== null);
-
-  //       // setTimeout(() => handleClose(), 3000);
-  //     } else {
-  //       toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error uploading images:", error);
-  //     toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+        if (page === 1) {
+          setpage(resp?.list?.data || []);
+        } else {
+          setpage(resp?.list?.data)
+          // setpage((prevList) => [...prevList, ...resp?.list?.data]);
+        }
+        setTotalRecords(resp?.list?.total)
+        setCurrentPage(resp?.list?.current_page);
+      } else {
+        notifyError("Please try again.",);
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      notifyError("An error occurred during fetch Data. Please try again.",);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const deletePages = async (id) => {
     try {
       const resp = await PageServices.deletePages(id);
       if (resp?.status_code === 200) {
         console.log(resp);
-        toast.success(resp?.message, { position: "top-center", autoClose: 3000 });
+        notifySuccess(resp?.message,);
         setTimeout(() =>
           setLoading(true),
-          // fetchPages(currentPage, documentType),
+          fetchPages(currentPage, documentType),
           3000);
 
       } else {
-        toast.error("Please try again.", { position: "top-center", autoClose: 3000 });
+        notifyError("Please try again.",);
       }
     } catch (error) {
       console.error("Error uploading images:", error);
-      toast.error("An error occurred during fetch Data. Please try again.", { position: "top-center", autoClose: 3000 });
+      notifyError("An error occurred during fetch Data. Please try again.",);
     } finally {
       setLoading(false);
     }
@@ -83,27 +83,7 @@ const Pages = () => {
   useEffect(() => {
     // Simulate data fetch
     setTimeout(() => {
-      setpage([
-        {
-          id: 1,
-          title: "China Outlook Q1 2023",
-          type: "Publications",
-          year: "2018"
-        },
-        {
-          id: 2,
-          title: "Master Fund – Portfolio Summary June 2024",
-          type: "Hedge Fund Reports",
-          year: "2021"
-        },
-        {
-          id: 3,
-          title: "Portfolio Summary – July 2024",
-          type: "Managed Account Reports",
-          year: "2021"
-        }
-      ]);
-      setIsLoading(false);
+      
     }, 2000);
   }, []);
   const handleCheckboxChange = (pageId, isChecked) => {
@@ -120,6 +100,12 @@ const Pages = () => {
   const handleDelete = (id) => {
     console.log("page.id", id)
     deletePages(id)
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    fetchPages(pageNumber, documentType);
+
   };
   return (
     <React.Fragment>
@@ -236,7 +222,11 @@ const Pages = () => {
                               }
                             />
                           </td>
-                          <td>{page.title}</td>
+                          <td>
+                            {page.file_name.split('.').slice(0, -1).join('.').length > 30
+                              ? page.file_name.split('.').slice(0, -1).join('.').substring(0, 30) + "..."
+                              : page.file_name.split('.').slice(0, -1).join('.')}
+                          </td>
                           <td>{page.type}</td>
                           <td>{page.year}</td>
                           <td>
@@ -267,8 +257,18 @@ const Pages = () => {
                     )}
                   </tbody>
                 </table>
-                <ToastContainer />
-
+                <div className="d-flex justify-content-end">
+                  <Pagination
+                    activePage={currentPage}
+                    itemsCountPerPage={perPageRecords}
+                    totalItemsCount={totalRecords}
+                    pageRangeDisplayed={5}
+                    onChange={handlePageChange}
+                    itemClass="custom-page-item"
+                    linkClass="custom-page-link"
+                    activeClass="custom-active"
+                  />
+                </div>
               </div>
             </div>
           </div>
