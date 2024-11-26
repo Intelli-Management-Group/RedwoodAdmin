@@ -7,6 +7,8 @@ import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import AddUserModal from "../Component/UserModal/UserModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import AdminServices from "../../Services/AdminServices";
+import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 
 const UserManagement = () => {
     const location = useLocation();
@@ -14,15 +16,37 @@ const UserManagement = () => {
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
     const [selectedUser, setSelectedUser] = useState(null);
+    const [userData, setUserData] = useState([])
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
 
     const { state } = location;
     const status = state?.status || "all";
+    console.log(status)
 
-    const dummyUsers = [
-        { username: "john_doe", name: "John Doe", email: "john@example.com", role: "Editor", status: "approved" },
-        { username: "jane_smith", name: "Jane Smith", email: "jane@example.com", role: "Author", status: "pending" },
-        { username: "michael_brown", name: "Michael Brown", email: "michael@example.com", role: "Contributor", status: "rejected" },
-    ];
+
+    useEffect(() => {
+        fetchAllUser()
+
+    }, [])
+
+    const fetchAllUser = async () => {
+        setIsLoading(true);
+        try {
+            const resp = await AdminServices.getAllUser();
+            if (resp?.status_code === 200) {
+                console.log(resp);
+
+                setUserData(resp?.list || [])
+            } else {
+                notifyError("Please try again.",);
+            }
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
@@ -30,7 +54,7 @@ const UserManagement = () => {
         setIsModalVisible(false);
     };
 
-    const filteredUsers = dummyUsers.filter((user) => status === "all" || user.status === status);
+    // const filteredUsers = dummyUsers.filter((user) => status === "all" || user.status === status);
     const openUserModal = (user) => {
         setSelectedUser(user); // Set the user to be edited
         setIsModalVisible(true); // Show the modal
@@ -41,12 +65,100 @@ const UserManagement = () => {
         setIsModalVisible(false); // Hide the modal
         setSelectedUser(null); // Clear the selected user data
     };
-    useEffect(()=>{
-        setTimeout(()=>{
+    useEffect(() => {
+        setTimeout(() => {
             setIsLoading(false)
-        },2000)
+        }, 2000)
     })
 
+    const handleDelete = (id) => {
+        console.log("page.id", id)
+        deleteUser(id)
+    };
+
+    const deleteUser = async (id) => {
+        try {
+            const resp = await AdminServices.userDelete(id);
+            if (resp?.status_code === 200) {
+                console.log(resp);
+                notifySuccess(resp?.message,);
+                setTimeout(() =>
+                    setIsLoading(true),
+                    fetchAllUser(),
+                    3000);
+
+            } else {
+                notifyError("Please try again.",);
+            }
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
+        }
+        const handleCheckboxChange = (pageId, isChecked) => {
+            if (isChecked) {
+                setSelectedCheckboxes((prev) => [...prev, pageId]);
+            } else {
+                setSelectedCheckboxes((prev) =>
+                    prev.filter((id) => id !== pageId)
+                );
+            }
+        };
+    };
+    const handleCheckboxChange = (pageId, isChecked) => {
+        if (isChecked) {
+            setSelectedCheckboxes((prev) => [...prev, pageId]);
+        } else {
+            setSelectedCheckboxes((prev) =>
+                prev.filter((id) => id !== pageId)
+            );
+        }
+    };
+
+    const handleSelectAll = (isChecked) => {
+        if (isChecked) {
+            // Select all
+            const allPostIds = userData.map((post) => post.id);
+            setSelectedCheckboxes(allPostIds);
+        } else {
+            // Deselect all
+            setSelectedCheckboxes([]);
+        }
+    };
+    const handleActionChange = async (action) => {
+        if (action === "Delete") {
+            try {
+                if (selectedCheckboxes.length === 0) {
+                    notifyError("No items selected for deletion.");
+                    return;
+                }
+                const formData = new FormData();
+
+                const idsAsString = selectedCheckboxes.join(",");
+
+                formData.append("ids", idsAsString);
+                const resp = await AdminServices.multipleDeleteUser(formData);
+                if (resp?.status_code === 200) {
+                    notifySuccess(resp?.message,);
+                    setTimeout(() =>
+                        setIsLoading(true),
+                        fetchAllUser(),
+                        3000);
+
+                } else {
+                    notifyError("Please try again.",);
+                }
+            } catch (error) {
+                console.error("Error uploading images:", error);
+                notifyError("An error occurred during fetch Data. Please try again.",);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+    const areAllSelected =
+        userData.length > 0 && selectedCheckboxes.length === userData.length;
     return (
 
         <React.Fragment>
@@ -95,6 +207,7 @@ const UserManagement = () => {
                                             <select
                                                 id="postCategories"
                                                 className="form-control custom-select"
+                                                onChange={(e) => handleActionChange(e.target.value)}
                                             >
                                                 <option value="">User Action</option>
                                                 <option value="approve">Approve Membership</option>
@@ -103,6 +216,7 @@ const UserManagement = () => {
                                                 <option value="resend">Resend Activation Email</option>
                                                 <option value="deactivate">Deactivate</option>
                                                 <option value="reactivate">Reactivate</option>
+                                                <option vlaue="Delete">Delete</option>
                                             </select>
                                         </div>
                                     </div>
@@ -123,7 +237,14 @@ const UserManagement = () => {
                                 <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
                                     <thead>
                                         <tr>
-                                            <th><input type="checkbox" id="select-all" /></th>
+                                            <th>
+                                                <input
+                                                    type="checkbox"
+                                                    id="select-all"
+                                                    checked={areAllSelected}
+                                                    onChange={(e) => handleSelectAll(e.target.checked)}
+                                                />
+                                            </th>
                                             <th>Username</th>
                                             <th>Name</th>
                                             <th>Email</th>
@@ -142,17 +263,17 @@ const UserManagement = () => {
                                                     <Skeleton columns={7} />
                                                 </>
                                             </>
-                                        ) : filteredUsers.length > 0 ? (
-                                            filteredUsers.map((user) => (
+                                        ) : userData.length > 0 ? (
+                                            userData.map((user) => (
                                                 <tr key={user.username}>
                                                     <td>
                                                         <input
                                                             type="checkbox"
                                                             className="user-select"
-                                                        // checked={selectedCheckboxes.includes(post.id)}
-                                                        // onChange={(e) =>
-                                                        //     handleCheckboxChange(post.id, e.target.checked)
-                                                        // }
+                                                            checked={selectedCheckboxes.includes(user.id)}
+                                                            onChange={(e) =>
+                                                                handleCheckboxChange(user.id, e.target.checked)
+                                                            }
                                                         />
                                                     </td>
                                                     <td>{user.username}</td>
@@ -167,7 +288,7 @@ const UserManagement = () => {
 
                                                         <button
                                                             className="btn btn-sm btn-danger ms-2"
-                                                            onClick={''}
+                                                            onClick={() => handleDelete(user.id)}
                                                         >
                                                             <FontAwesomeIcon icon={faTrash} size="lg" />
                                                         </button></td>
