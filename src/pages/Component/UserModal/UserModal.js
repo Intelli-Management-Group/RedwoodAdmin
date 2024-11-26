@@ -7,6 +7,7 @@ function AddUserModal({ show, onHide, userData }) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
+    id:"",
     username: "",
     name: "",
     email: "",
@@ -14,16 +15,19 @@ function AddUserModal({ show, onHide, userData }) {
     password: "",
     confirmPassword: "",
     sendEmail: false,
+    status:''
   });
 
   // Pre-fill form fields when userData changes
   useEffect(() => {
     if (userData) {
       setFormData({
+        id:userData?.id ? userData?.id :"",
         username: userData.username || "",
         email: userData.email || "",
         name: userData.name || "",
         role: userData.role || "Administrator",
+        status:userData.role || "Administrator",
         password: "",
         confirmPassword: "",
         sendEmail: false
@@ -66,13 +70,16 @@ function AddUserModal({ show, onHide, userData }) {
     console.log("formData", formData)
     try {
       const formdata = new FormData();
+      formdata.append("id", formData?.id ? formData?.id :"");
       formdata.append("email", formData?.email);
       formdata.append("password", formData?.password);
       formdata.append("confirmPassword", formData?.confirmPassword);
       formdata.append("username", formData?.username);
       formdata.append("name", formData?.name);
       formdata.append("role", formData?.role);
+      formdata.append("status", formData?.role);
       formdata.append("send_user_notification", "1");
+      formdata.append("role_id", "");
       // Call API to register user
       const response = await AdminServices.addUser(formdata);
       console.log("res",response)

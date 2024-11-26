@@ -5,7 +5,7 @@ const AdminServices = {
         return requests.post("/admin/login", body);
       },
       addUser: async(body) => {
-        return requests.post("/admin/signup", body);
+        return requests.post("/admin-panel-user/upsert", body);
       },
 
 }
