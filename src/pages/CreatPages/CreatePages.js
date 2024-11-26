@@ -3,7 +3,7 @@ import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import PageServices from "../../Services/PageServices";
-import { ToastContainer, toast } from 'react-toastify';
+import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 
 const CreatePages = () => {
   const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ const CreatePages = () => {
 
     const validationError = validateForm(selectedFile, documentType, postingYear);
     if (validationError) {
-      toast.error(validationError, { position: "top-center", autoClose: 3000 });
+      notifyError(validationError, { position: "top-center", autoClose: 3000 });
       setLoading(false);
       return;
     }
@@ -64,22 +64,13 @@ const CreatePages = () => {
       if (resp?.status_code === 200) {
         console.log(resp);
         resetFormFields();
-        toast.success(resp?.message || "File uploaded successfully!", {
-          position: "top-center",
-          autoClose: 3000,
-        });
+        notifySuccess(resp?.message || "File uploaded successfully!");
       } else {
-        toast.error(resp?.message || "Please try again.", {
-          position: "top-center",
-          autoClose: 3000,
-        });
+        notifyError(resp?.message || "Please try again.");
       }
     } catch (error) {
       console.error("Error uploading file:", error);
-      toast.error("An error occurred during file upload. Please try again.", {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      notifyError("An error occurred during file upload. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -201,7 +192,6 @@ const CreatePages = () => {
                 </div>
               </form>
             </div>
-            <ToastContainer />
 
           </div>
         </div>
