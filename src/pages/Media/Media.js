@@ -7,7 +7,6 @@ import MediaServices from '../../Services/MediaServices';
 import { ToastContainer } from 'react-toastify';
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Skeleton from '../Component/SkeletonComponent/SkeletonComponent';
-import { useNavigate } from 'react-router-dom';
 
 const mediaItems = [
   {
@@ -50,14 +49,13 @@ const placeholderVideo = "https://www.shutterstock.com/image-vector/no-video-ava
 const placeholderDocument = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"; // Path to a placeholder image
 
 function Media() {
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const mediaPerPage = (12)
+  const mediaPerPage = (10)
   const [hasMore, setHasMore] = useState(true);
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [uploadModalshow, setUploadModalshow] = useState(false);
+  // const handleClose = () => setShow(false);
+  // const handleShow = () => setShow(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [filteredItems, setFilteredItems] = useState(mediaItems);
@@ -98,7 +96,7 @@ function Media() {
         setCurrentPage(resp?.list?.current_page);
         setHasMore(resp?.list?.next_page_url !== null);
 
-        setTimeout(() => handleClose(), 3000);
+        setTimeout(() => handleUploadModalClose(), 3000);
       } else {
         notifyError("Please try again.",);
       }
@@ -173,6 +171,39 @@ function Media() {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setUploadLoading(true);
+
+    if (!selectedFile) {
+      notifyError("Please select an image to upload.",);
+      setUploadLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const resp = await MediaServices.MediaUpload(formData);
+
+      if (resp?.status_code === 200) {
+        // notifySuccess(resp?.message,);
+
+        setSelectedFile(null);
+        setPreviewUrl("");
+
+        setTimeout(() => handleUploadModalClose(), 3000);
+      } else {
+        // notifyError("Upload failed. Please try again.",);
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      // notifyError("An error occurred during upload. Please try again.",);
+    } finally {
+      setUploadLoading(false);
+    }
+  };
 
   const gotoNextPage = () => {
     if (hasMore) {
@@ -186,12 +217,17 @@ function Media() {
   const handleDelete = () => {
     deleteMedia(modalContent?.id)
   };
-  const gotoUploadMedia = () =>{
-    navigate('/upload-media')
+  const openUploadModal = () => {
+    setUploadModalshow(!uploadModalshow)
+  }
+  const handleUploadModalClose = () => {
+    setUploadModalshow(!uploadModalshow)
   }
 
   return (
     <React.Fragment>
+      <ToastContainer />
+
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
         <div className="">
           {/* Sidebar */}
@@ -213,7 +249,7 @@ function Media() {
                       text="Add New Media File"
                       className="btn btn-primary"
                       type="button"
-                      onClick={gotoUploadMedia}
+                      onClick={openUploadModal}
                     >
                       Add New Media File
                     </Button>
@@ -287,7 +323,7 @@ function Media() {
                   </nav>
                   <br />
                   <div className="container">
-            
+
                     <div
                       className="row p-2"
                       id="mediaItems"
@@ -399,8 +435,169 @@ function Media() {
                       )}
                     </div>
 
+
                   </div>
-              
+                  {/* uploadModal */}
+                  {/* onHide={handleClose} OutSide click when modal close */}
+                  <Modal show={uploadModalshow} onHide={handleUploadModalClose} style={{ marginTop: '5%' }}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Upload New Media</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      {uploadLoading ? (
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "150px" }}>
+                          <div className="spinner-border text-primary-color" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <form style={{ width: "100%", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          {/* Hidden File Input */}
+                          <input
+                            type="file"
+                            id="fileInput"
+                            accept="image/*,video/*,.pdf"
+                            multiple
+                            style={{ display: "none" }}
+                            onChange={handleFileChange}
+                          />
+
+                          {/* Preview Section */}
+                          <div style={{ display: "flex", gap: "10px", marginTop: "10px", flexWrap: "wrap", justifyContent: "center" }}>
+                            {selectedFile && (
+                              <div style={{ width: "120px", textAlign: "center", position: "relative" }}>
+                                {/* Image Preview */}
+                                {selectedFile.type.startsWith("image/") && (
+                                  <img
+                                    src={previewUrl}
+                                    alt="Image Preview"
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                      borderRadius: "8px",
+                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    }}
+                                  />
+                                )}
+
+                                {/* Video Preview */}
+                                {selectedFile.type.startsWith("video/") && (
+                                  <video
+                                    src={previewUrl}
+                                    controls
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      borderRadius: "8px",
+                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    }}
+                                  />
+                                )}
+
+                                {/* PDF Preview */}
+                                {selectedFile.type === "application/pdf" && (
+                                  <div
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      backgroundColor: "#f0f0f0",
+                                      borderRadius: "8px",
+                                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    }}
+                                  >
+                                    <img
+                                      src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg"
+                                      alt="PDF Preview"
+                                      style={{ width: "40px", height: "40px" }}
+                                    />
+                                  </div>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedFile(null);
+                                    setPreviewUrl("");
+                                  }}
+                                  style={{
+                                    position: "absolute",
+                                    top: "0",
+                                    right: "0",
+                                    backgroundColor: "#ff0000",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "50%",
+                                    width: "25px",
+                                    height: "25px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  X
+                                </button>
+                              </div>
+                            )}
+                          </div>
+
+                          <label
+                            htmlFor="fileInput"
+                            style={{
+                              padding: "10px 20px",
+                              color: "#fff",
+                              borderRadius: "5px",
+                              cursor: "pointer",
+                              fontSize: "16px",
+                              textAlign: "center",
+                              display: "inline-block",
+                              transition: "background-color 0.3s ease",
+                              marginBottom: "20px",
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+                            onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
+                            className="btn btn-primary mt-3"
+                          >
+                            Choose File(s)
+                          </label>
+
+                          <p style={{ marginTop: "20px", color: "#888", fontSize: "14px" }}>
+                            You can upload images, videos, or PDFs. Multiple files are supported.
+                          </p>
+                        </form>
+                      )}
+
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button
+                        text="Close"
+                        className="btn-primary"
+                        type="button"
+                        variant="secondary"
+                        onClick={handleUploadModalClose}
+                      >
+                        Close
+                      </Button>
+
+                      <Button
+                        text="Upload"
+                        className="btn-primary"
+                        type="button"
+                        onClick={handleSubmit}
+                      >
+                        Upload
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
+                  {/* UploadModal */}
+
+
                   {/* Modal */}
                   <Modal show={showModal} onHide={handleCloseModal} centered>
                     <Modal.Header closeButton>
@@ -466,7 +663,6 @@ function Media() {
                       </Button>
                     </Modal.Footer>
                   </Modal>
-                  <ToastContainer />
 
 
                 </div>
