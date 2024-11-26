@@ -19,6 +19,8 @@ const Pages = () => {
   const [totalRecords, setTotalRecords] = useState()
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [documentType, setDocumentType] = useState("");
+  const [postingYear, setPostingYear] = useState("");
+  const [searchString, setSearchString] = useState("");
 
 
   const toggleSidebar = () => {
@@ -32,11 +34,51 @@ const Pages = () => {
   const redirectToCreatePage = () => {
     navigate('/uploadDocument');
   };
-useEffect(()=>{
-if(documentType){
-  fetchPages(1, documentType);
-}
-},[documentType])
+  useEffect(() => {
+
+    if (documentType || postingYear || searchString) {
+      fetchPagesWithFilter(currentPage, documentType, postingYear, searchString);
+    }
+  }, [documentType, postingYear, searchString])
+  const logFormData = (formData) => {
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+  };
+  const fetchPagesWithFilter = async (page, documentType, year, search) => {
+    try {
+      const formData = new FormData();
+      if (documentType) formData.append("type", documentType);
+      if (year) formData.append("year", year);
+      if (search) formData.append("text", search);
+
+      logFormData(formData);
+
+      const resp = await PageServices.getPageListFilter({
+        page: currentPage,
+        perPageRecords,
+        body: formData,
+      });
+      if (resp?.status_code === 200) {
+        console.log(resp);
+
+        if (page === 1) {
+          setpage(resp?.list?.data || []);
+        } else {
+          setpage(resp?.list?.data)
+        }
+        setTotalRecords(resp?.list?.total)
+        setCurrentPage(resp?.list?.current_page);
+      } else {
+        notifyError("Please try again.",);
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      notifyError("An error occurred during fetch Data. Please try again.",);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const fetchPages = async (page, documentType) => {
     try {
       const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
@@ -85,7 +127,7 @@ if(documentType){
   useEffect(() => {
     // Simulate data fetch
     setTimeout(() => {
-      
+
     }, 2000);
   }, []);
   const handleCheckboxChange = (pageId, isChecked) => {
@@ -154,18 +196,21 @@ if(documentType){
                     </select>
                   </div>
                   <div className="custom-select-wrapper col-md-3 p-1">
-                    <select id="postCategories" className="form-control" style={{ height: 'auto' }}>
-                      <option value="">All Years</option>
-                      <option value="news">2015</option>
-                      <option value="visit">2016</option>
-                      <option value="visit">2017</option>
-                      <option value="visit">2018</option>
-                      <option value="visit">2019</option>
-                      <option value="visit">2020</option>
-                      <option value="visit">2021</option>
-                      <option value="visit">2022</option>
-                      <option value="visit">2023</option>
-                      <option value="visit">2024</option>
+                    <select
+                      id="postingYears"
+                      className="form-control custom-select"
+                      value={postingYear}
+                      onChange={(e) => setPostingYear(e.target.value)}
+                    >
+                      <option value="">Select a year</option>
+                      {Array.from({ length: 15 }, (_, i) => {
+                        const year = 2010 + i;
+                        return (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 
@@ -177,6 +222,8 @@ if(documentType){
                         id="searchPages"
                         className="form-control search-input"
                         placeholder="Search page..."
+                        value={searchString}
+                        onChange={(e) => setSearchString(e.target.value)}
                       />
                       <svg
                         className="search-icon"
