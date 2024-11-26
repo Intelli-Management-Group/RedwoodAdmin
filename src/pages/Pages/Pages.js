@@ -18,7 +18,7 @@ const Pages = () => {
   const [page, setpage] = useState([]);
   const [totalRecords, setTotalRecords] = useState()
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  const [documentType, setDocumentType] = useState("all");
+  const [documentType, setDocumentType] = useState("");
 
 
   const toggleSidebar = () => {
@@ -32,9 +32,11 @@ const Pages = () => {
   const redirectToCreatePage = () => {
     navigate('/uploadDocument');
   };
-// useEffect(()=>{
-
-// },[])
+useEffect(()=>{
+if(documentType){
+  fetchPages(1, documentType);
+}
+},[documentType])
   const fetchPages = async (page, documentType) => {
     try {
       const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
