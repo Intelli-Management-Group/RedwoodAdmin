@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap"; // Import React Bootstrap components
 import { ToastContainer, toast } from 'react-toastify';
 import AdminServices from "../../../Services/AdminServices";
+import { notifyError, notifySuccess } from "../ToastComponents/ToastComponents";
 
 function AddUserModal({ show, onHide, userData }) {
   const [loading, setLoading] = useState(false);
@@ -84,11 +85,9 @@ function AddUserModal({ show, onHide, userData }) {
       const response = await AdminServices.addUser(formdata);
       console.log("res",response)
       if (response?.status_code === 200) {
-        toast.success(response.message || "User registered successfully!", {
-          position: "top-center",
-          autoClose: 3000,
-        });
+        notifySuccess(formData?.id ? "User Updated SuccessFully!":response.message);
         setFormData({
+          id:"",
           username: "",
           name: "",
           email: "",
@@ -107,10 +106,7 @@ function AddUserModal({ show, onHide, userData }) {
         throw new Error(response.message || "Something went wrong!");
       }
     } catch (error) {
-      toast.error(error.message || "Failed to register user.", {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      notifyError(error.message || "Failed to register user.",);
     } finally {
       setLoading(false);
     }
@@ -222,7 +218,6 @@ function AddUserModal({ show, onHide, userData }) {
           </Button>
         </Modal.Footer>
       </Form>
-      <ToastContainer />
 
     </Modal>
   );
