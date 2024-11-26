@@ -53,9 +53,9 @@ function Media() {
   const mediaPerPage = (10)
   const [hasMore, setHasMore] = useState(true);
 
-  const [uploadModalshow, setUploadModalshow] = useState(false);
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [filteredItems, setFilteredItems] = useState(mediaItems);
@@ -96,7 +96,7 @@ function Media() {
         setCurrentPage(resp?.list?.current_page);
         setHasMore(resp?.list?.next_page_url !== null);
 
-        setTimeout(() => handleUploadModalClose(), 3000);
+        setTimeout(() => handleClose(), 3000);
       } else {
         notifyError("Please try again.",);
       }
@@ -193,7 +193,7 @@ function Media() {
         setSelectedFile(null);
         setPreviewUrl("");
 
-        setTimeout(() => handleUploadModalClose(), 3000);
+        setTimeout(() => handleClose, 3000);
       } else {
         notifyError("Upload failed. Please try again.",);
       }
@@ -217,16 +217,9 @@ function Media() {
   const handleDelete = () => {
     deleteMedia(modalContent?.id)
   };
-  const openUploadModal = () =>{
-    setUploadModalshow(!uploadModalshow)
-  }
-  const handleUploadModalClose = () => {
-    setUploadModalshow(!uploadModalshow)
-  }
 
   return (
     <React.Fragment>
-
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
         <div className="">
           {/* Sidebar */}
@@ -248,7 +241,7 @@ function Media() {
                       text="Add New Media File"
                       className="btn btn-primary"
                       type="button"
-                      onClick={openUploadModal}
+                      onClick={handleShow}
                     >
                       Add New Media File
                     </Button>
@@ -434,11 +427,10 @@ function Media() {
                       )}
                     </div>
 
-
                   </div>
                   {/* uploadModal */}
                   {/* onHide={handleClose} OutSide click when modal close */}
-                  <Modal show={uploadModalshow} onHide={handleUploadModalClose} style={{ marginTop: '5%' }}>
+                  <Modal show={show} onHide={handleClose} style={{ marginTop: '5%' }}>
                     <Modal.Header closeButton>
                       <Modal.Title>Upload New Media</Modal.Title>
                     </Modal.Header>
@@ -579,7 +571,7 @@ function Media() {
                         className="btn-primary"
                         type="button"
                         variant="secondary"
-                        onClick={handleUploadModalClose}
+                        onClick={handleClose}
                       >
                         Close
                       </Button>
