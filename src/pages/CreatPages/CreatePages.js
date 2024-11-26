@@ -55,7 +55,7 @@ const CreatePages = () => {
 
     try {
       const formdata = new FormData();
-      formdata.append("file", selectedFile?.name);
+      formdata.append("file", selectedFile, selectedFile.name);
       formdata.append("type", documentType);
       formdata.append("year", postingYear);
 
