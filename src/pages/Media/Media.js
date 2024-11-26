@@ -188,18 +188,18 @@ function Media() {
       const resp = await MediaServices.MediaUpload(formData);
 
       if (resp?.status_code === 200) {
-        // notifySuccess(resp?.message,);
+        notifySuccess(resp?.message,);
 
         setSelectedFile(null);
         setPreviewUrl("");
 
         setTimeout(() => handleUploadModalClose(), 3000);
       } else {
-        // notifyError("Upload failed. Please try again.",);
+        notifyError("Upload failed. Please try again.",);
       }
     } catch (error) {
       console.error("Error uploading images:", error);
-      // notifyError("An error occurred during upload. Please try again.",);
+      notifyError("An error occurred during upload. Please try again.",);
     } finally {
       setUploadLoading(false);
     }
@@ -217,7 +217,7 @@ function Media() {
   const handleDelete = () => {
     deleteMedia(modalContent?.id)
   };
-  const openUploadModal = () => {
+  const openUploadModal = () =>{
     setUploadModalshow(!uploadModalshow)
   }
   const handleUploadModalClose = () => {
@@ -226,7 +226,6 @@ function Media() {
 
   return (
     <React.Fragment>
-      <ToastContainer />
 
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
         <div className="">
@@ -323,7 +322,7 @@ function Media() {
                   </nav>
                   <br />
                   <div className="container">
-
+            
                     <div
                       className="row p-2"
                       id="mediaItems"
