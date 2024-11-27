@@ -8,7 +8,9 @@ function AddUserModal({ show, onHide, userData }) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    id:"",
+    id: "",
+    first_name: "",
+    last_name: "",
     username: "",
     name: "",
     email: "",
@@ -16,19 +18,21 @@ function AddUserModal({ show, onHide, userData }) {
     password: "",
     confirmPassword: "",
     sendEmail: false,
-    status:''
+    status: ''
   });
 
   // Pre-fill form fields when userData changes
   useEffect(() => {
     if (userData) {
       setFormData({
-        id:userData?.id ? userData?.id :"",
+        id: userData?.id ? userData?.id : "",
+        first_name: userData?.first_name || "",
+        last_name: userData?.last_name || "",
         username: userData.username || "",
         email: userData.email || "",
         name: userData.name || "",
         role: userData.role || "Administrator",
-        status:userData.role || "Administrator",
+        status: userData.role || "Administrator",
         password: "",
         confirmPassword: "",
         sendEmail: false
@@ -45,8 +49,11 @@ function AddUserModal({ show, onHide, userData }) {
     });
   };
   const validateForm = () => {
-    if (!formData.username.trim()) return "Username is required.";
-    if (!formData.name.trim()) return "Name is required.";
+    if (!formData.first_name.trim()) return "FirstName is required.";
+    if (!formData.last_name.trim()) return "LastName is required.";
+
+    // if (!formData.username.trim()) return "Username is required.";
+    // if (!formData.name.trim()) return "Name is required.";
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
       return "A valid email address is required.";
     if (!formData.password.trim() || formData.password.length < 6)
@@ -71,23 +78,25 @@ function AddUserModal({ show, onHide, userData }) {
     console.log("formData", formData)
     try {
       const formdata = new FormData();
-      formdata.append("id", formData?.id ? formData?.id :"");
+      formdata.append("id", formData?.id ? formData?.id : "");
+      formdata.append("first_name", formData?.first_name);
+      formdata.append("last_name", formData?.last_name);
       formdata.append("email", formData?.email);
       formdata.append("password", formData?.password);
-      formdata.append("confirmPassword", formData?.confirmPassword);
-      formdata.append("username", formData?.username);
-      formdata.append("name", formData?.name);
+      formdata.append("confirm_password", formData?.confirmPassword);
+      // formdata.append("username", formData?.username);
+      // formdata.append("name", formData?.name);
       formdata.append("role", formData?.role);
       formdata.append("status", formData?.role);
       formdata.append("send_user_notification", "1");
       formdata.append("role_id", "");
       // Call API to register user
       const response = await AdminServices.addUser(formdata);
-      console.log("res",response)
+      console.log("res", response)
       if (response?.status_code === 200) {
-        notifySuccess(formData?.id ? "User Updated SuccessFully!":response.message);
+        notifySuccess(formData?.id ? "User Updated SuccessFully!" : "User Created SuccessFully");
         setFormData({
-          id:"",
+          id: "",
           username: "",
           name: "",
           email: "",
@@ -118,6 +127,27 @@ function AddUserModal({ show, onHide, userData }) {
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body style={{ height: 400, overflow: "auto" }}>
+          <Form.Group controlId="firstName" className="mb-3">
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="lastName" className="mb-3">
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
           {/* Username */}
           <Form.Group controlId="username" className="mb-3">
             <Form.Label>Username</Form.Label>
@@ -213,7 +243,7 @@ function AddUserModal({ show, onHide, userData }) {
           <Button variant="secondary" onClick={onHide}>
             Close
           </Button>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={userData}>
             {userData ? "Save Changes" : "Add User"}
           </Button>
         </Modal.Footer>
