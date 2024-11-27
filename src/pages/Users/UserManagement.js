@@ -18,6 +18,7 @@ const UserManagement = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [userData, setUserData] = useState([])
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+    const [filter, SetFilter] = useState("")
 
     const { state } = location;
     const status = state?.status || "all";
@@ -28,15 +29,29 @@ const UserManagement = () => {
         fetchAllUser()
 
     }, [])
+    useEffect(() => {
+        if(filter === "all"){
+            console.log("filter",filter)
+            fetchAllUser()
+        }else{
+            fetchAllUser(filter)
+        }
+    }, [filter])
+    
 
-    const fetchAllUser = async () => {
+    const fetchAllUser = async (data) => {
         setIsLoading(true);
         try {
-            const resp = await AdminServices.getAllUser();
+            const formData = new FormData();
+            if (filter && filter !== "all") formData.append("status", data);
+
+            const resp = await AdminServices.getAllUser({
+                body: formData,
+            });
             if (resp?.status_code === 200) {
                 console.log(resp);
 
-                setUserData(resp?.list || [])
+                setUserData(resp?.list?.data || [])
             } else {
                 notifyError("Please try again.",);
             }
@@ -126,6 +141,7 @@ const UserManagement = () => {
             setSelectedCheckboxes([]);
         }
     };
+
     const handleActionChange = async (action) => {
         if (action === "Delete") {
             try {
@@ -180,28 +196,32 @@ const UserManagement = () => {
 
                                 </div>
                                 <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
+                        
                                     <div className="col-md-4 p-1">
                                         <div className="custom-select-wrapper">
                                             <select
-                                                id="tableActions"
+                                                id="postCategories"
                                                 className="form-control custom-select"
-                                                value={''}
-                                            // onChange={(e) => {
-                                            //     setTableActions(e.target.value);
-                                            //     handleTableAction(e.target.value);
-                                            // }}
+                                                onChange={(e) => SetFilter(e.target.value)}
                                             >
-                                                <option value="">Change role to...</option>
+                                                <option value="all">All User...</option>
                                                 <option value="Administrator">Administrator</option>
                                                 <option value="Editor">Editor</option>
-                                                <option value="Author">Author</option>
-                                                <option value="Contributor">Contributor</option>
-                                                <option value="Subscriber">Subscriber</option>
+                                                <option value="Pending">Pending User</option>
+                                                <option value="User">Member/User</option>
                                             </select>
-
                                         </div>
-                                    </div>
+                                        {/* <div className="search-input-wrapper">
+                                            <Button
+                                                text="Perform Action"
+                                                // onClick={''}
+                                                className={"btn btn-primary me-2"}
+                                                type="button"
+                                                disabled={true}
+                                            />
 
+                                        </div> */}
+                                    </div>
                                     <div className="col-md-4 p-1">
                                         <div className="custom-select-wrapper">
                                             <select
@@ -210,25 +230,32 @@ const UserManagement = () => {
                                                 onChange={(e) => handleActionChange(e.target.value)}
                                             >
                                                 <option value="">User Action</option>
-                                                <option value="approve">Approve Membership</option>
-                                                <option value="reject">Reject Membership</option>
-                                                <option value="pending">Put as Pending Review</option>
-                                                <option value="resend">Resend Activation Email</option>
-                                                <option value="deactivate">Deactivate</option>
-                                                <option value="reactivate">Reactivate</option>
+                                                <option value="approve" disabled>Approve Membership</option>
+                                                <option value="reject" disabled>Reject Membership</option>
+                                                <option value="pending" disabled>Put as Pending Review</option>
+                                                <option value="resend" disabled>Resend Activation Email</option>
+                                                <option value="deactivate" disabled>Deactivate</option>
+                                                <option value="reactivate" disabled>Reactivate</option>
                                                 <option vlaue="Delete">Delete</option>
                                             </select>
                                         </div>
                                     </div>
-
                                     <div className="col-md-4 p-1">
-                                        <div className="search-input-wrapper">
-                                            <Button
-                                                text="Perform Action"
-                                                onClick={''}
-                                                className={"btn btn-primary me-2"}
-                                                type="button"
-                                            />
+                                        <div className="custom-select-wrapper">
+                                            <select
+                                                id="tableActions"
+                                                className="form-control custom-select"
+                                                value={''}
+                                                disabled={true}
+                                        
+                                            >
+                                                <option value="">Change role to...</option>
+                                                <option value="Administrator">Administrator</option>
+                                                <option value="Editor">Editor</option>
+                                                <option value="Author">Author</option>
+                                                <option value="Contributor">Contributor</option>
+                                                <option value="Subscriber">Subscriber</option>
+                                            </select>
 
                                         </div>
                                     </div>
@@ -295,7 +322,7 @@ const UserManagement = () => {
                                                 </tr>
                                             ))) : (
                                             <tr>
-                                                <td colSpan="5">No user available yet.</td>
+                                                <td colSpan="7">No user available yet.</td>
                                             </tr>
                                         )}
                                     </tbody>
