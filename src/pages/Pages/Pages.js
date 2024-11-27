@@ -364,6 +364,7 @@ const Pages = () => {
                               className="btn btn-primary btn-sm me-2"
                               type="button"
                               text="Edit"
+                              disabled={true}
                               onClick={redirectToCreatePage}
 
                             />
