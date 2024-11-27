@@ -12,6 +12,7 @@ const CreatePages = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [documentType, setDocumentType] = useState("publications");
   const [postingYear, setPostingYear] = useState("2024");
+  const [hedgeFundReportstypes, setHedgeFundReportstypes] = useState("monthlyPortfolioSummary");
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -47,6 +48,7 @@ const CreatePages = () => {
     setLoading(true);
 
     const validationError = validateForm(selectedFile, documentType, postingYear);
+
     if (validationError) {
       notifyError(validationError, { position: "top-center", autoClose: 3000 });
       setLoading(false);
@@ -58,7 +60,7 @@ const CreatePages = () => {
       formdata.append("file", selectedFile, selectedFile.name);
       formdata.append("type", documentType);
       formdata.append("year", postingYear);
-
+      formdata.append("hedge_fund_report_type",hedgeFundReportstypes)
       const resp = await PageServices.uploadPages(formdata);
 
       if (resp?.status_code === 200) {
@@ -86,12 +88,19 @@ const CreatePages = () => {
   const resetFormFields = () => {
     setSelectedFile(null);
     setDocumentType("publications");
-    setPostingYear("2024");
+    // setPostingYear("2024");
   };
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
+  const handldeDocumentUpdate =(e) =>{
+    console.log("e",e.target.value)
+    if(e.target.value !== "hedgeFundReports"){
+      setHedgeFundReportstypes("monthlyPortfolioSummary")
+    }
+    setDocumentType(e.target.value)
+  }
   useEffect(() => {
     console.log('component mounted');
   }, []);
@@ -123,7 +132,7 @@ const CreatePages = () => {
                         id="postType"
                         className="form-control custom-select"
                         value={documentType}
-                        onChange={(e) => setDocumentType(e.target.value)}
+                        onChange={(e) => handldeDocumentUpdate(e)}
                       >
                         <option value="publications">Publications</option>
                         <option value="hedgeFundReports">Hedge Fund Reports</option>
@@ -131,6 +140,29 @@ const CreatePages = () => {
                       </select>
                     </div>
                   </div>
+                  {documentType === "hedgeFundReports" && (
+                  <div className="col-md-4">
+                    <label htmlFor="HedgeFundReportstypes" className="col-form-label">
+                      Hedge Fund Reports types
+                    </label>
+                    <div className="custom-select-wrapper">
+                      <select
+                        id="HedgeFundReportstypes"
+                        className="form-control custom-select"
+                        value={hedgeFundReportstypes}
+                        onChange={(e) => setHedgeFundReportstypes(e.target.value)}
+                      >
+                        <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
+                        <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
+                        <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
+                        <option value="fundDocumentation">Fund Documentation</option>
+                        <option value="auditedFinancialStatements">Audited Financial Statements</option>
+
+                      </select>
+                    </div>
+                  </div>
+                  )}
+                  {/* {hedgeFundReportstypes === "monthlyPortfolioSummary" && ( */}
                   <div className="col-md-4">
                     <label htmlFor="postingYears" className="col-form-label">
                       Posting Years
