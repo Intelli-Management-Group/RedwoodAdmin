@@ -326,9 +326,9 @@ const Pages = () => {
                   <tbody>
                     {isLoading ? (
                       <>
-                        <Skeleton type="row" />
-                        <Skeleton type="row" />
-                        <Skeleton type="row" />
+                        <Skeleton type="row"columns={6} />
+                        <Skeleton type="row" columns={6}/>
+                        <Skeleton type="row" columns={6} />
                       </>
                     ) : page.length > 0 ? (
                       page.map((page) => (
