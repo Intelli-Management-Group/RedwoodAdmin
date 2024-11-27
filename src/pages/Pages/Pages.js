@@ -20,6 +20,7 @@ const Pages = () => {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [documentType, setDocumentType] = useState("");
   const [postingYear, setPostingYear] = useState("");
+  const [hedgeFundReportstypes, setHedgeFundReportstypes] = useState("");
   const [searchString, setSearchString] = useState("");
 
 
@@ -36,10 +37,10 @@ const Pages = () => {
   };
   useEffect(() => {
 
-    if (documentType || postingYear || searchString) {
-      fetchPagesWithFilter(currentPage, documentType, postingYear, searchString);
+    if (documentType || postingYear || searchString || hedgeFundReportstypes) {
+      fetchPagesWithFilter(currentPage, documentType, postingYear, hedgeFundReportstypes, searchString);
     }
-  }, [documentType, postingYear, searchString])
+  }, [documentType, postingYear, hedgeFundReportstypes, searchString])
 
   const logFormData = (formData) => {
     for (const [key, value] of formData.entries()) {
@@ -47,12 +48,13 @@ const Pages = () => {
     }
   };
 
-  const fetchPagesWithFilter = async (page, documentType, year, search) => {
+  const fetchPagesWithFilter = async (page, documentType, year, hedgeFundReportstypes, search) => {
     try {
       const formData = new FormData();
       if (documentType) formData.append("type", documentType);
       if (year) formData.append("year", year);
       if (search) formData.append("text", search);
+      if (hedgeFundReportstypes) formData.append("hedge_fund_report_type", hedgeFundReportstypes)
 
       logFormData(formData);
 
@@ -128,7 +130,7 @@ const Pages = () => {
       setLoading(false);
     }
   };
-  
+
   const handleActionChange = async (action) => {
     if (action === "Delete") {
       try {
@@ -243,6 +245,22 @@ const Pages = () => {
                   </div>
                   <div className="custom-select-wrapper col-md-3 p-1">
                     <select
+                      id="HedgeFundReportstypes"
+                      className="form-control custom-select"
+                      value={hedgeFundReportstypes}
+                      onChange={(e) => setHedgeFundReportstypes(e.target.value)}
+                    >
+                      <option value="">Hedge Fund Reports types</option>
+                      <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
+                      <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
+                      <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
+                      <option value="fundDocumentation">Fund Documentation</option>
+                      <option value="auditedFinancialStatements">Audited Financial Statements</option>
+
+                    </select>
+                  </div>
+                  <div className="custom-select-wrapper col-md-3 p-1">
+                    <select
                       id="postingYears"
                       className="form-control custom-select"
                       value={postingYear}
@@ -261,7 +279,7 @@ const Pages = () => {
                   </div>
 
 
-                  <div className="col-md-3 p-1">
+                  <div className="col-md-12 p-1">
                     <div className="search-input-wrapper">
                       <input
                         type="text"
@@ -299,7 +317,8 @@ const Pages = () => {
                         />
                       </th>
                       <th>Document Title</th>
-                      <th>Document types</th>
+                      <th>Category</th>
+                      <th>Reports types</th>
                       <th>Years</th>
                       <th>Actions</th>
                     </tr>
@@ -330,6 +349,13 @@ const Pages = () => {
                               : page.file_name.split('.').slice(0, -1).join('.')}
                           </td>
                           <td>{page.type}</td>
+                          <td>
+                            {(page?.hedge_fund_report_type === "monthlyPortfolioSummary" || page?.hedge_fund_report_type === null) && "Monthly Portfolio Summary"}
+                            {page?.hedge_fund_report_type === "quarterlyPerformanceAnalysis" && "Quarterly Performance Analysis"}
+                            {page?.hedge_fund_report_type === "quarterlyShareholderLetter" && "Quarterly Shareholder Letter"}
+                            {page?.hedge_fund_report_type === "fundDocumentation" && "Fund Documentation"}
+                            {page?.hedge_fund_report_type === "auditedFinancialStatements" && "Audited Financial Statements"}
+                          </td>
                           <td>{page.year}</td>
                           <td>
 
@@ -354,7 +380,7 @@ const Pages = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="5">No page available yet.</td>
+                        <td colSpan="6">No page available yet.</td>
                       </tr>
                     )}
                   </tbody>
