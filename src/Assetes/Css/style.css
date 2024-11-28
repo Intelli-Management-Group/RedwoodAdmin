@@ -645,3 +645,70 @@ video {
 }
 
 /* paginations */
+
+/* Horizontally images show */
+.file-upload-container {
+    padding: 20px;
+    /* max-width: 600px; */
+    margin: 0 auto;
+  }
+  
+  .dropzone-area {
+    border: 2px dashed #007bff;
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .file-preview {
+    margin-top: 20px;
+  }
+  
+  .preview-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .preview-images div {
+    position: relative; /* This is key for positioning the remove button */
+  }
+  
+  .cancleButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .cancleButton:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .preview-images img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
+  
+  .preview-images p {
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+  }
+  
+  .default-label {
+    text-align: center;
+    font-size: 16px;
+    margin-top: 20px;
+    color: #888;
+  }
+  
+/*  */

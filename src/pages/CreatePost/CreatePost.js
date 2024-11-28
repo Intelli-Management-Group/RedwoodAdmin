@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { Form, Alert } from 'react-bootstrap';
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { useDropzone } from 'react-dropzone';
+import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
+import { ToastContainer } from "react-toastify";
 
 
 
@@ -13,56 +16,93 @@ const CreatePost = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
-  const [thumbnail, setThumbnail] = useState(null);
   const [editorContent, setEditorContent] = useState('');
   const [defaultContent, setDefaultContent] = useState()
-
-  // const [description, setDescription] = useState()
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [draggedIndex, setDraggedIndex] = useState(null); 
 
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
-
-
-  // Handle thumbnail validation and setting
-  const handleThumbnailChange = (e) => {
-    const file = e.target.files[0];
-    if (file && ['image/jpeg', 'image/png'].includes(file.type)) {
-      setThumbnail(file);
-    } else {
-      alert('Invalid file type. Please upload a JPEG or PNG image.');
-      setThumbnail(null); // Clear the file
-    }
+  useEffect(() => {
+    console.log('component mounted');
+  }, []);
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
   };
+
+
+  const onDrop = (acceptedFiles) => {
+    setSelectedFiles(acceptedFiles);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: 'image/jpeg, image/png, image/jpg',
+    multiple: true,
+  });
+
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+
+    const updatedFiles = [...selectedFiles];
+    const draggedFile = updatedFiles[draggedIndex];
+    updatedFiles.splice(draggedIndex, 1);
+    updatedFiles.splice(index, 0, draggedFile);
+
+    setSelectedFiles(updatedFiles);
+    setDraggedIndex(null);
+  };
+  const handleRemoveFile = (index) => {
+    const updatedFiles = [...selectedFiles];
+    updatedFiles.splice(index, 1);
+    setSelectedFiles(updatedFiles);
+  };
+
+  const validateForm = (title, category, content,images) => {
+    if (!title || title.trim() === "") return "Title is required.";
+    if (!category || category.trim() === "") return "Category is required.";
+    if (!content || content.trim() === "") return "Content cannot be empty.";
+    if (!images || images.length === 0) return 'At least one file is required';
+    
+    return null;
+  };
+
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    const validationError = validateForm(title, editorContent, category,selectedFiles);
 
-    // Log content to the console
+    if (validationError) {
+      notifyError(validationError);
+      return;
+    }
+    
+
+    //  validation passes, log content to the console
     console.log('Post Content:', editorContent);
+    console.log('Post title:', title);
+    console.log('Post category:', category);
+    console.log('Post selectedFiles:', selectedFiles);
 
-    // Optionally, save content to local storage
-    localStorage.setItem('postContent', editorContent);
-
-    // Show success message and clear the form
-    setSuccessMessage('Post created successfully!');
-    setTitle('');
-    setCategory('');
-    setThumbnail(null);
-    setEditorContent('');
-
-    // Redirect to another page if desired
-    setTimeout(() => navigate('/post'), 5000);
+  
   };
 
 
-  const toggleSidebar = () => {
-    setIsSidebarVisible(!isSidebarVisible);
-  };
-  useEffect(() => {
-    console.log('component mounted');
-  }, []);
+
+
+ 
+
   const handleEditorChange = (data) => {
     console.log(data)
     var encodedString = encodeURIComponent(data);
@@ -71,11 +111,9 @@ const CreatePost = () => {
     setEditorContent(encodedString)
   };
 
-  // function CustomUploadAdapterPlugin(editor) {
-  //   editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-  //     return new UploadAdapter(loader);
-  //   };
-  // }
+
+
+
 
   return (
     <React.Fragment>
@@ -122,21 +160,90 @@ const CreatePost = () => {
                       </Form.Control>
                     </Form.Group>
 
+                    <div className="file-upload-container">
+                      {/* Dropzone area */}
+                      <div
+                        {...getRootProps()}  // Bind dropzone props to the container
+                        className="dropzone-area"
+                        style={{
+                          border: '2px dashed #007bff',
+                          padding: '20px',
+                          textAlign: 'center',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <input {...getInputProps()} />  {/* Hidden file input */}
+                        <p>Drag and drop some images here, or click to select files</p>
+                      </div>
 
+                      {/* Preview selected files */}
+                      {selectedFiles.length > 0 && (
+                        <div className="file-preview">
+                          <h4>Selected Files:</h4>
+                          <div className="preview-images" style={{ display: 'flex', marginTop: '10px' }}>
+                            {selectedFiles.map((file, index) => (
+                              <div
+                                key={index}
+                                style={{ position: 'relative', marginRight: '10px', cursor: 'move' }}
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, index)} // Trigger the drag start event
+                                onDragOver={handleDragOver} // Allow the item to be dragged over other items
+                                onDrop={(e) => handleDrop(e, index)} // Handle drop to update position
+                              >
+                                <img
+                                  src={URL.createObjectURL(file)} // Preview the image
+                                  alt={file.name}
+                                  style={{
+                                    width: '100px',
+                                    height: '100px',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                    marginBottom: '5px',
+                                    display: 'block', // Ensure the image behaves as a block element
+                                  }}
+                                />
+                                <button
+                                  className="cancleButton"
+                                  onClick={() => handleRemoveFile(index)} // Remove file when button clicked
+                                  style={{
+                                    position: 'absolute',
+                                    top: '5px',
+                                    right: '5px',
+                                    background: '#531515',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    padding: '5px',
+                                    cursor: 'pointer',
+                                    color: 'white',
+                                    zIndex: 10,  // Ensure the button stays on top
+                                  }}
+                                >
+                                  &#10005; {/* Close icon */}
+                                </button>
 
-                    <div controlId="postThumbnail" className="upload-box mt-5 mb-5"
-                      style={{ border: "3px dashed #007bff", padding: "20px", textAlign: "center", borderRadius: "5px" }}>
-                      <h4>drag and drop your post thumbnail image  here or click to upload</h4>
-                      <br />
-                      <Button
-                        text="Select Image"
-                        className="btn-primary"
-                        type="file"
-                        onChange={handleThumbnailChange}
-                        accept="image/jpeg, image/png"
-                      >Select image</Button>
-                      <div className="text-muted">Only JPEG/JPG and PNG are allowed.</div>
+                                {/* Set the first file as the thumbnail and label it */}
+                                {index === 0 && (
+                                  <p style={{ textAlign: 'center', fontSize: '12px', marginTop: '5px' }}>
+                                    Thumbnail Image
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Default image label */}
+                      {selectedFiles.length === 0 && (
+                        <div className="default-label">
+                          <p>No files selected. Please upload an image.</p>
+                        </div>
+                      )}
+
                     </div>
+
+
 
                     <Form.Group controlId="postContent" className="mb-3">
                       <Form.Label>Post Content</Form.Label>
@@ -168,24 +275,23 @@ const CreatePost = () => {
                       />
 
                     </Form.Group>
-
-
-                    <Button
-                      text="Create Post"
-                      // onClick={handleNavigations}
-                      className="btn btn-primary"
-                      type="submit"
-                    >
-                      Create Post
-                    </Button>
                   </Form>
+                  <Button
+                    text="Create Post"
+                    onClick={handleSubmit}
+                    className="btn btn-primary"
+                    type="submit"
+                  >
+                    Create Post
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </React.Fragment>
+        <ToastContainer/>
+      </div >
+    </React.Fragment >
   );
 };
 
