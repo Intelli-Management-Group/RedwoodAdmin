@@ -441,10 +441,10 @@ const UserManagement = () => {
                                                     <td>
                                                         {user.status === "approve" && "Approve"}
                                                         {user.status === "pending" && "Pending"}
-                                                        {user.status === "rejected" && "Rejected"}
+                                                        {user.status === "reject" && "Rejected"}
                                                         {user.status === "deactivate" && "Deactivate"}
 
-                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
+                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "reject") && "Unknown Status"}
                                                   
                                                     </td>
                                                     <td>
