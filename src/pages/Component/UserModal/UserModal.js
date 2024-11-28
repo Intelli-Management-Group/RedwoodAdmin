@@ -243,7 +243,7 @@ function AddUserModal({ show, onHide, userData }) {
           <Button variant="secondary" onClick={onHide}>
             Close
           </Button>
-          <Button type="submit" variant="primary" disabled={userData}>
+          <Button type="submit" variant="primary" >
             {userData ? "Save Changes" : "Add User"}
           </Button>
         </Modal.Footer>
