@@ -10,8 +10,8 @@ const AdminServices = {
       getUserWiseCount:async() => {
         return requests.get("/user/count-by-status", );
       },
-      getAllUser:async({body}) =>{
-        return requests.post("/user/list",body );
+      getAllUser:async ({ page, perPageRecords, body }) => {
+        return requests.post(`/user/list?page=${page}&pageSize=${perPageRecords}`,body );
       },
       userDelete: async (id) => {
         return requests.get(`/user/${id}/delete`);
