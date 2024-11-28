@@ -10,12 +10,14 @@ import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AdminServices from "../../Services/AdminServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Pagination from "react-js-pagination";
+import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
 
 const UserManagement = () => {
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(true);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
+    const [isConfiremdModalVisible, setIsConfiremdModalVisible] = useState(false); // State to control modal visibility
     const [currentPage, setCurrentPage] = useState(1);
     const perPageRecords = (10)
     const [totalRecords, setTotalRecords] = useState()
@@ -23,6 +25,8 @@ const UserManagement = () => {
     const [userData, setUserData] = useState([])
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
     const [filter, SetFilter] = useState("")
+    const [deletedItemId,setDeletedItemId] = useState("")
+    const [action,setAction] = useState("")
 
     const { state } = location;
     const status = state?.status || "all";
@@ -43,19 +47,17 @@ const UserManagement = () => {
     }, [filter])
 
 
-    const fetchAllUser = async (pageNumbers,data) => {
-        console.log("pageNumbers",pageNumbers)
-        console.log("data",data)
+    const fetchAllUser = async (pageNumbers, data) => {
         setIsLoading(true);
         try {
             const formData = new FormData();
             if (filter && filter !== "all") formData.append("status", data);
 
             const resp = await AdminServices.getAllUser({
-                page: pageNumbers ? pageNumbers: currentPage,
+                page: pageNumbers ? pageNumbers : currentPage,
                 perPageRecords,
                 body: formData,
-              });
+            });
             if (resp?.status_code === 200) {
                 console.log(resp);
 
@@ -98,8 +100,36 @@ const UserManagement = () => {
     })
 
     const handleDelete = (id) => {
-        console.log("page.id", id)
-        deleteUser(id)
+        setIsConfiremdModalVisible(true)
+        setDeletedItemId(id)
+        // deleteUser(id)
+    };
+    const handleConfirmDelete = () => {
+        if(deletedItemId){
+            deleteUser(deletedItemId)
+        }else{
+            multipleDeleteUser()
+        }
+        clearSelectedCheckboxes();
+        setIsConfiremdModalVisible(false);
+        setTimeout(() => {
+            setDeletedItemId()
+        }, 2000)
+        
+    };
+
+    const handleCancelDelete = () => {
+      
+        setDeletedItemId()
+        clearSelectedCheckboxes();
+        setIsConfiremdModalVisible(false);
+        setSelectedCheckboxes([]);
+        setAction("")
+
+    };
+    const clearSelectedCheckboxes = () => {
+        const checkboxes = document.querySelectorAll(".user-select");
+        checkboxes.forEach((checkbox) => (checkbox.checked = false));
     };
 
     const deleteUser = async (id) => {
@@ -122,15 +152,31 @@ const UserManagement = () => {
         } finally {
             setIsLoading(false);
         }
-        const handleCheckboxChange = (pageId, isChecked) => {
-            if (isChecked) {
-                setSelectedCheckboxes((prev) => [...prev, pageId]);
+    };
+
+    const multipleDeleteUser = async (id) => {
+        try {
+            const formData = new FormData();
+            const idsAsString = selectedCheckboxes.join(",");
+            formData.append("ids", idsAsString);
+            const resp = await AdminServices.multipleDeleteUser(formData);
+            if (resp?.status_code === 200) {
+                notifySuccess(resp?.message,);
+                setTimeout(() =>
+                    setIsLoading(true),
+                    fetchAllUser(),
+                    3000);
+
             } else {
-                setSelectedCheckboxes((prev) =>
-                    prev.filter((id) => id !== pageId)
-                );
+                notifyError("Please try again.",);
             }
-        };
+           
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
+        }
     };
     const handleCheckboxChange = (pageId, isChecked) => {
         if (isChecked) {
@@ -154,32 +200,34 @@ const UserManagement = () => {
     };
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        fetchAllUser(pageNumber,filter)
+        fetchAllUser(pageNumber, filter)
     };
 
     const handleActionChange = async (action) => {
+        setAction(action)
         if (action === "Delete") {
             try {
                 if (selectedCheckboxes.length === 0) {
                     notifyError("No items selected for deletion.");
                     return;
                 }
+                setIsConfiremdModalVisible(true);
                 const formData = new FormData();
 
                 const idsAsString = selectedCheckboxes.join(",");
 
                 formData.append("ids", idsAsString);
-                const resp = await AdminServices.multipleDeleteUser(formData);
-                if (resp?.status_code === 200) {
-                    notifySuccess(resp?.message,);
-                    setTimeout(() =>
-                        setIsLoading(true),
-                        fetchAllUser(),
-                        3000);
+                // const resp = await AdminServices.multipleDeleteUser(formData);
+                // if (resp?.status_code === 200) {
+                //     notifySuccess(resp?.message,);
+                //     setTimeout(() =>
+                //         setIsLoading(true),
+                //         fetchAllUser(),
+                //         3000);
 
-                } else {
-                    notifyError("Please try again.",);
-                }
+                // } else {
+                //     notifyError("Please try again.",);
+                // }
             } catch (error) {
                 console.error("Error uploading images:", error);
                 notifyError("An error occurred during fetch Data. Please try again.",);
@@ -242,6 +290,7 @@ const UserManagement = () => {
                                             <select
                                                 id="postCategories"
                                                 className="form-control custom-select"
+                                                value={action}
                                                 onChange={(e) => handleActionChange(e.target.value)}
                                             >
                                                 <option value="">User Action</option>
@@ -361,6 +410,14 @@ const UserManagement = () => {
                             show={isModalVisible}
                             onHide={() => setIsModalVisible(false)}
                             userData={selectedUser}
+                        />
+
+                        <ConfirmationDialog
+                            isVisible={isConfiremdModalVisible}
+                            title="Confirm Deletion"
+                            message="Are you sure you want to delete this item? This action cannot be undone."
+                            onConfirm={handleConfirmDelete}
+                            onCancel={handleCancelDelete}
                         />
                     </div>
                 </div>
