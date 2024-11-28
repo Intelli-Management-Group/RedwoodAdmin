@@ -9,12 +9,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AdminServices from "../../Services/AdminServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
+import Pagination from "react-js-pagination";
 
 const UserManagement = () => {
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(true);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
+    const [currentPage, setCurrentPage] = useState(1);
+    const perPageRecords = (10)
+    const [totalRecords, setTotalRecords] = useState()
     const [selectedUser, setSelectedUser] = useState(null);
     const [userData, setUserData] = useState([])
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
@@ -30,28 +34,35 @@ const UserManagement = () => {
 
     }, [])
     useEffect(() => {
-        if(filter === "all"){
-            console.log("filter",filter)
+        if (filter === "all") {
+            console.log("filter", filter)
             fetchAllUser()
-        }else{
+        } else {
             fetchAllUser(filter)
         }
     }, [filter])
-    
 
-    const fetchAllUser = async (data) => {
+
+    const fetchAllUser = async (pageNumbers,data) => {
+        console.log("pageNumbers",pageNumbers)
+        console.log("data",data)
         setIsLoading(true);
         try {
             const formData = new FormData();
             if (filter && filter !== "all") formData.append("status", data);
 
             const resp = await AdminServices.getAllUser({
+                page: pageNumbers ? pageNumbers: currentPage,
+                perPageRecords,
                 body: formData,
-            });
+              });
             if (resp?.status_code === 200) {
                 console.log(resp);
 
                 setUserData(resp?.list?.data || [])
+                setTotalRecords(resp?.list?.total)
+                setCurrentPage(resp?.list?.current_page);
+
             } else {
                 notifyError("Please try again.",);
             }
@@ -141,6 +152,10 @@ const UserManagement = () => {
             setSelectedCheckboxes([]);
         }
     };
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        fetchAllUser(pageNumber,filter)
+    };
 
     const handleActionChange = async (action) => {
         if (action === "Delete") {
@@ -196,7 +211,7 @@ const UserManagement = () => {
 
                                 </div>
                                 <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
-                        
+
                                     <div className="col-md-4 p-1">
                                         <div className="custom-select-wrapper">
                                             <select
@@ -247,7 +262,7 @@ const UserManagement = () => {
                                                 className="form-control custom-select"
                                                 value={''}
                                                 disabled={true}
-                                        
+
                                             >
                                                 <option value="">Change role to...</option>
                                                 <option value="Administrator">Administrator</option>
@@ -327,6 +342,18 @@ const UserManagement = () => {
                                         )}
                                     </tbody>
                                 </table>
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        activePage={currentPage}
+                                        itemsCountPerPage={perPageRecords}
+                                        totalItemsCount={totalRecords}
+                                        pageRangeDisplayed={5}
+                                        onChange={handlePageChange}
+                                        itemClass="custom-page-item"
+                                        linkClass="custom-page-link"
+                                        activeClass="custom-active"
+                                    />
+                                </div>
                             </div>
                         </div>
                         {/* <AddUserModal isOpen={isModalVisible} onHide={closeModal} UserData={selectedUser}/> */}
