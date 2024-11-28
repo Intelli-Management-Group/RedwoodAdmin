@@ -32,14 +32,15 @@ const Home = () => {
 
                 if (response?.status_code === 200) {
                     const { token,user } = response;
-
+                    if(user?.role === "admin") {
                     localStorage.setItem("authToken", token);
                     localStorage.setItem('userData', JSON.stringify(user));
-
                     login();
-
                     notifySuccess("Login successful!");
                     setTimeout(() => navigate("/dashboard"), 1500);
+                    }else{
+                        notifyError(`${user?.email} is not authenticated to access the Admin site.`);
+                    }
                 } else {
                     notifyError(response?.message || "Invalid email or password",);
                 }
