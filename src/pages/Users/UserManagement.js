@@ -25,9 +25,9 @@ const UserManagement = () => {
     const [userData, setUserData] = useState([])
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
     const [filter, SetFilter] = useState("")
-    const [deletedItemId,setDeletedItemId] = useState("")
-    const [action,setAction] = useState("")
-    const [roleAction,setRoleAction] = useState("")
+    const [deletedItemId, setDeletedItemId] = useState("")
+    const [action, setAction] = useState("")
+    const [roleAction, setRoleAction] = useState("")
 
     const { state } = location;
     const status = state?.status || "all";
@@ -43,7 +43,7 @@ const UserManagement = () => {
             console.log("filter", filter)
             fetchAllUser()
         } else {
-            fetchAllUser(1,filter)
+            fetchAllUser(1, filter)
         }
     }, [filter])
 
@@ -84,14 +84,14 @@ const UserManagement = () => {
     };
 
     const openUserModal = (user) => {
-        setSelectedUser(user); 
+        setSelectedUser(user);
         setIsModalVisible(true);
     };
 
     // Function to close the modal
     const closeUserModal = () => {
-        setIsModalVisible(false); 
-        setSelectedUser(null); 
+        setIsModalVisible(false);
+        setSelectedUser(null);
     };
     useEffect(() => {
         setTimeout(() => {
@@ -105,9 +105,9 @@ const UserManagement = () => {
         // deleteUser(id)
     };
     const handleConfirmDelete = () => {
-        if(deletedItemId){
+        if (deletedItemId) {
             deleteUser(deletedItemId)
-        }else{
+        } else {
             multipleDeleteUser()
         }
         clearSelectedCheckboxes();
@@ -115,7 +115,7 @@ const UserManagement = () => {
         setTimeout(() => {
             setDeletedItemId()
         }, 2000)
-        
+
     };
 
     const handleCancelDelete = () => {
@@ -157,7 +157,7 @@ const UserManagement = () => {
         try {
             const formData = new FormData();
             const idsAsString = selectedCheckboxes.join(",");
-            formData.append("ids", idsAsString);            
+            formData.append("ids", idsAsString);
             const resp = await AdminServices.multipleDeleteUser(formData);
             if (resp?.status_code === 200) {
                 notifySuccess(resp?.message,);
@@ -170,7 +170,7 @@ const UserManagement = () => {
             } else {
                 notifyError("Please try again.",);
             }
-           
+
         } catch (error) {
             console.error("Error uploading images:", error);
             notifyError("An error occurred during fetch Data. Please try again.",);
@@ -206,9 +206,9 @@ const UserManagement = () => {
     const handleActionChange = async (action) => {
         console.log("Selected Action:", action); // Debugging log for selected action
         setAction(action); // Update the state with the selected action
-    
+
         try {
-            if (action === "delete") {
+            if (action === "Delete") {
                 if (selectedCheckboxes.length === 0) {
                     notifyError("No items selected for deletion."); // Show error if no checkboxes are selected
                     return;
@@ -222,7 +222,7 @@ const UserManagement = () => {
                 }
                 // console.log("Updating status for selected users:", selectedCheckboxes);
                 await updateStatus(selectedCheckboxes, action);
-            } 
+            }
             // else if (action === "resend") {
             //     notifyError("The 'Resend Activation Email' option is disabled.");
             // } else if (action === "pending") {
@@ -235,10 +235,10 @@ const UserManagement = () => {
             console.error("Error handling action:", error);
             notifyError("An error occurred while processing the action. Please try again.");
         } finally {
-            setIsLoading(false); 
+            setIsLoading(false);
         }
     };
-    
+
     const updateStatus = async (ids, status) => {
         console.log("here")
         try {
@@ -258,7 +258,7 @@ const UserManagement = () => {
             } else {
                 notifyError("Please try again.",);
             }
-           
+
         } catch (error) {
             console.error("Error uploading images:", error);
             notifyError("An error occurred during fetch Data. Please try again.",);
@@ -266,7 +266,7 @@ const UserManagement = () => {
             setIsLoading(false);
         }
     };
-    const updateRoles= async (ids, role) => {
+    const updateRoles = async (ids, role) => {
         console.log("here")
         try {
             const formData = new FormData();
@@ -285,7 +285,7 @@ const UserManagement = () => {
             } else {
                 notifyError("Please try again.",);
             }
-           
+
         } catch (error) {
             console.error("Error uploading images:", error);
             notifyError("An error occurred during fetch Data. Please try again.",);
@@ -358,7 +358,7 @@ const UserManagement = () => {
                                                 <option value="reject">Reject User</option>
                                                 <option value="deactivate">Deactivate</option>
                                                 <option value="approve">Reactivate</option>
-                                                <option vlaue="delete">Delete</option>
+                                                <option vlaue="Delete">Delete</option>
 
                                                 <option value="pending" disabled>Put as Pending Review</option>
                                                 <option value="resend" disabled>Resend Activation Email</option>
@@ -372,7 +372,7 @@ const UserManagement = () => {
                                                 className="form-control custom-select"
                                                 value={roleAction}
                                                 onChange={(e) => handleRoleChange(e.target.value)}
-                                            
+
 
                                             >
                                                 <option value="">Change role to...</option>
@@ -432,8 +432,21 @@ const UserManagement = () => {
                                                     <td>{user.username}</td>
                                                     <td>{user.name}</td>
                                                     <td>{user.email}</td>
-                                                    <td>{user.role}</td>
-                                                    <td>{user.status}</td>
+                                                    <td>
+                                                        {user.role === "user" && "User"}
+                                                        {user.role === "admin" && "Admin"}
+                                                        {user.role === "siteAdmin" && "Site Admin"}
+                                                        {!(user.role === "user" || user.role === "admin" || user.role === "siteAdmin") && "Unknown"}
+                                                    </td>
+                                                    <td>
+                                                        {user.status === "approve" && "Approve"}
+                                                        {user.status === "pending" && "Pending"}
+                                                        {user.status === "rejected" && "Rejected"}
+                                                        {user.status === "deactivate" && "Deactivate"}
+
+                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
+                                                  
+                                                    </td>
                                                     <td>
                                                         <button className="btn btn-sm btn-primary" onClick={() => openUserModal(user)}>
                                                             <FontAwesomeIcon icon={faPencilSquare} size="lg" />
