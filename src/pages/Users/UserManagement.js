@@ -215,7 +215,7 @@ const UserManagement = () => {
                 }
                 setIsConfiremdModalVisible(true);
                 console.log("Deleting selected users:", selectedCheckboxes);
-            } else if (["approve", "reject", "deactivate",].includes(action)) {
+            } else if (["approve", "rejected", "deactivate",].includes(action)) {
                 if (selectedCheckboxes.length === 0) {
                     notifyError("No users selected for this action.");
                     return;
@@ -326,7 +326,7 @@ const UserManagement = () => {
                                             >
                                                 <option value="all">Filter User...</option>
                                                 <option value="approve">Approve User</option>
-                                                <option value="reject">Reject User</option>
+                                                <option value="rejected">Reject User</option>
                                                 <option value="deactivate">Deactivate</option>
                                                 <option value="approve">Reactivate</option>
                                                 <option value="pending" disabled>Put as Pending Review</option>
@@ -355,7 +355,7 @@ const UserManagement = () => {
                                             >
                                                 <option value="">User Action</option>
                                                 <option value="approve">Approve User</option>
-                                                <option value="reject">Reject User</option>
+                                                <option value="rejected">Reject User</option>
                                                 <option value="deactivate">Deactivate</option>
                                                 <option value="approve">Reactivate</option>
                                                 <option vlaue="Delete">Delete</option>
@@ -441,10 +441,10 @@ const UserManagement = () => {
                                                     <td>
                                                         {user.status === "approve" && "Approve"}
                                                         {user.status === "pending" && "Pending"}
-                                                        {user.status === "reject" && "Rejected"}
+                                                        {user.status === "rejected" && "Rejected"}
                                                         {user.status === "deactivate" && "Deactivate"}
 
-                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "reject") && "Unknown Status"}
+                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
                                                   
                                                     </td>
                                                     <td>
