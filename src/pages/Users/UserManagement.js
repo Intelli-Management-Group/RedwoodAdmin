@@ -201,6 +201,10 @@ const UserManagement = () => {
         fetchAllUser(pageNumber, filter)
     };
     const handleRoleChange = async (action) => {
+        if (selectedCheckboxes.length === 0) {
+            notifyError("No Users selected for Role Update.");
+            return;
+        }
         await updateRoles(selectedCheckboxes, action);
     }
     const handleActionChange = async (action) => {
