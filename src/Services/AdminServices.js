@@ -18,7 +18,12 @@ const AdminServices = {
       },
       multipleDeleteUser:async (body) =>{
         return requests.post(`/user/multiple-delete`,body);
-    
+      },
+      userUpdateStatus:async (body) =>{
+        return requests.post(`/user/bulk-status-change`,body);
+      },
+      userUpdateRoles:async (body) =>{
+        return requests.post(`/user/bulk-role-change`,body);
       }
 
 }

@@ -31,8 +31,8 @@ function AddUserModal({ show, onHide, userData }) {
         username: userData.username || "",
         email: userData.email || "",
         name: userData.name || "",
-        role: userData.role || "Administrator",
-        status: userData.role || "Administrator",
+        role: userData.role || "user",
+        status: userData.status || "approve",
         password: "",
         confirmPassword: "",
         sendEmail: false
@@ -52,7 +52,7 @@ function AddUserModal({ show, onHide, userData }) {
     if (!formData.first_name.trim()) return "FirstName is required.";
     if (!formData.last_name.trim()) return "LastName is required.";
 
-    // if (!formData.username.trim()) return "Username is required.";
+    if (!formData.username.trim()) return "Username is required.";
     // if (!formData.name.trim()) return "Name is required.";
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
       return "A valid email address is required.";
@@ -84,10 +84,10 @@ function AddUserModal({ show, onHide, userData }) {
       formdata.append("email", formData?.email);
       formdata.append("password", formData?.password);
       formdata.append("confirm_password", formData?.confirmPassword);
-      // formdata.append("username", formData?.username);
+      formdata.append("username", formData?.username);
       // formdata.append("name", formData?.name);
-      formdata.append("role", formData?.role);
-      formdata.append("status", formData?.role);
+      formdata.append("role",formData?.id ? formData?.role : 'user');
+      formdata.append("status", formData?.id ? formData?.status : "approve");
       formdata.append("send_user_notification", "1");
       formdata.append("role_id", "");
       // Call API to register user
@@ -121,8 +121,8 @@ function AddUserModal({ show, onHide, userData }) {
     }
   };
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
+    <Modal show={show}  centered>
+      <Modal.Header >
         <Modal.Title>{userData ? "Edit User" : "Add User"}</Modal.Title>
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
@@ -160,7 +160,7 @@ function AddUserModal({ show, onHide, userData }) {
             />
           </Form.Group>
           {/* Name */}
-          <Form.Group controlId="name" className="mb-3">
+          {/* <Form.Group controlId="name" className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control
               type="text"
@@ -169,7 +169,7 @@ function AddUserModal({ show, onHide, userData }) {
               onChange={handleChange}
               required
             />
-          </Form.Group>
+          </Form.Group> */}
 
           {/* Email */}
           <Form.Group controlId="email" className="mb-3">
@@ -195,14 +195,33 @@ function AddUserModal({ show, onHide, userData }) {
               onChange={handleChange}
               required
             >
-              <option value="Administrator">Administrator</option>
-              <option value="Editor">Editor</option>
-              <option value="User">Member/USer</option>
+              <option value="admin">Admin</option>
+              <option value="siteAdmin">Site Admin</option>
+              <option value="user">User</option>
 
               {/* Add other roles here */}
             </Form.Control>
           </Form.Group>
+          {userData && (
+          <Form.Group controlId="role" className="mb-3">
+            <Form.Label>User Status</Form.Label>
+            <Form.Control
+              as="select"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              // required
+            >
+              <option value="pending">Pending</option>
+              <option value="approve">Approve</option>
+              <option value="rejected">Rejected</option>
+              <option value="inActive">Inactive</option>
 
+
+              {/* Add other roles here */}
+            </Form.Control>
+          </Form.Group>
+          )}
           {/* Password */}
           <Form.Group controlId="password" className="mb-3">
             <Form.Label>Password</Form.Label>

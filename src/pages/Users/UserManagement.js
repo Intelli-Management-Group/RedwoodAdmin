@@ -27,6 +27,7 @@ const UserManagement = () => {
     const [filter, SetFilter] = useState("")
     const [deletedItemId,setDeletedItemId] = useState("")
     const [action,setAction] = useState("")
+    const [roleAction,setRoleAction] = useState("")
 
     const { state } = location;
     const status = state?.status || "all";
@@ -42,7 +43,7 @@ const UserManagement = () => {
             console.log("filter", filter)
             fetchAllUser()
         } else {
-            fetchAllUser(filter)
+            fetchAllUser(1,filter)
         }
     }, [filter])
 
@@ -82,16 +83,15 @@ const UserManagement = () => {
         setIsModalVisible(false);
     };
 
-    // const filteredUsers = dummyUsers.filter((user) => status === "all" || user.status === status);
     const openUserModal = (user) => {
-        setSelectedUser(user); // Set the user to be edited
-        setIsModalVisible(true); // Show the modal
+        setSelectedUser(user); 
+        setIsModalVisible(true);
     };
 
     // Function to close the modal
     const closeUserModal = () => {
-        setIsModalVisible(false); // Hide the modal
-        setSelectedUser(null); // Clear the selected user data
+        setIsModalVisible(false); 
+        setSelectedUser(null); 
     };
     useEffect(() => {
         setTimeout(() => {
@@ -119,7 +119,6 @@ const UserManagement = () => {
     };
 
     const handleCancelDelete = () => {
-      
         setDeletedItemId()
         clearSelectedCheckboxes();
         setIsConfiremdModalVisible(false);
@@ -158,13 +157,14 @@ const UserManagement = () => {
         try {
             const formData = new FormData();
             const idsAsString = selectedCheckboxes.join(",");
-            formData.append("ids", idsAsString);
+            formData.append("ids", idsAsString);            
             const resp = await AdminServices.multipleDeleteUser(formData);
             if (resp?.status_code === 200) {
                 notifySuccess(resp?.message,);
                 setTimeout(() =>
                     setIsLoading(true),
                     fetchAllUser(),
+                    setAction(""),
                     3000);
 
             } else {
@@ -190,11 +190,9 @@ const UserManagement = () => {
 
     const handleSelectAll = (isChecked) => {
         if (isChecked) {
-            // Select all
             const allPostIds = userData.map((post) => post.id);
             setSelectedCheckboxes(allPostIds);
         } else {
-            // Deselect all
             setSelectedCheckboxes([]);
         }
     };
@@ -202,38 +200,97 @@ const UserManagement = () => {
         setCurrentPage(pageNumber);
         fetchAllUser(pageNumber, filter)
     };
-
+    const handleRoleChange = async (action) => {
+        await updateRoles(selectedCheckboxes, action);
+    }
     const handleActionChange = async (action) => {
-        setAction(action)
-        if (action === "Delete") {
-            try {
+        console.log("Selected Action:", action); // Debugging log for selected action
+        setAction(action); // Update the state with the selected action
+    
+        try {
+            if (action === "delete") {
                 if (selectedCheckboxes.length === 0) {
-                    notifyError("No items selected for deletion.");
+                    notifyError("No items selected for deletion."); // Show error if no checkboxes are selected
                     return;
                 }
                 setIsConfiremdModalVisible(true);
-                const formData = new FormData();
-
-                const idsAsString = selectedCheckboxes.join(",");
-
-                formData.append("ids", idsAsString);
-                // const resp = await AdminServices.multipleDeleteUser(formData);
-                // if (resp?.status_code === 200) {
-                //     notifySuccess(resp?.message,);
-                //     setTimeout(() =>
-                //         setIsLoading(true),
-                //         fetchAllUser(),
-                //         3000);
-
-                // } else {
-                //     notifyError("Please try again.",);
-                // }
-            } catch (error) {
-                console.error("Error uploading images:", error);
-                notifyError("An error occurred during fetch Data. Please try again.",);
-            } finally {
-                setIsLoading(false);
+                console.log("Deleting selected users:", selectedCheckboxes);
+            } else if (["approve", "reject", "deactivate",].includes(action)) {
+                if (selectedCheckboxes.length === 0) {
+                    notifyError("No users selected for this action.");
+                    return;
+                }
+                // console.log("Updating status for selected users:", selectedCheckboxes);
+                await updateStatus(selectedCheckboxes, action);
+            } 
+            // else if (action === "resend") {
+            //     notifyError("The 'Resend Activation Email' option is disabled.");
+            // } else if (action === "pending") {
+            //     notifyError("The 'Put as Pending Review' option is disabled.");
+            // } 
+            else {
+                console.warn("Unhandled action selected:", action);
             }
+        } catch (error) {
+            console.error("Error handling action:", error);
+            notifyError("An error occurred while processing the action. Please try again.");
+        } finally {
+            setIsLoading(false); 
+        }
+    };
+    
+    const updateStatus = async (ids, status) => {
+        console.log("here")
+        try {
+            const formData = new FormData();
+            const idsAsString = ids.join(",");
+            formData.append("ids", idsAsString);
+            formData.append("status", status);
+            const resp = await AdminServices.userUpdateStatus(formData);
+            if (resp?.status_code === 200) {
+                notifySuccess(resp?.message,);
+                setTimeout(() =>
+                    setIsLoading(true),
+                    fetchAllUser(),
+                    setAction(""),
+                    3000);
+
+            } else {
+                notifyError("Please try again.",);
+            }
+           
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    const updateRoles= async (ids, role) => {
+        console.log("here")
+        try {
+            const formData = new FormData();
+            const idsAsString = ids.join(",");
+            formData.append("ids", idsAsString);
+            formData.append("role", role);
+            const resp = await AdminServices.userUpdateRoles(formData);
+            if (resp?.status_code === 200) {
+                notifySuccess(resp?.message,);
+                setTimeout(() =>
+                    setIsLoading(true),
+                    fetchAllUser(),
+                    setRoleAction(""),
+                    3000);
+
+            } else {
+                notifyError("Please try again.",);
+            }
+           
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
         }
     };
     const areAllSelected =
@@ -267,11 +324,14 @@ const UserManagement = () => {
                                                 className="form-control custom-select"
                                                 onChange={(e) => SetFilter(e.target.value)}
                                             >
-                                                <option value="all">All User...</option>
-                                                <option value="Administrator">Administrator</option>
-                                                <option value="Editor">Editor</option>
-                                                <option value="Pending">Pending User</option>
-                                                <option value="User">Member/User</option>
+                                                <option value="all">Filter User...</option>
+                                                <option value="approve">Approve User</option>
+                                                <option value="reject">Reject User</option>
+                                                <option value="deactivate">Deactivate</option>
+                                                <option value="approve">Reactivate</option>
+                                                <option value="pending" disabled>Put as Pending Review</option>
+                                                <option value="resend" disabled>Resend Activation Email</option>
+                                                {/* <option value="User">Member/User</option> */}
                                             </select>
                                         </div>
                                         {/* <div className="search-input-wrapper">
@@ -294,13 +354,14 @@ const UserManagement = () => {
                                                 onChange={(e) => handleActionChange(e.target.value)}
                                             >
                                                 <option value="">User Action</option>
-                                                <option value="approve" disabled>Approve Membership</option>
-                                                <option value="reject" disabled>Reject Membership</option>
+                                                <option value="approve">Approve User</option>
+                                                <option value="reject">Reject User</option>
+                                                <option value="deactivate">Deactivate</option>
+                                                <option value="approve">Reactivate</option>
+                                                <option vlaue="delete">Delete</option>
+
                                                 <option value="pending" disabled>Put as Pending Review</option>
                                                 <option value="resend" disabled>Resend Activation Email</option>
-                                                <option value="deactivate" disabled>Deactivate</option>
-                                                <option value="reactivate" disabled>Reactivate</option>
-                                                <option vlaue="Delete">Delete</option>
                                             </select>
                                         </div>
                                     </div>
@@ -309,16 +370,17 @@ const UserManagement = () => {
                                             <select
                                                 id="tableActions"
                                                 className="form-control custom-select"
-                                                value={''}
-                                                disabled={true}
+                                                value={roleAction}
+                                                onChange={(e) => handleRoleChange(e.target.value)}
+                                            
 
                                             >
                                                 <option value="">Change role to...</option>
-                                                <option value="Administrator">Administrator</option>
-                                                <option value="Editor">Editor</option>
-                                                <option value="Author">Author</option>
-                                                <option value="Contributor">Contributor</option>
-                                                <option value="Subscriber">Subscriber</option>
+                                                <option value="admin">Admin</option>
+                                                <option value="siteAdmin">Site Admin</option>
+                                                <option value="user">User</option>
+                                                <option value="Contributor" disabled>Contributor</option>
+                                                <option value="Subscriber" disabled>Subscriber</option>
                                             </select>
 
                                         </div>
