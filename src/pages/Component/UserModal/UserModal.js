@@ -15,7 +15,7 @@ function AddUserModal({ show, onHide, userData }) {
     username: "",
     name: "",
     email: "",
-    role: "User",
+    role: "",
     password: "",
     confirmPassword: "",
     sendEmail: false,
@@ -32,7 +32,7 @@ function AddUserModal({ show, onHide, userData }) {
         username: userData.username || "",
         email: userData.email || "",
         name: userData.name || "",
-        role: userData.role || "user",
+        role: userData.role || "",
         status: userData.status || "approve",
         password: "",
         confirmPassword: "",
@@ -87,7 +87,7 @@ function AddUserModal({ show, onHide, userData }) {
       formdata.append("confirm_password", formData?.confirmPassword);
       formdata.append("username", formData?.username);
       // formdata.append("name", formData?.name);
-      formdata.append("role",formData?.id ? formData?.role : 'user');
+      formdata.append("role", formData?.role);
       formdata.append("status", formData?.id ? formData?.status : "approve");
       formdata.append("send_user_notification", "1");
       formdata.append("role_id", "");
@@ -101,7 +101,7 @@ function AddUserModal({ show, onHide, userData }) {
           username: "",
           name: "",
           email: "",
-          role: "User",
+          role: "",
           password: "",
           confirmPassword: "",
           sendEmail: false,
@@ -199,7 +199,7 @@ function AddUserModal({ show, onHide, userData }) {
               value={formData.role}
               onChange={handleChange}
               required
-            >
+            >  <option value="">Select role</option>
               <option value="admin">Admin</option>
               <option value="siteAdmin">Site Admin</option>
               <option value="user">User</option>
