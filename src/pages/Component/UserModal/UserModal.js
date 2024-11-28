@@ -3,10 +3,11 @@ import { Button, Form, Modal } from "react-bootstrap"; // Import React Bootstrap
 import { ToastContainer, toast } from 'react-toastify';
 import AdminServices from "../../../Services/AdminServices";
 import { notifyError, notifySuccess } from "../ToastComponents/ToastComponents";
+import { useNavigate } from "react-router-dom";
 
 function AddUserModal({ show, onHide, userData }) {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
-
   const [formData, setFormData] = useState({
     id: "",
     first_name: "",
@@ -106,7 +107,11 @@ function AddUserModal({ show, onHide, userData }) {
           sendEmail: false,
         });
         // 
-        setTimeout(() => onHide(), 3000);
+        setTimeout(() => {
+          navigate(`/usersManagement?status=all`);
+          onHide()
+
+        }, 3000);
 
 
         // if (onSave) onSave(); // Optional callback for parent component
