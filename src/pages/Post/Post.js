@@ -5,155 +5,195 @@ import Button from "../Component/ButtonComponents/ButtonComponents";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
+import PostServices from "../../Services/PostServices";
+import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
+import Pagination from "react-js-pagination";
 
 const Post = () => {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
-    const [postsPerPage, setPostsPerPage] = useState(5);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
+    const [category, setCategory] = useState('');
+    const [searchString, setSearchString] = useState("");
+
     const [posts, setPosts] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState([]);
     const [tableActions, setTableActions] = useState("");
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+    const perPageRecords = (10);
+    const [totalRecords, setTotalRecords] = useState();
 
 
-    // Calculate the posts to display on the current page
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+    useEffect(() => {
+        fetchPost()
+    }, [])
 
-    // Pagination logic
-    const totalPosts = posts.length;
-    const totalPages = Math.ceil(totalPosts / postsPerPage);
+    useEffect(() => {
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+        if (category || searchString) {
+            fetchPost(currentPage, );
+        }else{
+            setCategory('')
+            fetchPost(currentPage);
+        }
+    }, [category,searchString])
+    const fetchPost = async (pageNumbers) => {
+        setIsLoading(true);
+        try {
+            const formData = new FormData();
+            if (category) formData.append("category", category);
+            if (searchString) formData.append("text", searchString);
+
+
+
+            const resp = await PostServices.getPostList({
+                page: pageNumbers ? pageNumbers : currentPage,
+                perPageRecords,
+                body: formData,
+            });
+            if (resp?.status_code === 200) {
+                console.log(resp);
+
+                setPosts(resp?.list?.data || [])
+                setTotalRecords(resp?.list?.total)
+                setCurrentPage(resp?.list?.current_page);
+
+            } else {
+                notifyError("Please try again.",);
+            }
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const handlePrevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        // fetchPost(pageNumber, documentType);
+
     };
 
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
 
-    const redirectToCreatePage = () => {
-        navigate('/post/create');
+
+    const redirectToCreatePage = (id) => {
+        navigate('/post/create', { state: { id: id } });
     };
 
-    useEffect(() => {
-        // Simulate data fetch
-        setTimeout(() => {
-            setPosts([
-                {
-                    id: 1,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-                    title: "Post Title 1",
-                    category: "Latest News"
-                },
-                {
-                    id: 2,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-                    title: "Post Title 2",
-                    category: "Visit"
-                },
-                {
-                    id: 3,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-                    title: "Post Title 3",
-                    category: "Latest News"
-                },
-                {
-                    id: 4,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-                    title: "Post Title 4",
-                    category: "Visit"
-                },
 
-                {
-                    id: 5,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-                    title: "Post Title 5",
-                    category: "Latest News"
-                },
-                {
-                    id: 6,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-                    title: "Post Title 6",
-                    category: "Visit"
-                },
-                {
-                    id: 7,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-                    title: "Post Title 7",
-                    category: "Latest News"
-                },
-                {
-                    id: 8,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-                    title: "Post Title 8",
-                    category: "Visit"
-                },
-                {
-                    id: 9,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-                    title: "Post Title 9",
-                    category: "Latest News"
-                },
-                {
-                    id: 10,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-                    title: "Post Title 10",
-                    category: "Visit"
-                },
-                {
-                    id: 11,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-                    title: "Post Title 11",
-                    category: "Latest News"
-                },
-                {
-                    id: 12,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-                    title: "Post Title 12",
-                    category: "Visit"
-                },
 
-                {
-                    id: 13,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-                    title: "Post Title 13",
-                    category: "Latest News"
-                },
-                {
-                    id: 14,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-                    title: "Post Title 14",
-                    category: "Visit"
-                },
-                {
-                    id: 15,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-                    title: "Post Title 15",
-                    category: "Latest News"
-                },
-                {
-                    id: 16,
-                    image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-                    title: "Post Title 16",
-                    category: "Visit"
-                }
-            ]);
-            setIsLoading(false);
-        }, 2000);
-    }, []);
+    // useEffect(() => {
+    //     // Simulate data fetch
+    //     setTimeout(() => {
+    //         setPosts([
+    //             {
+    //                 id: 1,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
+    //                 title: "Post Title 1",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 2,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+    //                 title: "Post Title 2",
+    //                 category: "Visit"
+    //             },
+    //             {
+    //                 id: 3,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+    //                 title: "Post Title 3",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 4,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+    //                 title: "Post Title 4",
+    //                 category: "Visit"
+    //             },
+
+    //             {
+    //                 id: 5,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
+    //                 title: "Post Title 5",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 6,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+    //                 title: "Post Title 6",
+    //                 category: "Visit"
+    //             },
+    //             {
+    //                 id: 7,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+    //                 title: "Post Title 7",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 8,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+    //                 title: "Post Title 8",
+    //                 category: "Visit"
+    //             },
+    //             {
+    //                 id: 9,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
+    //                 title: "Post Title 9",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 10,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+    //                 title: "Post Title 10",
+    //                 category: "Visit"
+    //             },
+    //             {
+    //                 id: 11,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+    //                 title: "Post Title 11",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 12,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+    //                 title: "Post Title 12",
+    //                 category: "Visit"
+    //             },
+
+    //             {
+    //                 id: 13,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
+    //                 title: "Post Title 13",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 14,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
+    //                 title: "Post Title 14",
+    //                 category: "Visit"
+    //             },
+    //             {
+    //                 id: 15,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
+    //                 title: "Post Title 15",
+    //                 category: "Latest News"
+    //             },
+    //             {
+    //                 id: 16,
+    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
+    //                 title: "Post Title 16",
+    //                 category: "Visit"
+    //             }
+    //         ]);
+    //         setIsLoading(false);
+    //     }, 2000);
+    // }, []);
     const handleTableAction = (action) => {
         if (action === "Delete") {
             const checkedItems = Array.from(
@@ -164,16 +204,32 @@ const Post = () => {
                 setSelectedPosts(checkedItems); // Save checked items
                 setIsModalVisible(true); // Show confirmation modal
             } else {
-                alert("No items selected!");
+                notifyError("No items selected for deletion.");
             }
         }
     };
 
 
 
-    const handleConfirmDelete = () => {
-        console.log("Deleted items:", selectedPosts);
+    const handleConfirmDelete = async () => {
+        console.log("Deleted items:", selectedCheckboxes);
 
+        const formData = new FormData();
+
+        const idsAsString = selectedCheckboxes.join(",");
+
+        formData.append("ids", idsAsString);
+        const resp = await PostServices.multiDeletePost(formData);
+        if (resp?.status_code === 200) {
+            notifySuccess(resp?.message,);
+            setTimeout(() =>
+                setIsLoading(true),
+                fetchPost(currentPage,),
+                3000);
+
+        } else {
+            notifyError("Please try again.",);
+        }
         // Clear selected checkboxes and reset table action
         clearSelectedCheckboxes();
         setTableActions("");
@@ -215,6 +271,31 @@ const Post = () => {
             );
         }
     };
+    const handleDelete = (id) => {
+        console.log("page.id", id)
+        deletePost(id)
+    };
+    const deletePost = async (id) => {
+        try {
+            const resp = await PostServices.deletePost(id);
+            if (resp?.status_code === 200) {
+                console.log(resp);
+                notifySuccess(resp?.message,);
+                setTimeout(() =>
+                    setIsLoading(true),
+                    fetchPost(currentPage),
+                    3000);
+
+            } else {
+                notifyError("Please try again.",);
+            }
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     // Check if all are selected
     const areAllSelected =
         posts.length > 0 && selectedCheckboxes.length === posts.length;
@@ -239,11 +320,11 @@ const Post = () => {
                                     </div>
                                     <div className="col-9 d-flex justify-content-end">
                                         <Button
-                                        text="Add New Post"
-                                        onClick={redirectToCreatePage}
-                                        className="btn btn-primary"
-                                        type="button"
-                                    />
+                                            text="Add New Post"
+                                            onClick={() => redirectToCreatePage(null)}
+                                            className="btn btn-primary"
+                                            type="button"
+                                        />
                                     </div>
                                 </div>
 
@@ -269,8 +350,10 @@ const Post = () => {
                                     <div className="col-md-4 p-1">
                                         <div className="custom-select-wrapper">
                                             <select
-                                                id="postCategories"
+                                                id="postCategory"
                                                 className="form-control custom-select"
+                                                value={category}
+                                                onChange={(e) => setCategory(e.target.value)}
                                             >
                                                 <option value="">All Categories</option>
                                                 <option value="news">News</option>
@@ -286,6 +369,8 @@ const Post = () => {
                                                 id="searchPages"
                                                 className="form-control search-input"
                                                 placeholder="Search post..."
+                                                value={searchString}
+                                                onChange={(e) => setSearchString(e.target.value)}
                                             />
                                             <svg
                                                 className="search-icon"
@@ -326,8 +411,8 @@ const Post = () => {
                                                 <Skeleton type="row" />
                                                 <Skeleton type="row" />
                                             </>
-                                        ) : currentPosts.length > 0 ? (
-                                            currentPosts.map((post) => (
+                                        ) : posts.length > 0 ? (
+                                            posts.map((post) => (
                                                 <tr key={post.id}>
                                                     <td>
                                                         <input
@@ -341,7 +426,7 @@ const Post = () => {
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={post.image}
+                                                            src={post?.thumbnail?.path}
                                                             style={{ width: '50px' }}
                                                             className="bannerHeight"
                                                             alt="News Banner"
@@ -353,14 +438,14 @@ const Post = () => {
 
                                                         <Button
                                                             text="Edit"
-                                                            onClick={redirectToCreatePage}
-                                                            className={"btn btn-primary me-2"}
+                                                            onClick={() => redirectToCreatePage(post.id)}
+                                                            className={"btn btn-primary btn-sm me-2"}
                                                             type="button"
                                                         />
-                                                          <Button
+                                                        <Button
                                                             text="Delete"
-                                                            // onClick={redirectToCreatePage}
-                                                            className={"btn btn-secondary"}
+                                                            onClick={() => handleDelete(post.id)}
+                                                            className="btn btn-danger btn-sm ms-1"
                                                             type="button"
                                                         />
 
@@ -374,25 +459,16 @@ const Post = () => {
                                         )}
                                     </tbody>
                                 </table>
-                                <div className="pagination-controls text-end">
-                                    <Button
-                                        text="Previous"
-                                        onClick={handlePrevPage}
-                                        className={currentPage === 1 ? "btn btn-secondary" : "btn-primary"}
-                                        type="button"
-                                        disabled={currentPage === 1}
-
-                                    />
-
-                                    <span className="ps-1 pe-1">
-                                        Page {currentPage} of {totalPages}
-                                    </span>
-                                    <Button
-                                        text="Next"
-                                        onClick={handleNextPage}
-                                        className="btn btn-secondary"
-                                        type="button"
-                                        disabled={currentPage === totalPages}
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        activePage={currentPage}
+                                        itemsCountPerPage={perPageRecords}
+                                        totalItemsCount={totalRecords}
+                                        pageRangeDisplayed={5}
+                                        onChange={handlePageChange}
+                                        itemClass="custom-page-item"
+                                        linkClass="custom-page-link"
+                                        activeClass="custom-active"
                                     />
                                 </div>
 
