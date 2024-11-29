@@ -4,8 +4,8 @@ const PostServices = {
   uploadPost: async (body) => {
     return requests.post("/post/upload", body);
   },
-  updatePost:async(id) =>{
-    return requests.get(`/post/edit`);
+  updatePost:async(body) =>{
+    return requests.post(`/post/edit`,body);
   },
   getPostList: async ({ page, perPageRecords, body }) => {
     // if (body) {

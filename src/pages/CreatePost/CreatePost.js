@@ -24,10 +24,11 @@ const CreatePost = () => {
   const [editorContent, setEditorContent] = useState('');
   const [defaultContent, setDefaultContent] = useState()
   const [selectedFiles, setSelectedFiles] = useState([]);
+
   const [captions, setCaptions] = useState({});
   const [draggedIndex, setDraggedIndex] = useState(null);
-  const [deletedMediaList,setDeletedMediaList] = useState([])
-  
+  const [deletedMediaList, setDeletedMediaList] = useState([])
+
 
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ const CreatePost = () => {
       const resp = await PostServices.getPostDetails(id);
       if (resp?.status_code === 200) {
         console.log(resp);
+        setId(resp?.data[0]?.id)
         setTitle(resp?.data[0]?.title);
         setCategory(resp?.data[0]?.category);
         setPostingYear(resp?.data[0]?.year)
@@ -165,23 +167,85 @@ const CreatePost = () => {
       return;
     }
     try {
+      console.log("selectedFiles", selectedFiles)
+
+      console.log(captions)
+      const captionData = JSON.stringify(captions); 
+      const formdata = new FormData();
+
+      selectedFiles.forEach((file) => {
+        return (
+          formdata.append(`files[]`, file, file.name)
+        )
+      });
+
+      formdata.append("title", title);
+      formdata.append("category", category);
+      formdata.append("year", postingYear);
+      formdata.append("content", editorContent);
+      if (selectedFiles.length > 0) {
+        formdata.append("thumbnail_image", selectedFiles[0].name);
+      }
+      formdata.append("image_caption_data", captionData);
+
+      // Debugging: Log FormData key-value pairs
+      for (let [key, value] of formdata.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+
+      const resp = await PostServices.uploadPost(formdata);
+
+      if (resp?.status_code === 200) {
+        console.log(resp);
+        notifySuccess("Post uploaded successfully!");
+      } else {
+        notifyError(resp?.message || "Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      notifyError("An error occurred during file upload. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const validationError = validateForm(title, editorContent, category, postingYear, selectedFiles);
+
+    if (validationError) {
+      notifyError(validationError);
+      return;
+    }
+    try {
+      console.log("selectedFiles", selectedFiles)
+
       console.log(captions)
       const captionData = JSON.stringify(captions); // Ensure captions object is properly stringified
       const formdata = new FormData();
+      for (const file of selectedFiles) {
+        if (file.name && file.path) {
+          try {
+            const response = await fetch(file.path);
+            if (!response.ok) {
+              console.error(`Failed to fetch ${file.path}`);
+              continue;
+            }
+            const blob = await response.blob(); // Convert file data to Blob
+            formdata.append(`files[]`, blob, file.name); // Append Blob with the correct file name
+          } catch (error) {
+            console.error(`Error fetching file at ${file.path}:`, error);
+          }
+        }
+      }
 
-      console.log(selectedFiles)
-      selectedFiles.forEach((file) => {
-        return(
-        formdata.append(`files[]`, file, file.name)
-      )});
-      
 
       // Append other data
       formdata.append("title", title);
       formdata.append("category", category);
       formdata.append("year", postingYear);
       formdata.append("content", editorContent);
-
       // Append thumbnail image (use just the filename for thumbnail_image)
       if (selectedFiles.length > 0) {
         formdata.append("thumbnail_image", selectedFiles[0].name); // Use the name of the first file as the thumbnail
@@ -191,13 +255,13 @@ const CreatePost = () => {
       formdata.append("image_caption_data", captionData);
 
       // Append additional fields
-      if(id) {formdata.append("id", id ? id : "");}
-      if(id){  formdata.append("id_disabled", "");}
-      if(id){
-      const deletedMediaString = deletedMediaList.join(",");
-      formdata.append("delete_media", deletedMediaString);
+       formdata.append("id", id ? id : ""); 
+       formdata.append("id_disabled", ""); 
+    
+        const deletedMediaString = deletedMediaList.join(",");
+        formdata.append("delete_media", deletedMediaString);
 
-      }
+      
 
 
       // Debugging: Log FormData key-value pairs
@@ -206,11 +270,10 @@ const CreatePost = () => {
       }
 
 
-      const resp = await id ? PostServices.updatePost(formdata) : PostServices.uploadPost(formdata);
+      const resp = await  PostServices.updatePost(formdata) 
 
       if (resp?.status_code === 200) {
         console.log(resp);
-        // resetFormFields();
         notifySuccess("Post uploaded successfully!");
       } else {
         notifyError(resp?.message || "Please try again.");
@@ -344,11 +407,11 @@ const CreatePost = () => {
                               <div
                                 key={index}
                                 style={{ position: 'relative', marginRight: '10px', cursor: 'move', width: '150px' }}
-                              >                        
+                              >
                                 <img
-                                key={file.name}
-                                src={file instanceof File ? URL.createObjectURL(file) : file.path} // Handle local or API-provided files
-                                alt={file.name}
+                                  key={file.name}
+                                  src={file instanceof File ? URL.createObjectURL(file) : file.path} // Handle local or API-provided files
+                                  alt={file.name}
                                   style={{
                                     width: '100px',
                                     height: '100px',
@@ -453,19 +516,20 @@ const CreatePost = () => {
                   {/* </Form.Group>
                   </Form> */}
                   <Button
-                    text="Create Post"
-                    onClick={handleSubmit}
+                    text={id ? "Update Post" : "Create Post"}
+                    onClick={id ? handleUpdate : handleSubmit}
                     className="btn btn-primary mt-2"
+                    disabled={id ? true :false}
                     type="submit"
-                  >
-                    Create Post
-                  </Button>
+                  />
+
+
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <ToastContainer />
+        {/* <ToastContainer />/ */}
       </div >
     </React.Fragment >
   );
