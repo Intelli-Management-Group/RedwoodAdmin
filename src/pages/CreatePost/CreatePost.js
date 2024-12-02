@@ -28,6 +28,7 @@ const CreatePost = () => {
   const [captions, setCaptions] = useState({});
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [deletedMediaList, setDeletedMediaList] = useState([])
+  const [editCaptionsList, setEditCaptionsList] = useState([])
 
 
   const [successMessage, setSuccessMessage] = useState('');
@@ -140,11 +141,29 @@ const CreatePost = () => {
 
   const handleCaptionChange = (e, fileName) => {
     const newCaption = e.target.value;
-    setCaptions((prevCaptions) => ({
+      setCaptions((prevCaptions) => ({
       ...prevCaptions,
       [fileName]: newCaption,
     }));
+      if (id) {
+      const result = selectedFiles.find((item) => item.name === fileName);
+        if (result && result.id) {
+        const obj = { media_id: result.id, caption: newCaption };
+  
+        setEditCaptionsList((prevList) => {
+          const existsIndex = prevList.findIndex((item) => item.media_id === obj.media_id);
+  
+          if (existsIndex > -1) {
+            const updatedList = [...prevList];
+            updatedList[existsIndex].caption = obj.caption;
+            return updatedList;
+          }
+            return [...prevList, obj];
+        });
+      }
+    }
   };
+  
 
 
   const validateForm = (title, category, content, postingYear, images) => {
@@ -248,6 +267,7 @@ const CreatePost = () => {
       }
 
       formdata.append("image_caption_data", captionData);
+      formdata.append("edited_caption_data", JSON.stringify(editCaptionsList));
       formdata.append("id", id ? id : "");
       formdata.append("id_disabled", "");
       const deletedMediaString = deletedMediaList.join(",");
@@ -503,7 +523,7 @@ const CreatePost = () => {
                     text={loading ? "Submitting..." : id ? "Update Post" : "Create Post"}
                     onClick={id ? handleUpdate : handleSubmit}
                     className="btn btn-primary mt-2"
-                    disabled={loading ? true :false}
+                    disabled={loading ? true : false}
                     type="submit"
                   />
 
