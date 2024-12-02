@@ -57,10 +57,12 @@ function AddUserModal({ show, onHide, userData }) {
     // if (!formData.name.trim()) return "Name is required.";
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
       return "A valid email address is required.";
-    if (!formData.password.trim() || formData.password.length < 6)
-      return "Password must be at least 6 characters long.";
-    if (formData.password !== formData.confirmPassword)
-      return "Passwords do not match.";
+    if (!formData?.id) {
+      if (!formData.password.trim() || formData.password.length < 6)
+        return "Password must be at least 6 characters long.";
+      if (formData.password !== formData.confirmPassword)
+        return "Passwords do not match.";
+    }
     return null;
   };
 
@@ -83,8 +85,10 @@ function AddUserModal({ show, onHide, userData }) {
       formdata.append("first_name", formData?.first_name);
       formdata.append("last_name", formData?.last_name);
       formdata.append("email", formData?.email);
+      if (!formData?.id) {
       formdata.append("password", formData?.password);
       formdata.append("confirm_password", formData?.confirmPassword);
+      }
       formdata.append("username", formData?.username);
       // formdata.append("name", formData?.name);
       formdata.append("role", formData?.role);
@@ -126,7 +130,7 @@ function AddUserModal({ show, onHide, userData }) {
     }
   };
   return (
-    <Modal show={show}  centered>
+    <Modal show={show} centered>
       <Modal.Header >
         <Modal.Title>{userData ? "Edit User" : "Add User"}</Modal.Title>
       </Modal.Header>
@@ -208,48 +212,53 @@ function AddUserModal({ show, onHide, userData }) {
             </Form.Control>
           </Form.Group>
           {userData && (
-          <Form.Group controlId="role" className="mb-3">
-            <Form.Label>User Status</Form.Label>
-            <Form.Control
-              as="select"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
+            <Form.Group controlId="role" className="mb-3">
+              <Form.Label>User Status</Form.Label>
+              <Form.Control
+                as="select"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
               // required
-            >
-              <option value="pending">Pending</option>
-              <option value="approve">Approve</option>
-              <option value="rejected">Rejected</option>
-              <option value="inActive">Inactive</option>
+              >
+                <option value="pending">Pending</option>
+                <option value="approve">Approve</option>
+                <option value="rejected">Rejected</option>
+                <option value="inActive">Inactive</option>
 
 
-              {/* Add other roles here */}
-            </Form.Control>
-          </Form.Group>
+                {/* Add other roles here */}
+              </Form.Control>
+            </Form.Group>
           )}
-          {/* Password */}
-          <Form.Group controlId="password" className="mb-3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+          {!userData ? (
+            <>
+              {/* Password */}
+              <Form.Group controlId="password" className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-          {/* Confirm Password */}
-          <Form.Group controlId="confirmPassword" className="mb-3">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+              {/* Confirm Password */}
+              <Form.Group controlId="confirmPassword" className="mb-3">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </>
+          ) : null}
+
 
           {/* Send Email Checkbox */}
           <Form.Group className="mb-3" controlId="sendEmail">
