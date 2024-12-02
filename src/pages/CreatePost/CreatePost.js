@@ -19,7 +19,7 @@ const CreatePost = () => {
   const [id, setId] = useState(location.state?.id ? location.state?.id : '');
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
-  const [postingYear, setPostingYear] = useState('');
+  const [postingYear, setPostingYear] = useState("2024");
   const [loading, setLoading] = useState(false);
   const [editorContent, setEditorContent] = useState('');
   const [defaultContent, setDefaultContent] = useState()
@@ -160,6 +160,7 @@ const CreatePost = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const validationError = validateForm(title, editorContent, category, postingYear, selectedFiles);
 
     if (validationError) {
@@ -170,7 +171,7 @@ const CreatePost = () => {
       console.log("selectedFiles", selectedFiles)
 
       console.log(captions)
-      const captionData = JSON.stringify(captions); 
+      const captionData = JSON.stringify(captions);
       const formdata = new FormData();
 
       selectedFiles.forEach((file) => {
@@ -212,6 +213,7 @@ const CreatePost = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const validationError = validateForm(title, editorContent, category, postingYear, selectedFiles);
 
     if (validationError) {
@@ -220,24 +222,19 @@ const CreatePost = () => {
     }
     try {
       console.log("selectedFiles", selectedFiles)
+      const newImgesAdd = selectedFiles.filter(item =>
+        Object.keys(item).length === 2 && 'path' in item && 'relativePath' in item
+      );
+      console.log(newImgesAdd)
+      const captionData = JSON.stringify(captions);
 
-      console.log(captions)
-      const captionData = JSON.stringify(captions); // Ensure captions object is properly stringified
       const formdata = new FormData();
-      for (const file of selectedFiles) {
-        if (file.name && file.path) {
-          try {
-            const response = await fetch(file.path);
-            if (!response.ok) {
-              console.error(`Failed to fetch ${file.path}`);
-              continue;
-            }
-            const blob = await response.blob(); // Convert file data to Blob
-            formdata.append(`files[]`, blob, file.name); // Append Blob with the correct file name
-          } catch (error) {
-            console.error(`Error fetching file at ${file.path}:`, error);
-          }
-        }
+      if (newImgesAdd?.length > 0) {
+        newImgesAdd.forEach((file) => {
+          return (
+            formdata.append(`files[]`, file, file.name)
+          )
+        });
       }
 
 
@@ -246,32 +243,19 @@ const CreatePost = () => {
       formdata.append("category", category);
       formdata.append("year", postingYear);
       formdata.append("content", editorContent);
-      // Append thumbnail image (use just the filename for thumbnail_image)
       if (selectedFiles.length > 0) {
-        formdata.append("thumbnail_image", selectedFiles[0].name); // Use the name of the first file as the thumbnail
+        formdata.append("thumbnail_image", selectedFiles[0].name);
       }
 
-      // Append image caption data
       formdata.append("image_caption_data", captionData);
-
-      // Append additional fields
-       formdata.append("id", id ? id : ""); 
-       formdata.append("id_disabled", ""); 
-    
-        const deletedMediaString = deletedMediaList.join(",");
-        formdata.append("delete_media", deletedMediaString);
-
-      
-
-
-      // Debugging: Log FormData key-value pairs
+      formdata.append("id", id ? id : "");
+      formdata.append("id_disabled", "");
+      const deletedMediaString = deletedMediaList.join(",");
+      formdata.append("delete_media", deletedMediaString);
       for (let [key, value] of formdata.entries()) {
         console.log(`${key}:`, value);
       }
-
-
-      const resp = await  PostServices.updatePost(formdata) 
-
+      const resp = await PostServices.updatePost(formdata)
       if (resp?.status_code === 200) {
         console.log(resp);
         notifySuccess("Post uploaded successfully!");
@@ -516,10 +500,10 @@ const CreatePost = () => {
                   {/* </Form.Group>
                   </Form> */}
                   <Button
-                    text={id ? "Update Post" : "Create Post"}
+                    text={loading ? "Submitting..." : id ? "Update Post" : "Create Post"}
                     onClick={id ? handleUpdate : handleSubmit}
                     className="btn btn-primary mt-2"
-                    disabled={id ? true :false}
+                    disabled={loading ? true :false}
                     type="submit"
                   />
 
