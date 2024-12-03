@@ -50,7 +50,7 @@ const placeholderDocument = "https://upload.wikimedia.org/wikipedia/commons/thum
 
 function Media() {
   const [currentPage, setCurrentPage] = useState(1);
-  const mediaPerPage = (10)
+  const mediaPerPage = (12)
   const [hasMore, setHasMore] = useState(true);
 
   const [show, setShow] = useState(false);
@@ -577,10 +577,11 @@ function Media() {
                       </Button>
 
                       <Button
-                        text="Upload"
                         className="btn-primary"
                         type="button"
                         onClick={handleSubmit}
+                        text={uploadLoading ? "Submitting..." : "Upload"}
+                        disabled={uploadLoading}
                       >
                         Upload
                       </Button>
