@@ -408,64 +408,76 @@ const CreatePost = () => {
                         <div className="preview-images" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
                           {selectedFiles.map((file, index) => (
                             <>
-                              <div
-                                key={index}
-                                style={{ position: 'relative', marginRight: '10px', cursor: 'move', width: '150px' }}
+                            <div
+                              className="d-flex flex-column align-items-center"
+                              key={index}
+                              style={{
+                                position: "relative",
+                                marginRight: "10px",
+                                cursor: "move",
+                                width: "150px",
+                              }}
+                            >
+                              <img
+                                key={file.name}
+                                src={file instanceof File ? URL.createObjectURL(file) : file.path} // Handle local or API-provided files
+                                alt={file.name}
+                                style={{
+                                  width: "100px",
+                                  height: "100px",
+                                  objectFit: "cover",
+                                  borderRadius: "8px",
+                                  marginBottom: "5px",
+                                }}
+                              />
+                              <button
+                                className="cancleButton"
+                                onClick={() => handleRemoveFile(index)}
+                                style={{
+                                  position: "absolute",
+                                  top: "5px",
+                                  right: "5px",
+                                  background: "#531515",
+                                  border: "none",
+                                  borderRadius: "50%",
+                                  padding: "5px",
+                                  cursor: "pointer",
+                                  color: "white",
+                                  zIndex: 10,
+                                }}
                               >
-                                <img
-                                  key={file.name}
-                                  src={file instanceof File ? URL.createObjectURL(file) : file.path} // Handle local or API-provided files
-                                  alt={file.name}
+                                &#10005;
+                              </button>
+                              {/* Thumbnail label */}
+                              {index === 0 && (
+                                <p
                                   style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    objectFit: 'cover',
-                                    borderRadius: '8px',
-                                    marginBottom: '5px',
-                                  }}
-                                />
-                                <button
-                                  className="cancleButton"
-                                  onClick={() => handleRemoveFile(index)}
-                                  style={{
-                                    position: 'absolute',
-                                    top: '5px',
-                                    right: '5px',
-                                    background: '#531515',
-                                    border: 'none',
-                                    borderRadius: '50%',
-                                    padding: '5px',
-                                    cursor: 'pointer',
-                                    color: 'white',
-                                    zIndex: 10,
+                                    textAlign: "center",
+                                    fontSize: "12px",
+                                    marginTop: "5px",
                                   }}
                                 >
-                                  &#10005;
-                                </button>
-
-                                {/* Thumbnail label */}
-                                {index === 0 && (
-                                  <p style={{ textAlign: 'center', fontSize: '12px', marginTop: '5px' }}>
-                                    Thumbnail Image
-                                  </p>
-                                )}
-
-                                {/* Caption input */}
-                                <input
-                                  type="text"
-                                  placeholder="Enter caption"
-                                  value={captions[file.name] || ""}
-                                  onChange={(e) => handleCaptionChange(e, file.name)}
-                                  style={{
-                                    width: '100%',
-                                    marginTop: '5px',
-                                    padding: '5px',
-                                    borderRadius: '4px',
-                                    border: '1px solid #ccc',
-                                  }}
-                                />
-                              </div>
-                            </>
+                                  Thumbnail Image
+                                </p>
+                              )}
+                          
+                              {/* Caption input */}
+                              <input
+                                type="text"
+                                placeholder="Enter caption"
+                                value={captions[file.name] || ""}
+                                onChange={(e) => handleCaptionChange(e, file.name)}
+                                style={{
+                                  width: "100%",
+                                  marginTop: "5px",
+                                  padding: "5px",
+                                  borderRadius: "4px",
+                                  border: "1px solid #ccc",
+                                  textAlign: "center", // Center-align text inside input
+                                }}
+                              />
+                            </div>
+                          </>
                           ))}
                         </div>
                       </div>
