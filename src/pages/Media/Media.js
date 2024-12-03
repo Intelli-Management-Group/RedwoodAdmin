@@ -7,6 +7,9 @@ import MediaServices from '../../Services/MediaServices';
 import { ToastContainer } from 'react-toastify';
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Skeleton from '../Component/SkeletonComponent/SkeletonComponent';
+import documnetImages from "../../Assetes/images/Redwood-Investor-Quarterly-Q2-June-2024-pdf-212x300.jpg"
+import { faClone } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const mediaItems = [
   {
@@ -65,6 +68,7 @@ function Media() {
   const [mediaList, setMediaList] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true)
+  const [copySuccess, setCopySuccess] = useState("");
   const [modalContent, setModalContent] = useState({
     id: "",
     src: "",
@@ -218,6 +222,13 @@ function Media() {
     deleteMedia(modalContent?.id)
   };
 
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text).then(
+      () => setCopySuccess("Copied!"),
+      () => setCopySuccess("Failed to copy!")
+    );
+    setTimeout(() => setCopySuccess(""), 2000); // Clear message after 2 seconds
+  };
   return (
     <React.Fragment>
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
@@ -375,7 +386,7 @@ function Media() {
                                 {item.category === "application" && (
                                   <a href={item.path} target="_blank" rel="noopener noreferrer">
                                     <img
-                                      src={'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg'}
+                                      src={documnetImages}
                                       className="card-img-top"
                                       alt="Document Thumbnail"
                                       style={{ width: "100%" }}
@@ -591,13 +602,13 @@ function Media() {
 
 
                   {/* Modal */}
-                  <Modal show={showModal} onHide={handleCloseModal} centered>
+                  <Modal show={showModal} onHide={handleCloseModal} centered className="custom-media-modal">
                     <Modal.Header closeButton>
                       <Modal.Title>{modalContent.title || "Details"}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                       <div className='row'>
-                        <div className='col-md-4'>
+                        <div className='col-md-3'>
                           {modalContent.type === "image" && (
                             <img
                               src={modalContent.src || placeholderImage}
@@ -626,8 +637,15 @@ function Media() {
                           )}
 
                         </div>
-                        <div className='col-md-8'>
-                          <h6>File URL:</h6>
+                        <div className='col-md-9'>
+                          <div className="d-flex align-items-center justify-content-between">
+                            <div>
+                              <h6>File URL:</h6>
+                            </div>
+                            <div className="ml-auto" style={{ cursor: "pointer" }}  onClick={() => handleCopy(modalContent.url)} title="Copy URL">
+                              <FontAwesomeIcon icon={faClone} className='text-primary-color' size="lg" />
+                            </div>
+                          </div>
                           <a
                             href={modalContent.url}
                             target="_blank"
@@ -635,10 +653,20 @@ function Media() {
                           >
                             {modalContent.url}
                           </a>
+                          <div className="d-flex align-items-center justify-content-between mt-3">
+                            <div>
+                              <h6>File Name:</h6>
+                            </div>
+                            <div className="ml-auto" style={{ cursor: "pointer" }}  onClick={() => handleCopy(modalContent.title)} title="Copy FileName">
+                              <FontAwesomeIcon icon={faClone} className='text-primary-color' size="lg" />
+                            </div>
+                          </div>
+                          <p>{modalContent?.title}</p>
+                          {copySuccess && <p className="text-primary-color">{copySuccess}</p>}
                           <div>
                             <Button
                               variant="primary"
-                              className="btn btn-danger btn-sm mt-2"
+                              className="btn btn-danger btn-sm mt-3"
                               type="button"
                               text="Delete"
                               onClick={() => handleDelete()}

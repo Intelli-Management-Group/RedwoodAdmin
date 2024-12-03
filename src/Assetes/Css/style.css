@@ -712,3 +712,6 @@ video {
   }
   
 /*  */
+.custom-media-modal{
+    min-width: 600px !important;
+}
