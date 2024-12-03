@@ -4,48 +4,10 @@ import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
 import Modal from 'react-bootstrap/Modal';
 import MediaServices from '../../Services/MediaServices';
-import { ToastContainer } from 'react-toastify';
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
-import Skeleton from '../Component/SkeletonComponent/SkeletonComponent';
 import documnetImages from "../../Assetes/images/Redwood-Investor-Quarterly-Q2-June-2024-pdf-212x300.jpg"
 import { faClone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-const mediaItems = [
-  {
-    id: 1,
-    type: "images",
-    title: "Image 3",
-    src: "https://dev.jackychee.com/assets/dummy_Assetes/service_img1.jpg",
-    alt: "Image 1",
-    isImage: true,
-  },
-  {
-    id: 2,
-    type: "images",
-    title: "Image 4",
-    src: "https://dev.jackychee.com/assets/dummy_Assetes/service_img2.jpg",
-    alt: "Image 2",
-    isImage: true,
-  },
-  {
-    id: 3,
-    type: "videos",
-    title: "Video 2",
-    src: "https://dev.jackychee.com/assets/dummy_Assetes/video.mp4",
-    isVideo: true,
-  },
-  {
-    id: 4,
-    type: "documents",
-    title: "Document 2",
-    src: "https://dev.jackychee.com/assets/dummy_Assetes/servdsice_img2.jpg",
-    thumbnail: "/assets/dummy_Assetes/pdf.jpg",
-    isDocument: true,
-  },
-
-];
-
 
 const placeholderImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"; // Path to a placeholder image
 const placeholderVideo = "https://www.shutterstock.com/image-vector/no-video-available-sign-isolated-260nw-2227175051.jpg"; // Path to a video placeholder image
@@ -61,7 +23,6 @@ function Media() {
   const handleShow = () => setShow(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [filteredItems, setFilteredItems] = useState(mediaItems);
   const [searchTerm, setSearchTerm] = useState('');
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -81,11 +42,17 @@ function Media() {
     fetchMedia(currentPage);
   }, [])
 
-  const fetchMedia = async (page) => {
+  const fetchMedia = async (page, type) => {
     try {
       const formdata = new FormData();
       formdata.append("page", page);
       formdata.append("pageSize", mediaPerPage);
+      if (type && type !== "all") {
+        formdata.append("type", type);
+      }
+      if(searchTerm){
+        formdata.append("text", searchTerm);
+      }
 
       const resp = await MediaServices.getMediaList(formdata);
       if (resp?.status_code === 200) {
@@ -110,6 +77,10 @@ function Media() {
     } finally {
       setLoading(false);
     }
+  };
+  const handleFilter = (type) => {
+    setLoading(true)
+    fetchMedia(1, type)
   };
   const deleteMedia = async (id) => {
     try {
@@ -153,20 +124,11 @@ function Media() {
     setIsSidebarVisible(!isSidebarVisible);
   };
   const handleSearch = () => {
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
-    const searchedItems = mediaItems.filter((item) =>
-      item.title.toLowerCase().includes(lowercasedSearchTerm)
-    );
-    setFilteredItems(searchedItems);
+    setLoading(true)
+
+    fetchMedia(1)
   };
 
-  const handleFilter = (type) => {
-    if (type === "all") {
-      setFilteredItems(mediaItems);
-    } else {
-      setFilteredItems(mediaItems.filter((item) => item.type === type));
-    }
-  };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -276,21 +238,21 @@ function Media() {
                           className="btn btn-outline-secondary ms-auto w-auto me-2"
                           type="button"
                           text="Images"
-                          onClick={() => handleFilter("images")}
+                          onClick={() => handleFilter("image")}
                         />
                         <Button
                           variant="primary"
                           className="btn btn-outline-secondary ms-auto w-auto me-2"
                           type="button"
                           text="Videos"
-                          onClick={() => handleFilter("videos")}
+                          onClick={() => handleFilter("video")}
                         />
                         <Button
                           variant="primary"
                           className="btn btn-outline-secondary ms-auto w-auto me-2"
                           type="button"
                           text="Documents"
-                          onClick={() => handleFilter("documents")}
+                          onClick={() => handleFilter("application")}
                         />
                         <Button
                           variant="primary"
@@ -326,7 +288,7 @@ function Media() {
                   </nav>
                   <br />
                   <div className="container">
-            
+
                     <div
                       className="row p-2"
                       id="mediaItems"
@@ -357,84 +319,94 @@ function Media() {
                         </>
                       ) : (
                         <>
-                          {mediaList.map((item) => (
-                            <div className="col-md-3 media-item" key={item.id} data-type={item.type}>
-                              <div className="card cardBorder mb-4">
-                                {item.category === "image" && (
-                                  <img
-                                    src={item.path || placeholderImage}
-                                    className="card-img-top"
-                                    alt={item.alt || "Placeholder Image"}
-                                    style={{
-                                      width: "100%",
-                                      height: "200px",
-                                      objectFit: "contain",
-                                    }}
-                                    onError={(e) => (e.target.src = placeholderImage)}
-                                  />
-                                )}
-                                {item.category === "video" && (
-                                  <video className="card-img-top" controls>
-                                    <source
-                                      src={item.path || placeholderImage}
-                                      type="video/mp4"
-                                      onError={(e) => (e.target.src = placeholderVideo)}
-                                    />
-                                    Your browser does not support the video tag.
-                                  </video>
-                                )}
-                                {item.category === "application" && (
-                                  <a href={item.path} target="_blank" rel="noopener noreferrer">
-                                    <img
-                                      src={documnetImages}
-                                      className="card-img-top"
-                                      alt="Document Thumbnail"
-                                      style={{ width: "100%" }}
-                                      onError={(e) => (e.target.src = placeholderDocument)}
-                                    />
-                                  </a>
-                                )}
-                                <div className="card-body">
-                                  <h6 className="card-title">
-                                    {item.name ? item.name.split('.').slice(0, -1).join('.') : "Untitled"}
-                                  </h6>
-                                  <div className="d-flex flex-column flex-md-row justify-content-md-center justify-content-center">
-                                    <Button
-                                      variant="primary"
-                                      className="btn btn-primary w-auto me-2"
-                                      type="button"
-                                      text="View"
-                                      onClick={() => handleViewClick(item)}
-                                    />
+                          {mediaList.length > 0 ? (
+                            <>
+                              {mediaList.map((item) => (
+                                <div className="col-md-3 media-item" key={item.id} data-type={item.type}>
+                                  <div className="card cardBorder mb-4">
+                                    {item.category === "image" && (
+                                      <img
+                                        src={item.path || placeholderImage}
+                                        className="card-img-top"
+                                        alt={item.alt || "Placeholder Image"}
+                                        style={{
+                                          width: "100%",
+                                          height: "200px",
+                                          objectFit: "contain",
+                                        }}
+                                        onError={(e) => (e.target.src = placeholderImage)}
+                                      />
+                                    )}
+                                    {item.category === "video" && (
+                                      <video className="card-img-top" controls>
+                                        <source
+                                          src={item.path || placeholderImage}
+                                          type="video/mp4"
+                                          onError={(e) => (e.target.src = placeholderVideo)}
+                                        />
+                                        Your browser does not support the video tag.
+                                      </video>
+                                    )}
+                                    {item.category === "application" && (
+                                      <a href={item.path} target="_blank" rel="noopener noreferrer">
+                                        <img
+                                          src={documnetImages}
+                                          className="card-img-top"
+                                          alt="Document Thumbnail"
+                                          style={{ width: "100%" }}
+                                          onError={(e) => (e.target.src = placeholderDocument)}
+                                        />
+                                      </a>
+                                    )}
+                                    <div className="card-body">
+                                      <h6 className="card-title">
+                                        {item.name ? item.name.split('.').slice(0, -1).join('.') : "Untitled"}
+                                      </h6>
+                                      <div className="d-flex flex-column flex-md-row justify-content-md-center justify-content-center">
+                                        <Button
+                                          variant="primary"
+                                          className="btn btn-primary w-auto me-2"
+                                          type="button"
+                                          text="View"
+                                          onClick={() => handleViewClick(item)}
+                                        />
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
+                              ))}
+                              <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
+                                {hasMore && (
+                                  <div className="text-center">
+                                    <Button
+                                      variant="primary"
+                                      className="btn btn-primary ms-auto w-auto me-2"
+                                      type="button"
+                                      text={loading ? "Loading..." : "Load More"}
+                                      onClick={gotoNextPage}
+                                      disabled={loading} // Disable the button while loading
+                                    />
+                                  </div>
+                                )}
+                                {currentPage !== 1 && (
+                                  <div className="text-center">
+                                    <button
+                                      className="btn btn-secondary ms-auto w-auto me-2"
+                                      onClick={jumpToFirstItem}
+                                    >
+                                      Jump to First Loaded Item
+                                    </button>
+                                  </div>
+                                )}
                               </div>
+                            </>
+                          ) : (
+                            <div className="text-center my-4">
+                              <p className="text-muted">No media found</p>
                             </div>
-                          ))}
-                          <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
-                            {hasMore && (
-                              <div className="text-center">
-                                <Button
-                                  variant="primary"
-                                  className="btn btn-primary ms-auto w-auto me-2"
-                                  type="button"
-                                  text={loading ? "Loading..." : "Load More"}
-                                  onClick={gotoNextPage}
-                                  disabled={loading} // Disable the button while loading
-                                />
-                              </div>
-                            )} {currentPage !== 1 && (
-                              <div className="text-center">
-                                <button
-                                  className="btn btn-secondary ms-auto w-auto me-2"
-                                  onClick={jumpToFirstItem}
-                                >
-                                  Jump to First Loaded Item
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                          )}
                         </>
+
                       )}
                     </div>
 
@@ -642,7 +614,7 @@ function Media() {
                             <div>
                               <h6>File URL:</h6>
                             </div>
-                            <div className="ml-auto" style={{ cursor: "pointer" }}  onClick={() => handleCopy(modalContent.url)} title="Copy URL">
+                            <div className="ml-auto" style={{ cursor: "pointer" }} onClick={() => handleCopy(modalContent.url)} title="Copy URL">
                               <FontAwesomeIcon icon={faClone} className='text-primary-color' size="lg" />
                             </div>
                           </div>
@@ -657,7 +629,7 @@ function Media() {
                             <div>
                               <h6>File Name:</h6>
                             </div>
-                            <div className="ml-auto" style={{ cursor: "pointer" }}  onClick={() => handleCopy(modalContent.title)} title="Copy FileName">
+                            <div className="ml-auto" style={{ cursor: "pointer" }} onClick={() => handleCopy(modalContent.title)} title="Copy FileName">
                               <FontAwesomeIcon icon={faClone} className='text-primary-color' size="lg" />
                             </div>
                           </div>
