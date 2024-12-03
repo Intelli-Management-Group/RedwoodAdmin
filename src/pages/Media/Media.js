@@ -50,7 +50,7 @@ function Media() {
       if (type && type !== "all") {
         formdata.append("type", type);
       }
-      if(searchTerm){
+      if (searchTerm) {
         formdata.append("text", searchTerm);
       }
 
@@ -551,13 +551,12 @@ function Media() {
                     <Modal.Footer>
                       <Button
                         text="Close"
-                        className="btn-primary"
+                        className="btn-secondary"
                         type="button"
                         variant="secondary"
                         onClick={handleClose}
-                      >
-                        Close
-                      </Button>
+                        disabled={uploadLoading}
+                      />
 
                       <Button
                         className="btn-primary"
@@ -565,9 +564,7 @@ function Media() {
                         onClick={handleSubmit}
                         text={uploadLoading ? "Submitting..." : "Upload"}
                         disabled={uploadLoading}
-                      >
-                        Upload
-                      </Button>
+                      />
                     </Modal.Footer>
                   </Modal>
                   {/* UploadModal */}
