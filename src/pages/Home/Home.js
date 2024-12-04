@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import {notifyError, notifySuccess} from "../Component/ToastComponents/ToastComponents";
 
 const Home = () => {
+    const [loading, setLoading] = useState(false)
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -20,7 +21,7 @@ const Home = () => {
 
     const handleLogin = async (event) => {
         event.preventDefault();
-
+        setLoading(true)
         if (email.trim() && password.trim()) {
             try {
                 const loginData = {
@@ -47,6 +48,8 @@ const Home = () => {
             } catch (error) {
                 console.error("Login Error:", error);
                 notifyError("An error occurred during login. Please try again.",);
+            }finally{
+                setLoading(false)
             }
         } else {
             notifyError("Please enter both email and password.",);
@@ -86,7 +89,8 @@ const Home = () => {
                         required
                     />
                     <Button
-                        text="Login"
+                        text={loading ? "Submitting..." : "Login"}
+                        disabled={loading ? true : false}
                         className="btn-primary"
                         type="submit"
                     />
