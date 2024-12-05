@@ -59,7 +59,7 @@ const Pages = () => {
       logFormData(formData);
 
       const resp = await PageServices.getPageListFilter({
-        page: currentPage,
+        page: page,
         perPageRecords,
         body: formData,
       });
@@ -189,7 +189,7 @@ const Pages = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    fetchPages(pageNumber, documentType);
+    fetchPagesWithFilter(pageNumber, documentType, postingYear, hedgeFundReportstypes, searchString);
 
   };
   const areAllSelected =
