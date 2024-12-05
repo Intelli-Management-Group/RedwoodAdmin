@@ -24,13 +24,10 @@ const CreatePost = () => {
   const [editorContent, setEditorContent] = useState('');
   const [defaultContent, setDefaultContent] = useState()
   const [selectedFiles, setSelectedFiles] = useState([]);
-
   const [captions, setCaptions] = useState({});
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [deletedMediaList, setDeletedMediaList] = useState([])
   const [editCaptionsList, setEditCaptionsList] = useState([])
-
-
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
@@ -184,6 +181,7 @@ const CreatePost = () => {
 
     if (validationError) {
       notifyError(validationError);
+      setLoading(false);
       return;
     }
     try {
