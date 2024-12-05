@@ -7,6 +7,8 @@ import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastCo
 
 const CreatePages = () => {
   const [loading, setLoading] = useState(false);
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const maxFileSizeInMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -28,6 +30,10 @@ const CreatePages = () => {
 
     const file = event.dataTransfer.files[0];
     if (file && file.type === 'application/pdf') {
+      if (file.size > MAX_FILE_SIZE) {
+        notifyError(`File size exceeds ${maxFileSizeInMB} MB. Please upload a smaller file.`);
+        return;
+      }
       setSelectedFile(file);
     } else {
       alert('Only PDF files are allowed.');
@@ -37,6 +43,10 @@ const CreatePages = () => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type === 'application/pdf') {
+      if (file.size > MAX_FILE_SIZE) {
+        notifyError(`File size exceeds ${maxFileSizeInMB} MB. Please upload a smaller file.`);
+        return;
+      }
       setSelectedFile(file);
     } else {
       alert('Only PDF files are allowed.');
@@ -60,7 +70,7 @@ const CreatePages = () => {
       formdata.append("file", selectedFile, selectedFile.name);
       formdata.append("type", documentType);
       formdata.append("year", postingYear);
-      formdata.append("hedge_fund_report_type",hedgeFundReportstypes)
+      formdata.append("hedge_fund_report_type", hedgeFundReportstypes)
       const resp = await PageServices.uploadPages(formdata);
 
       if (resp?.status_code === 200) {
@@ -94,9 +104,9 @@ const CreatePages = () => {
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
-  const handldeDocumentUpdate =(e) =>{
-    console.log("e",e.target.value)
-    if(e.target.value !== "hedgeFundReports"){
+  const handldeDocumentUpdate = (e) => {
+    console.log("e", e.target.value)
+    if (e.target.value !== "hedgeFundReports") {
       setHedgeFundReportstypes("monthlyPortfolioSummary")
     }
     setDocumentType(e.target.value)
@@ -141,26 +151,26 @@ const CreatePages = () => {
                     </div>
                   </div>
                   {documentType === "hedgeFundReports" && (
-                  <div className="col-md-4">
-                    <label htmlFor="HedgeFundReportstypes" className="col-form-label">
-                      Hedge Fund Reports types
-                    </label>
-                    <div className="custom-select-wrapper">
-                      <select
-                        id="HedgeFundReportstypes"
-                        className="form-control custom-select"
-                        value={hedgeFundReportstypes}
-                        onChange={(e) => setHedgeFundReportstypes(e.target.value)}
-                      >
-                        <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
-                        <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
-                        <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
-                        <option value="fundDocumentation">Fund Documentation</option>
-                        <option value="auditedFinancialStatements">Audited Financial Statements</option>
+                    <div className="col-md-4">
+                      <label htmlFor="HedgeFundReportstypes" className="col-form-label">
+                        Hedge Fund Reports types
+                      </label>
+                      <div className="custom-select-wrapper">
+                        <select
+                          id="HedgeFundReportstypes"
+                          className="form-control custom-select"
+                          value={hedgeFundReportstypes}
+                          onChange={(e) => setHedgeFundReportstypes(e.target.value)}
+                        >
+                          <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
+                          <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
+                          <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
+                          <option value="fundDocumentation">Fund Documentation</option>
+                          <option value="auditedFinancialStatements">Audited Financial Statements</option>
 
-                      </select>
+                        </select>
+                      </div>
                     </div>
-                  </div>
                   )}
                   {/* {hedgeFundReportstypes === "monthlyPortfolioSummary" && ( */}
                   <div className="col-md-4">
@@ -211,7 +221,7 @@ const CreatePages = () => {
                       onClick={() => document.getElementById("documentUpload").click()}
                     />
                   </div>
-                  <small className="form-text text-muted">Only PDF files are allowed.</small>
+                  <small className="form-text text-muted">Note: Each file should not exceed {maxFileSizeInMB} MB in size, Only PDF files are allowed.</small>
                 </div>
                 <div className="text-center">
                   <Button
