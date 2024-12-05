@@ -73,7 +73,7 @@ const Post = () => {
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        // fetchPost(pageNumber, documentType);
+        fetchPost(pageNumber);
 
     };
 
