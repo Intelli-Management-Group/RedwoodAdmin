@@ -30,6 +30,8 @@ const CreatePost = () => {
   const [editCaptionsList, setEditCaptionsList] = useState([])
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const MAX_FILE_SIZE = 3 * 1024 * 1024;
+  const maxFileSizeInMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
 
   useEffect(() => {
     console.log('component mounted', id);
@@ -86,12 +88,19 @@ const CreatePost = () => {
 
 
   const onDrop = (acceptedFiles) => {
-    setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    const validFiles = acceptedFiles.filter((file) => {
+      if (file.size > MAX_FILE_SIZE) {
+        notifyError(`File "${file.name}" exceeds ${maxFileSizeInMB} MB and will not be uploaded.`);
+        return false;
+      }
+      return true;
+    });
+    setSelectedFiles((prevFiles) => [...prevFiles, ...validFiles]);
 
     // Initialize captions for new files
     setCaptions((prevCaptions) => {
       const newCaptions = {};
-      acceptedFiles.forEach((file) => {
+      validFiles.forEach((file) => {
         newCaptions[file.name] = ""; // Default caption is empty
       });
       return { ...prevCaptions, ...newCaptions };
@@ -314,21 +323,9 @@ const CreatePost = () => {
                   <h2 className="mb-4">Create New Post</h2>
 
                   {successMessage && <Alert variant="success">{successMessage}</Alert>}
-
-                  {/* <Form onSubmit={handleSubmit}>
-                    <Form.Group controlId="postTitle" className="mb-3">
-                      <Form.Label>Post Title</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter post title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                      />
-                    </Form.Group> */}
                   <div className="col-md-12 p-1">
                     <label htmlFor="postCategory" className="col-form-label">
-                      Choose Post Category
+                      Post Title
                     </label>
                     <input
                       type="text"
@@ -342,7 +339,7 @@ const CreatePost = () => {
                   <div className="px-2 mb-3 mt-2 row d-flex justify-content-between">
                     <div className="col-md-6 p-1">
                       <label htmlFor="postCategory" className="col-form-label">
-                        Post Title
+                      Choose Post Category
                       </label>
                       <div className="custom-select-wrapper">
                         <select
