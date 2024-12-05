@@ -17,7 +17,7 @@ function Media() {
   const [currentPage, setCurrentPage] = useState(1);
   const mediaPerPage = (12)
   const [hasMore, setHasMore] = useState(true);
-
+  const maxFileSize = 3 * 1024 * 1024;
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -132,6 +132,10 @@ function Media() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > maxFileSize) {
+        notifyError("File size exceeds 3 MB. Please upload a smaller file.");
+        return;
+      }
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -542,7 +546,7 @@ function Media() {
                           </label>
 
                           <p style={{ marginTop: "20px", color: "#888", fontSize: "14px" }}>
-                            You can upload images, videos, or PDFs. Multiple files are supported.
+                            Note: Each file should not exceed 3 MB in size. Supported formats include images, videos, and PDFs..
                           </p>
                         </form>
                       )}
