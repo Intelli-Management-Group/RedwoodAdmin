@@ -402,7 +402,7 @@ const UserManagement = () => {
                                                     onChange={(e) => handleSelectAll(e.target.checked)}
                                                 />
                                             </th>
-                                            <th>Username</th>
+                                            {/* <th>Username</th> */}
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Role</th>
@@ -415,14 +415,14 @@ const UserManagement = () => {
                                         {isLoading ? (
                                             <>
                                                 <>
-                                                    <Skeleton columns={7} /> {/* 5 columns for the Post table */}
-                                                    <Skeleton columns={7} />
-                                                    <Skeleton columns={7} />
+                                                    <Skeleton columns={6} /> {/* 5 columns for the Post table */}
+                                                    <Skeleton columns={6} />
+                                                    <Skeleton columns={6} />
                                                 </>
                                             </>
                                         ) : userData.length > 0 ? (
-                                            userData.map((user) => (
-                                                <tr key={user.username}>
+                                            userData.map((user,index) => (
+                                                <tr key={index}>
                                                     <td>
                                                         <input
                                                             type="checkbox"
@@ -433,7 +433,7 @@ const UserManagement = () => {
                                                             }
                                                         />
                                                     </td>
-                                                    <td>{user.username}</td>
+                                                    {/* <td>{user.username}</td> */}
                                                     <td>{user.name}</td>
                                                     <td>{user.email}</td>
                                                     <td>

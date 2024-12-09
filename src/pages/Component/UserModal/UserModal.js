@@ -53,7 +53,7 @@ function AddUserModal({ show, onHide, userData }) {
     if (!formData.first_name.trim()) return "FirstName is required.";
     if (!formData.last_name.trim()) return "LastName is required.";
 
-    if (!formData.username.trim()) return "Username is required.";
+    // if (!formData.username.trim()) return "Username is required.";
     // if (!formData.name.trim()) return "Name is required.";
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
       return "A valid email address is required.";
@@ -89,7 +89,7 @@ function AddUserModal({ show, onHide, userData }) {
       formdata.append("password", formData?.password);
       formdata.append("confirm_password", formData?.confirmPassword);
       }
-      formdata.append("username", formData?.username);
+      formdata.append("username", "");
       // formdata.append("name", formData?.name);
       formdata.append("role", formData?.role);
       formdata.append("status", formData?.id ? formData?.status : "approve");
@@ -158,7 +158,7 @@ function AddUserModal({ show, onHide, userData }) {
           </Form.Group>
 
           {/* Username */}
-          <Form.Group controlId="username" className="mb-3">
+          {/* <Form.Group controlId="username" className="mb-3">
             <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
@@ -167,7 +167,7 @@ function AddUserModal({ show, onHide, userData }) {
               onChange={handleChange}
               required
             />
-          </Form.Group>
+          </Form.Group> */}
           {/* Name */}
           {/* <Form.Group controlId="name" className="mb-3">
             <Form.Label>Name</Form.Label>
