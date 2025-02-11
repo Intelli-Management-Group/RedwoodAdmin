@@ -333,7 +333,7 @@ const UserManagement = () => {
                                                 <option value="rejected">Reject User</option>
                                                 <option value="deactivate">Deactivate</option>
                                                 <option value="approve">Reactivate</option>
-                                                <option value="pending" disabled>Put as Pending Review</option>
+                                                <option value="pending">Pending User</option>
                                                 <option value="resend" disabled>Resend Activation Email</option>
                                                 {/* <option value="User">Member/User</option> */}
                                             </select>
