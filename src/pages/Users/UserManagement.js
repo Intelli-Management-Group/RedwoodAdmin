@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
@@ -6,11 +6,12 @@ import Button from "../Component/ButtonComponents/ButtonComponents";
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import AddUserModal from "../Component/UserModal/UserModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AdminServices from "../../Services/AdminServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Pagination from "react-js-pagination";
 import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
+import { Form } from 'react-bootstrap';
 
 const UserManagement = () => {
     const location = useLocation();
@@ -31,15 +32,19 @@ const UserManagement = () => {
     const [statusWiseUser, setStatusWiseUser] = useState([]);
     const { state } = location;
     const status = state?.status || "all";
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [isActionsOpen, setIsActionsOpen] = useState(false);
+    const [isRolesOpen, setIsRolesOpen] = useState(false);
+    const filterRef = useRef();
+    const actionsRef = useRef();
+    const rolesRef = useRef()
     const totalUserCount = statusWiseUser?.reduce((acc, statusData) => acc + statusData.total, 0);
-
-    console.log("totalUserCount", totalUserCount)
 
     useEffect(() => {
         fetchAllUser()
         getUserWiseCounts()
-
-
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [])
     useEffect(() => {
         if (isModalVisible === false) {
@@ -331,6 +336,23 @@ const UserManagement = () => {
     const filtersUsers = async (selectedStatus) => {
         SetFilter(selectedStatus)
     }
+    const toggleFilterDropdown = () => setIsFilterOpen(!isFilterOpen);
+    const toggleActionsDropdown = () => setIsActionsOpen(!isActionsOpen);
+    const toggleRolesDropdown = () => setIsRolesOpen(!isRolesOpen);
+
+    
+    const handleClickOutside = (e) => {
+        if (filterRef.current && !filterRef.current.contains(e.target)) {
+            setIsFilterOpen(false);
+        }
+        if (actionsRef.current && !actionsRef.current.contains(e.target)) {
+            setIsActionsOpen(false);
+        }
+        if (rolesRef.current && !rolesRef.current.contains(e.target)) {
+            setIsRolesOpen(false);
+        }
+    };
+
     const areAllSelected =
         userData.length > 0 && selectedCheckboxes.length === userData.length;
     return (
@@ -395,61 +417,63 @@ const UserManagement = () => {
                                 <div className="px-2 mb-3 mt-2 row d-flex justify-content-between">
 
                                     <div className="col-md-4 p-1">
-                                        <div className="custom-select-wrapper">
-                                            <select
-                                                id="postCategories"
-                                                className="form-control custom-select"
-                                                onChange={(e) => SetFilter(e.target.value)}
-                                            >
-                                                <option value="all">Filter User...</option>
-                                                <option value="approve">Approve User</option>
-                                                <option value="rejected">Reject User</option>
-                                                <option value="deactivate">Deactivate</option>
-                                                {/* <option value="approve">Reactivate</option> */}
-                                                <option value="pending">Pending User</option>
-                                                <option value="resend" disabled>Resend Activation Email</option>
-                                                {/* <option value="User">Member/User</option> */}
-                                            </select>
-                                        </div>
-                                        {/* <div className="search-input-wrapper">
-                                            <Button
-                                                text="Perform Action"
-                                                // onClick={''}
-                                                className={"btn btn-primary me-2"}
-                                                type="button"
-                                                disabled={true}
-                                            />
+                                        <Form.Group controlId="postCategories">
+                                            <div className="custom-select-wrapper" ref={filterRef}>
+                                                <Form.Control
+                                                    as="select"
+                                                    className="custom-select"
+                                                    onChange={(e) => SetFilter(e.target.value)}
+                                                    onClick={toggleFilterDropdown}
 
-                                        </div> */}
+                                                >
+                                                    <option value="all">Filter User...</option>
+                                                    <option value="approve">Approve User</option>
+                                                    <option value="rejected">Reject User</option>
+                                                    <option value="deactivate">Deactivate</option>
+                                                    <option value="pending">Pending User</option>
+                                                    <option value="resend" disabled>Resend Activation Email</option>
+                                                </Form.Control>
+                                                <FontAwesomeIcon
+                                                    icon={isFilterOpen ? faChevronUp : faChevronDown}
+                                                    className="dropdown-arrow position-absolute"
+                                                />
+                                            </div>
+
+                                        </Form.Group>
                                     </div>
                                     <div className="col-md-4 p-1">
-                                        <div className="custom-select-wrapper">
-                                            <select
-                                                id="postCategories"
-                                                className="form-control custom-select"
-                                                value={action}
-                                                onChange={(e) => handleActionChange(e.target.value)}
-                                            >
-                                                <option value="">User Action</option>
-                                                <option value="approve">Approve User</option>
-                                                <option value="rejected">Reject User</option>
-                                                <option value="deactivate">Deactivate</option>
-                                                {/* <option value="approve">Reactivate</option> */}
-                                                <option vlaue="Delete">Delete</option>
-
-                                                <option value="pending" disabled>Put as Pending Review</option>
-                                                <option value="resend" disabled>Resend Activation Email</option>
-                                            </select>
-                                        </div>
+                                        <Form.Group controlId="userAction">
+                                            <div className="custom-select-wrapper" ref={actionsRef}>
+                                                <Form.Control
+                                                    as="select"
+                                                    value={action}
+                                                    onChange={(e) => handleActionChange(e.target.value)}
+                                                    className="custom-select"
+                                                    onClick={toggleActionsDropdown}
+                                                >
+                                                    <option value="">User Action</option>
+                                                    <option value="approve">Approve User</option>
+                                                    <option value="rejected">Reject User</option>
+                                                    <option value="deactivate">Deactivate</option>
+                                                    <option value="pending" disabled>Put as Pending Review</option>
+                                                    <option value="resend" disabled>Resend Activation Email</option>
+                                                </Form.Control>
+                                                <FontAwesomeIcon
+                                                    icon={isActionsOpen ? faChevronUp : faChevronDown}
+                                                    className="dropdown-arrow position-absolute"
+                                                />
+                                            </div>
+                                        </Form.Group>
                                     </div>
                                     <div className="col-md-4 p-1">
-                                        <div className="custom-select-wrapper">
-                                            <select
-                                                id="tableActions"
-                                                className="form-control custom-select"
+                                        <Form.Group controlId="roleAction">
+                                        <div className="custom-select-wrapper" ref={rolesRef}>
+                                            <Form.Control
+                                                as="select"
                                                 value={roleAction}
                                                 onChange={(e) => handleRoleChange(e.target.value)}
-
+                                                className="custom-select"
+                                                onClick={toggleRolesDropdown}
 
                                             >
                                                 <option value="">Change role to...</option>
@@ -458,131 +482,136 @@ const UserManagement = () => {
                                                 <option value="user">User</option>
                                                 <option value="Contributor" disabled>Contributor</option>
                                                 <option value="Subscriber" disabled>Subscriber</option>
-                                            </select>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <input
-                                                    type="checkbox"
-                                                    id="select-all"
-                                                    checked={areAllSelected}
-                                                    onChange={(e) => handleSelectAll(e.target.checked)}
+                                            </Form.Control>
+                                            <FontAwesomeIcon
+                                                    icon={isRolesOpen ? faChevronUp : faChevronDown}
+                                                    className="dropdown-arrow position-absolute"
                                                 />
-                                            </th>
-                                            {/* <th>Username</th> */}
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
+                                            </div>
+                                        </Form.Group>
 
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {isLoading ? (
-                                            <>
-                                                <>
-                                                    <Skeleton columns={6} /> {/* 5 columns for the Post table */}
-                                                    <Skeleton columns={6} />
-                                                    <Skeleton columns={6} />
-                                                </>
-                                            </>
-                                        ) : userData.length > 0 ? (
-                                            userData.map((user, index) => (
-                                                <tr key={index}>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="user-select"
-                                                            checked={selectedCheckboxes.includes(user.id)}
-                                                            onChange={(e) =>
-                                                                handleCheckboxChange(user.id, e.target.checked)
-                                                            }
-                                                        />
-                                                    </td>
-                                                    {/* <td>{user.username}</td> */}
-                                                    <td>{user.name}</td>
-                                                    <td>{user.email}</td>
-                                                    <td>
-                                                        {user.role === "user" && "User"}
-                                                        {user.role === "admin" && "Admin"}
-                                                        {user.role === "siteAdmin" && "Site Admin"}
-                                                        {!(user.role === "user" || user.role === "admin" || user.role === "siteAdmin") && "Unknown"}
-                                                    </td>
-                                                    <td>
-                                                        {user.status === "approve" && "Approve"}
-                                                        {user.status === "pending" && "Pending"}
-                                                        {user.status === "rejected" && "Rejected"}
-                                                        {user.status === "deactivate" && "Deactivate"}
-
-                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
-
-                                                    </td>
-                                                    <td>
-                                                        <Button
-                                                            text=""
-                                                            onClick={() => openUserModal(user)}
-                                                            className="btn btn-sm btn-primary"
-                                                            icon={faPencilSquare}
-                                                            iconSize="lg"
-                                                            disabled={false}
-                                                        />
-
-                                                        <Button
-                                                            text=""
-                                                            onClick={() => openUserModal(user)}
-                                                            className="btn btn-sm btn-danger ms-2"
-                                                            icon={faTrash}
-                                                            iconSize="lg"
-                                                            disabled={false}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            ))) : (
-                                            <tr>
-                                                <td colSpan="7">No user available yet.</td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                                <div className="d-flex justify-content-end">
-                                    <Pagination
-                                        activePage={currentPage}
-                                        itemsCountPerPage={perPageRecords}
-                                        totalItemsCount={totalRecords}
-                                        pageRangeDisplayed={5}
-                                        onChange={handlePageChange}
-                                        itemClass="custom-page-item"
-                                        linkClass="custom-page-link"
-                                        activeClass="custom-active"
-                                    />
                                 </div>
                             </div>
-                        </div>
-                        {/* <AddUserModal isOpen={isModalVisible} onHide={closeModal} UserData={selectedUser}/> */}
-                        <AddUserModal
-                            show={isModalVisible}
-                            onHide={() => setIsModalVisible(false)}
-                            userData={selectedUser}
-                        />
 
-                        <ConfirmationDialog
-                            isVisible={isConfiremdModalVisible}
-                            title="Confirm Deletion"
-                            message="Are you sure you want to delete this item? This action cannot be undone."
-                            onConfirm={handleConfirmDelete}
-                            onCancel={handleCancelDelete}
-                        />
+                            <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input
+                                                type="checkbox"
+                                                id="select-all"
+                                                checked={areAllSelected}
+                                                onChange={(e) => handleSelectAll(e.target.checked)}
+                                            />
+                                        </th>
+                                        {/* <th>Username</th> */}
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {isLoading ? (
+                                        <>
+                                            <>
+                                                <Skeleton columns={6} /> {/* 5 columns for the Post table */}
+                                                <Skeleton columns={6} />
+                                                <Skeleton columns={6} />
+                                            </>
+                                        </>
+                                    ) : userData.length > 0 ? (
+                                        userData.map((user, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <input
+                                                        type="checkbox"
+                                                        className="user-select"
+                                                        checked={selectedCheckboxes.includes(user.id)}
+                                                        onChange={(e) =>
+                                                            handleCheckboxChange(user.id, e.target.checked)
+                                                        }
+                                                    />
+                                                </td>
+                                                {/* <td>{user.username}</td> */}
+                                                <td>{user.name}</td>
+                                                <td>{user.email}</td>
+                                                <td>
+                                                    {user.role === "user" && "User"}
+                                                    {user.role === "admin" && "Admin"}
+                                                    {user.role === "siteAdmin" && "Site Admin"}
+                                                    {!(user.role === "user" || user.role === "admin" || user.role === "siteAdmin") && "Unknown"}
+                                                </td>
+                                                <td>
+                                                    {user.status === "approve" && "Approve"}
+                                                    {user.status === "pending" && "Pending"}
+                                                    {user.status === "rejected" && "Rejected"}
+                                                    {user.status === "deactivate" && "Deactivate"}
+
+                                                    {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
+
+                                                </td>
+                                                <td>
+                                                    <Button
+                                                        text=""
+                                                        onClick={() => openUserModal(user)}
+                                                        className="btn btn-sm btn-primary"
+                                                        icon={faPencilSquare}
+                                                        iconSize="lg"
+                                                        disabled={false}
+                                                    />
+
+                                                    <Button
+                                                        text=""
+                                                        onClick={() => openUserModal(user)}
+                                                        className="btn btn-sm btn-danger ms-2"
+                                                        icon={faTrash}
+                                                        iconSize="lg"
+                                                        disabled={false}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))) : (
+                                        <tr>
+                                            <td colSpan="7">No user available yet.</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                            <div className="d-flex justify-content-end">
+                                <Pagination
+                                    activePage={currentPage}
+                                    itemsCountPerPage={perPageRecords}
+                                    totalItemsCount={totalRecords}
+                                    pageRangeDisplayed={5}
+                                    onChange={handlePageChange}
+                                    itemClass="custom-page-item"
+                                    linkClass="custom-page-link"
+                                    activeClass="custom-active"
+                                />
+                            </div>
+                        </div>
                     </div>
+                    {/* <AddUserModal isOpen={isModalVisible} onHide={closeModal} UserData={selectedUser}/> */}
+                    <AddUserModal
+                        show={isModalVisible}
+                        onHide={() => setIsModalVisible(false)}
+                        userData={selectedUser}
+                    />
+
+                    <ConfirmationDialog
+                        isVisible={isConfiremdModalVisible}
+                        title="Confirm Deletion"
+                        message="Are you sure you want to delete this item? This action cannot be undone."
+                        onConfirm={handleConfirmDelete}
+                        onCancel={handleCancelDelete}
+                    />
                 </div>
             </div>
-        </React.Fragment>
+        </div>
+        </React.Fragment >
     );
 };
 
