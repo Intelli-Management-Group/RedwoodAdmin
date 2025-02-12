@@ -469,7 +469,7 @@ const Post = () => {
                                                             alt="News Banner"
                                                         />
                                                     </td>
-                                                    <td>{post.title}</td>
+                                                    <td>{post.title.length > 60 ? `${post.title.substring(0, 60)}...` : post.title}</td>
                                                     <td>{post.category}</td>
                                                     <td>
                                                         <Button
