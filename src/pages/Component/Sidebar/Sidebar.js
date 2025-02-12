@@ -34,11 +34,11 @@ const Sidebar = ({ isVisible }) => {
             Dashboard
           </Link>
         </li>
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <Link to="/media" className="nav-link text-white Links">
             Media
           </Link>
-        </li>
+        </li> */}
         <li className="nav-item">
           <Link to="/post" className="nav-link text-white Links">
             Posts
