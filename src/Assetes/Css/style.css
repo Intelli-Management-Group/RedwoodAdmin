@@ -532,18 +532,16 @@ video {
     cursor: pointer;
 }
 
-.custom-select-wrapper::after {
+/* .custom-select-wrapper::after {
     content: "▼";
-    /* Unicode for down arrow */
     font-size: 12px;
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    /* Prevent arrow from blocking clicks */
     color: #999;
-}
+} */
 
 /* Dropdown  ICons*/
 

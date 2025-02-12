@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
@@ -8,7 +8,9 @@ import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import PostServices from "../../Services/PostServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Pagination from "react-js-pagination";
-import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPencilSquare, faTrash, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Form } from 'react-bootstrap';
 
 const Post = () => {
     const navigate = useNavigate();
@@ -17,7 +19,8 @@ const Post = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [category, setCategory] = useState('');
     const [searchString, setSearchString] = useState("");
-
+    const [isActionsOpen, setIsActionsOpen] = useState(false);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [posts, setPosts] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState([]);
@@ -26,9 +29,13 @@ const Post = () => {
     const perPageRecords = (10);
     const [totalRecords, setTotalRecords] = useState();
 
+    const actionsRef = useRef();
+    const categoryRef = useRef();
 
     useEffect(() => {
-        fetchPost()
+        fetchPost();
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [])
 
     useEffect(() => {
@@ -297,6 +304,19 @@ const Post = () => {
             setIsLoading(false);
         }
     };
+
+    const toggleTableActionsDropdown = () => setIsActionsOpen(!isActionsOpen);
+    const toggleTableCategoryDropdown = () => setIsCategoryOpen(!isCategoryOpen);
+    
+    const handleClickOutside = (e) => {
+        if (actionsRef.current && !actionsRef.current.contains(e.target)) {
+            setIsActionsOpen(false);
+        }
+        if (categoryRef.current && !categoryRef.current.contains(e.target)) {
+            setIsCategoryOpen(false);
+        }
+    };
+
     // Check if all are selected
     const areAllSelected =
         posts.length > 0 && selectedCheckboxes.length === posts.length;
@@ -330,62 +350,78 @@ const Post = () => {
                                 </div>
 
                                 <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
-                                    <div className="col-md-4 p-1">
-                                        <div className="custom-select-wrapper">
-                                            <select
-                                                id="tableActions"
-                                                className="form-control custom-select"
-                                                value={tableActions}
-                                                onChange={(e) => {
-                                                    setTableActions(e.target.value);
-                                                    handleTableAction(e.target.value);
-                                                }}
-                                            >
-                                                <option value="">Table Action...</option>
-                                                <option value="Delete">Delete</option>
-                                            </select>
+                                    <Form className="">
+                                        <Form.Group className="row d-flex justify-content-between">
+                                            <div className="col-md-4 p-1">
+                                                <div className="custom-select-wrapper" ref={actionsRef}>
+                                                    <Form.Control
+                                                        as="select"
+                                                        id="tableActions"
+                                                        className="custom-dropdown"
+                                                        value={tableActions}
+                                                        onChange={(e) => {
+                                                            setTableActions(e.target.value);
+                                                            // handleTableAction(e.target.value);  // Add your handler here
+                                                        }}
+                                                        onClick={toggleTableActionsDropdown}
+                                                    >
+                                                        <option value="">Table Action...</option>
+                                                        <option value="Delete">Delete</option>
+                                                    </Form.Control>
+                                                    <FontAwesomeIcon
+                                                        icon={isActionsOpen ? faChevronUp : faChevronDown}
+                                                        className="dropdown-arrow position-absolute"
+                                                    />
+                                                </div>
+                                            </div>
 
-                                        </div>
-                                    </div>
+                                            {/* Post Category Dropdown */}
+                                            <div className="col-md-4 p-1">
+                                                <div className="custom-select-wrapper" ref={categoryRef}>
+                                                    <Form.Control
+                                                        as="select"
+                                                        id="postCategory"
+                                                        className="custom-dropdown"
+                                                        value={category}
+                                                        onChange={(e) => setCategory(e.target.value)}
+                                                        onClick={toggleTableCategoryDropdown}
+                                                    >
+                                                        <option value="">All Categories</option>
+                                                        <option value="news">News</option>
+                                                        <option value="visit">Visit</option>
+                                                    </Form.Control>
+                                                    <FontAwesomeIcon
+                                                        icon={isCategoryOpen ? faChevronUp : faChevronDown}
+                                                        className="dropdown-arrow position-absolute"
+                                                    />
+                                                </div>
+                                            </div>
 
-                                    <div className="col-md-4 p-1">
-                                        <div className="custom-select-wrapper">
-                                            <select
-                                                id="postCategory"
-                                                className="form-control custom-select"
-                                                value={category}
-                                                onChange={(e) => setCategory(e.target.value)}
-                                            >
-                                                <option value="">All Categories</option>
-                                                <option value="news">News</option>
-                                                <option value="visit">Visit</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-4 p-1">
-                                        <div className="search-input-wrapper">
-                                            <input
-                                                type="text"
-                                                id="searchPages"
-                                                className="form-control search-input"
-                                                placeholder="Search post..."
-                                                value={searchString}
-                                                onChange={(e) => setSearchString(e.target.value)}
-                                            />
-                                            <svg
-                                                className="search-icon"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 24 24"
-                                                width="20"
-                                                height="20"
-                                            >
-                                                <circle cx="10" cy="10" r="7" stroke="black" strokeWidth="2" fill="none" />
-                                                <line x1="15" y1="15" x2="20" y2="20" stroke="black" strokeWidth="2" />
-                                            </svg>
-
-                                        </div>
-                                    </div>
+                                            {/* Search Input */}
+                                            <div className="col-md-4 p-1">
+                                                <div className="search-input-wrapper">
+                                                    <Form.Control
+                                                        type="text"
+                                                        id="searchPages"
+                                                        className="form-control search-input"
+                                                        placeholder="Search post..."
+                                                        value={searchString}
+                                                        onChange={(e) => setSearchString(e.target.value)}
+                                                    />
+                                                    <svg
+                                                        className="search-icon position-absolute"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 24 24"
+                                                        width="20"
+                                                        height="20"
+                                                    >
+                                                        <circle cx="10" cy="10" r="7" stroke="black" strokeWidth="2" fill="none" />
+                                                        <line x1="15" y1="15" x2="20" y2="20" stroke="black" strokeWidth="2" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </Form.Group>
+                                    </Form>
                                 </div>
 
                                 <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>

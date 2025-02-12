@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Form, Modal } from "react-bootstrap"; // Import React Bootstrap components
 import { toast } from 'react-toastify';
 import AdminServices from "../../../Services/AdminServices";
@@ -12,6 +12,8 @@ function AddUserModal({ show, onHide, userData }) {
   const [loading, setLoading] = useState(false);
   const [isRoleOpen, setIsRoleOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const roleRef = useRef();
+  const statusRef = useRef();
   const [formData, setFormData] = useState({
     id: "",
     first_name: "",
@@ -26,6 +28,10 @@ function AddUserModal({ show, onHide, userData }) {
     status: ''
   });
 
+    useEffect(() => {
+          document.addEventListener('mousedown', handleClickOutside);
+          return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, [])
   useEffect(() => {
     if (userData) {
       setFormData({
@@ -86,8 +92,8 @@ function AddUserModal({ show, onHide, userData }) {
       formdata.append("last_name", formData?.last_name);
       formdata.append("email", formData?.email);
       if (!formData?.id) {
-      formdata.append("password", formData?.password);
-      formdata.append("confirm_password", formData?.confirmPassword);
+        formdata.append("password", formData?.password);
+        formdata.append("confirm_password", formData?.confirmPassword);
       }
       formdata.append("username", "");
       // formdata.append("name", formData?.name);
@@ -115,13 +121,19 @@ function AddUserModal({ show, onHide, userData }) {
       setLoading(false);
     }
   };
-  const toggleRoleDropdown = () => {
-    setIsRoleOpen(!isRoleOpen);
-  };
+ 
 
-  const toggleStatusDropdown = () => {
-    setIsStatusOpen(!isStatusOpen);
-  };
+  const toggleRoleDropdown = () => setIsRoleOpen(!isRoleOpen);
+  const toggleStatusDropdown = () => setIsStatusOpen(!isStatusOpen);
+    
+    const handleClickOutside = (e) => {
+        if (roleRef.current && !roleRef.current.contains(e.target)) {
+          setIsRoleOpen(false);
+        }
+        if (statusRef.current && !statusRef.current.contains(e.target)) {
+          setIsStatusOpen(false);
+        }
+    };
   return (
     <Modal show={show} centered>
       <Modal.Header >
@@ -165,31 +177,31 @@ function AddUserModal({ show, onHide, userData }) {
 
           <Form.Group controlId="role" className="mb-3 position-relative">
             <Form.Label>Role</Form.Label>
-            <div className="custom-dropdown-wrapper">
-            <Form.Control
-              as="select"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="custom-dropdown"
-              onClick={toggleRoleDropdown}
-              required
-            >  <option value="">Select role</option>
-              <option value="admin">Admin</option>
-              <option value="siteAdmin">Site Admin</option>
-              <option value="user">User</option>
+            <div className="custom-dropdown-wrapper" ref={roleRef}>
+              <Form.Control
+                as="select"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="custom-dropdown"
+                onClick={toggleRoleDropdown}
+                required
+              >  <option value="">Select role</option>
+                <option value="admin">Admin</option>
+                <option value="siteAdmin">Site Admin</option>
+                <option value="user">User</option>
 
-            </Form.Control>
-            <FontAwesomeIcon
-                  icon={isRoleOpen ? faChevronUp : faChevronDown}
-                  className="dropdown-arrow position-absolute"
-                />
-              </div>
+              </Form.Control>
+              <FontAwesomeIcon
+                icon={isRoleOpen ? faChevronUp : faChevronDown}
+                className="dropdown-arrow position-absolute"
+              />
+            </div>
           </Form.Group>
           {userData && (
             <Form.Group controlId="role" className="mb-3 position-relative">
               <Form.Label>User Status</Form.Label>
-              <div className="custom-dropdown-wrapper">
+              <div className="custom-dropdown-wrapper" ref={statusRef}>
                 <Form.Control
                   as="select"
                   name="status"
