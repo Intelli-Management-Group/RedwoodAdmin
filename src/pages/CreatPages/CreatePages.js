@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import PageServices from "../../Services/PageServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
+import { Form } from 'react-bootstrap';
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const CreatePages = () => {
   const [loading, setLoading] = useState(false);
@@ -15,6 +18,14 @@ const CreatePages = () => {
   const [documentType, setDocumentType] = useState("publications");
   const [postingYear, setPostingYear] = useState("2024");
   const [hedgeFundReportstypes, setHedgeFundReportstypes] = useState("monthlyPortfolioSummary");
+  const [isDocumentOpen, setIsDocumentOpen] = useState(false);
+  const [isReportsOpen, setIsReportsOpen] = useState(false);
+  const [isYearsOpen, setIsYearsOpen] = useState(false);
+
+  const documentRef = useRef();
+  const reportsRef = useRef();
+  const yearsRef = useRef();
+
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -113,7 +124,26 @@ const CreatePages = () => {
   }
   useEffect(() => {
     console.log('component mounted');
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const toggleDocumnetsDropdown = () => setIsDocumentOpen(!isDocumentOpen);
+  const toggleReportsDropdown = () => setIsReportsOpen(!isReportsOpen);
+  const toggleYearsDropdown = () => setIsYearsOpen(!isYearsOpen);
+
+
+  const handleClickOutside = (e) => {
+    if (documentRef.current && !documentRef.current.contains(e.target)) {
+      setIsDocumentOpen(false);
+    }
+    if (reportsRef.current && !reportsRef.current.contains(e.target)) {
+      setIsReportsOpen(false);
+    }
+    if (yearsRef.current && !yearsRef.current.contains(e.target)) {
+      setIsYearsOpen(false);
+    }
+  };
 
 
   return (
@@ -130,59 +160,71 @@ const CreatePages = () => {
             {/* Dashboard Content */}
             <div className="container-fluid">
               <h2 className="mt-5 mb-3">Upload Documents</h2>
-
-              <form className="mt-5 mb-5" onSubmit={handleSubmit}>
+              <Form className="mt-5 mb-5" onSubmit={handleSubmit}>
                 <div className="form-group row">
-                  <div className="col-md-4">
-                    <label htmlFor="postType" className="col-form-label">
-                      Documents Type
-                    </label>
-                    <div className="custom-select-wrapper">
-                      <select
-                        id="postType"
-                        className="form-control custom-select"
-                        value={documentType}
-                        onChange={(e) => handldeDocumentUpdate(e)}
-                      >
-                        <option value="publications">Publications</option>
-                        <option value="hedgeFundReports">Hedge Fund Reports</option>
-                        <option value="managedAccountReports">Managed Account Reports</option>
-                      </select>
-                    </div>
+                 
+                  <div className="col-md-4 p-1">
+                    <Form.Group controlId="postType">
+                      <Form.Label>Documents Type</Form.Label>
+                      <div className="custom-select-wrapper" ref={documentRef}>
+                        <Form.Control
+                          as="select"
+                          className="form-control custom-select"
+                          value={documentType}
+                          onChange={(e) => handldeDocumentUpdate(e)}
+                          onClick={toggleDocumnetsDropdown}
+
+                        >
+                          <option value="publications">Publications</option>
+                          <option value="hedgeFundReports">Hedge Fund Reports</option>
+                          <option value="managedAccountReports">Managed Account Reports</option>
+                        </Form.Control>
+                        <FontAwesomeIcon
+                          icon={isDocumentOpen ? faChevronUp : faChevronDown}
+                          className="dropdown-arrow position-absolute"
+                        />
+                      </div>
+                    </Form.Group>
                   </div>
-                  {documentType === "hedgeFundReports" && (
-                    <div className="col-md-4">
-                      <label htmlFor="HedgeFundReportstypes" className="col-form-label">
-                        Hedge Fund Reports types
-                      </label>
-                      <div className="custom-select-wrapper">
-                        <select
-                          id="HedgeFundReportstypes"
+
+                  {documentType === 'hedgeFundReports' && (
+                    <div className="col-md-4 p-1">
+                      <Form.Group controlId="HedgeFundReportstypes">
+                        <Form.Label>Hedge Fund Reports Types</Form.Label>
+                        <div className="custom-select-wrapper" ref={reportsRef}>
+                        <Form.Control
+                          as="select"
                           className="form-control custom-select"
                           value={hedgeFundReportstypes}
                           onChange={(e) => setHedgeFundReportstypes(e.target.value)}
+                          onClick={toggleReportsDropdown}
                         >
                           <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
                           <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
                           <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
                           <option value="fundDocumentation">Fund Documentation</option>
                           <option value="auditedFinancialStatements">Audited Financial Statements</option>
-
-                        </select>
+                        </Form.Control>
+                        <FontAwesomeIcon
+                          icon={isReportsOpen ? faChevronUp : faChevronDown}
+                          className="dropdown-arrow position-absolute"
+                        />
                       </div>
+                      </Form.Group>
                     </div>
                   )}
-                  {/* {hedgeFundReportstypes === "monthlyPortfolioSummary" && ( */}
-                  <div className="col-md-4">
-                    <label htmlFor="postingYears" className="col-form-label">
-                      Posting Years
-                    </label>
-                    <div className="custom-select-wrapper">
-                      <select
-                        id="postingYears"
+
+                  <div className="col-md-4 p-1">
+                    <Form.Group controlId="postingYears">
+                      <Form.Label>Posting Years</Form.Label>
+                      <div className="custom-select-wrapper" ref={yearsRef}>
+                      <Form.Control
+                        as="select"
                         className="form-control custom-select"
                         value={postingYear}
                         onChange={(e) => setPostingYear(e.target.value)}
+                        onClick={toggleYearsDropdown}
+
                       >
                         {Array.from({ length: 15 }, (_, i) => {
                           const year = 2010 + i;
@@ -192,27 +234,35 @@ const CreatePages = () => {
                             </option>
                           );
                         })}
-                      </select>
-                    </div>
+                      </Form.Control>
+                      <FontAwesomeIcon
+                          icon={isYearsOpen ? faChevronUp : faChevronDown}
+                          className="dropdown-arrow position-absolute"
+                        />
+                      </div>
+                    </Form.Group>
                   </div>
                 </div>
+
                 <div className="upload-box mt-5 mb-5"
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}>
-                  <label htmlFor="documentUpload" className="upload-label">
-                    <h4>
-                      {selectedFile ? selectedFile.name : "Drag and drop your PDF here or click to upload"}
-                    </h4>
-                  </label>
-                  <input
-                    type="file"
-                    id="documentUpload"
-                    className="form-control"
-                    accept="application/pdf"
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
+                  <Form.Group controlId="documentUpload">
+                    <Form.Label className="upload-label">
+                      <h4>
+                        {selectedFile ? selectedFile.name : "Drag and drop your PDF here or click to upload"}
+                      </h4>
+                    </Form.Label>
+                    <input
+                      type="file"
+                      id="documentUpload"
+                      className="form-control"
+                      accept="application/pdf"
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                    />
+                  </Form.Group>
                   <div className="upload-button">
                     <Button
                       text="Select PDF"
@@ -221,8 +271,11 @@ const CreatePages = () => {
                       onClick={() => document.getElementById("documentUpload").click()}
                     />
                   </div>
-                  <small className="form-text text-muted">Note: Each file should not exceed {maxFileSizeInMB} MB in size, Only PDF files are allowed.</small>
+                  <small className="form-text text-muted">
+                    Note: Each file should not exceed 10 MB in size. Only PDF files are allowed.
+                  </small>
                 </div>
+
                 <div className="text-center">
                   <Button
                     text={loading ? "Submitting..." : "Submit"}
@@ -230,9 +283,9 @@ const CreatePages = () => {
                     type="submit"
                     disabled={loading}
                   />
-                  {/* {loading && <div className="spinner-border text-primary" role="status"></div>} */}
+                  {loading && <div className="spinner-border text-primary" role="status"></div>}
                 </div>
-              </form>
+              </Form>
             </div>
 
           </div>
