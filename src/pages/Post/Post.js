@@ -361,7 +361,7 @@ const Post = () => {
                                                         value={tableActions}
                                                         onChange={(e) => {
                                                             setTableActions(e.target.value);
-                                                            // handleTableAction(e.target.value);  // Add your handler here
+                                                            handleTableAction(e.target.value);
                                                         }}
                                                         onClick={toggleTableActionsDropdown}
                                                     >
