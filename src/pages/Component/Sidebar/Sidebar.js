@@ -50,7 +50,7 @@ const Sidebar = ({ isVisible }) => {
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/users" className="nav-link text-white Links">
+          <Link to="/usersManagement" className="nav-link text-white Links">
             Users
           </Link>
         </li>

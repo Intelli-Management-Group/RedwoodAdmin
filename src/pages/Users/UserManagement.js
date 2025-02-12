@@ -28,22 +28,26 @@ const UserManagement = () => {
     const [deletedItemId, setDeletedItemId] = useState("")
     const [action, setAction] = useState("")
     const [roleAction, setRoleAction] = useState("")
-
+    const [statusWiseUser, setStatusWiseUser] = useState([]);
     const { state } = location;
     const status = state?.status || "all";
-    console.log(status)
+    const totalUserCount = statusWiseUser?.reduce((acc, statusData) => acc + statusData.total, 0);
 
+    console.log("totalUserCount", totalUserCount)
 
     useEffect(() => {
         fetchAllUser()
+        getUserWiseCounts()
+
 
     }, [])
     useEffect(() => {
-        fetchAllUser();
+        if (isModalVisible === false) {
+            fetchAllUser(currentPage, filter);
+        }
     }, [isModalVisible]);
     useEffect(() => {
         if (filter === "all") {
-            console.log("filter", filter)
             fetchAllUser()
         } else {
             fetchAllUser(1, filter)
@@ -300,6 +304,33 @@ const UserManagement = () => {
             setIsLoading(false);
         }
     };
+    const getUserWiseCounts = async () => {
+        setIsLoading(true);
+
+        try {
+            const resp = await AdminServices.getUserWiseCount();
+            if (resp?.status_code === 200) {
+                console.log(resp);
+
+                const processedData = resp?.list.map((item) => ({
+                    status: item.status || "Unknown", // Replace null with "Unknown"
+                    total: item.total,
+                }));
+                setStatusWiseUser(processedData)
+            } else {
+                notifyError("Please try again.",);
+            }
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            notifyError("An error occurred during fetch Data. Please try again.",);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    console.log(statusWiseUser)
+    const filtersUsers = async (selectedStatus) => {
+        SetFilter(selectedStatus)
+    }
     const areAllSelected =
         userData.length > 0 && selectedCheckboxes.length === userData.length;
     return (
@@ -322,7 +353,46 @@ const UserManagement = () => {
 
 
                                 </div>
-                                <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
+                                <div className="px-2 mb-2 mt-5 d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center">
+                                        <div className="">
+                                            <span
+                                                className=""
+                                                onClick={() => filtersUsers("all")}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                All ({totalUserCount})
+                                            </span>
+                                        </div>
+
+                                        {statusWiseUser?.map((statusData, index) => {
+                                            console.log(statusData)
+                                            return (
+                                                <div key={index} className={"mx-3"}>
+                                                    <span
+                                                        className={``}
+                                                        onClick={() => filtersUsers(statusData.status)}
+                                                        style={{ cursor: 'pointer' }}
+                                                    >
+                                                        {`${statusData.status.charAt(0).toUpperCase() + statusData.status.slice(1)} (${statusData.total})`}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div className="d-flex align-items-center">
+                                        <Button
+                                            text="Add User"
+                                            onClick={() => setIsModalVisible(true)}
+                                            className="btn btn-primary me-2"
+                                            type="button"
+                                        />
+                                    </div>
+                                </div>
+
+
+                                <div className="px-2 mb-3 mt-2 row d-flex justify-content-between">
 
                                     <div className="col-md-4 p-1">
                                         <div className="custom-select-wrapper">
@@ -335,7 +405,7 @@ const UserManagement = () => {
                                                 <option value="approve">Approve User</option>
                                                 <option value="rejected">Reject User</option>
                                                 <option value="deactivate">Deactivate</option>
-                                                <option value="approve">Reactivate</option>
+                                                {/* <option value="approve">Reactivate</option> */}
                                                 <option value="pending">Pending User</option>
                                                 <option value="resend" disabled>Resend Activation Email</option>
                                                 {/* <option value="User">Member/User</option> */}
@@ -364,7 +434,7 @@ const UserManagement = () => {
                                                 <option value="approve">Approve User</option>
                                                 <option value="rejected">Reject User</option>
                                                 <option value="deactivate">Deactivate</option>
-                                                <option value="approve">Reactivate</option>
+                                                {/* <option value="approve">Reactivate</option> */}
                                                 <option vlaue="Delete">Delete</option>
 
                                                 <option value="pending" disabled>Put as Pending Review</option>
@@ -462,8 +532,8 @@ const UserManagement = () => {
                                                             icon={faPencilSquare}
                                                             iconSize="lg"
                                                             disabled={false}
-                                                        />      
-                                                                                              
+                                                        />
+
                                                         <Button
                                                             text=""
                                                             onClick={() => openUserModal(user)}
