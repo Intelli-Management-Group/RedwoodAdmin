@@ -7,7 +7,8 @@ const ConfirmationDialog = ({
     title,
     message,
     onConfirm,
-    onCancel
+    onCancel,
+    isLoading
 }) => {
     if (!isVisible) return null;
 
@@ -18,11 +19,13 @@ const ConfirmationDialog = ({
                 <p className="dialog-message">{message}</p>
                 <div className="dialog-actions">
                     <Button
-                        text="Confirm"
+                        text={isLoading ? "Processing..." : "Confirm"}
                         onClick={onConfirm}
                         className="btn-primary"
+                        disabled={isLoading}
                         type="submit"
                     />
+                    
                      <Button
                         text="Cancel"
                         onClick={onCancel}

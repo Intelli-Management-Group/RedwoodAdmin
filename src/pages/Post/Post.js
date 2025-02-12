@@ -28,6 +28,8 @@ const Post = () => {
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
     const perPageRecords = (10);
     const [totalRecords, setTotalRecords] = useState();
+    const [isConfirmedAlertLoading, setIsConfirmedAlertLoading] = useState(false);
+
 
     const actionsRef = useRef();
     const categoryRef = useRef();
@@ -221,6 +223,7 @@ const Post = () => {
 
     const handleConfirmDelete = async () => {
         console.log("Deleted items:", selectedCheckboxes);
+        setIsConfirmedAlertLoading(true); 
 
         const formData = new FormData();
 
@@ -233,10 +236,12 @@ const Post = () => {
             setTimeout(() =>
                 setIsLoading(true),
                 fetchPost(currentPage,),
+                setIsConfirmedAlertLoading(false),
                 3000);
 
         } else {
             notifyError("Please try again.",);
+            setIsConfirmedAlertLoading(false);
         }
         // Clear selected checkboxes and reset table action
         clearSelectedCheckboxes();
@@ -525,6 +530,7 @@ const Post = () => {
                 message="Are you sure you want to delete this item? This action cannot be undone."
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCancelDelete}
+                isLoading={isConfirmedAlertLoading}
             />
         </React.Fragment>
     );
