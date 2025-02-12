@@ -7,7 +7,7 @@ import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import PageServices from "../../Services/PageServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Pagination from "react-js-pagination";
-import { faChevronDown, faChevronUp, faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faCopy, faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -226,6 +226,10 @@ const Pages = () => {
       setIsYearsOpen(false);
     }
   };
+  const handleCopy = (text) => {
+    console.log("text", text);
+    navigator.clipboard.writeText(text).then();
+  };
   const areAllSelected =
     page.length > 0 && selectedCheckboxes.length === page.length;
   return (
@@ -281,20 +285,20 @@ const Pages = () => {
                       <Form.Group controlId="postCategories">
                         <Form.Label>Document Categories</Form.Label>
                         <div className="custom-select-wrapper" ref={categoryRef}>
-                        <Form.Control
-                          as="select"
-                          className="form-control"
-                          style={{ height: 'auto' }}
-                          value={documentType}
-                          onChange={(e) => setDocumentType(e.target.value)}
-                          onClick={toggleCategoryDropdown}
-                        >
-                          <option value="all">All Categories</option>
-                          <option value="publications">Publications</option>
-                          <option value="hedgeFundReports">Hedge Fund Reports</option>
-                          <option value="managedAccountReports">Managed Account Reports</option>
-                        </Form.Control>
-                        <FontAwesomeIcon
+                          <Form.Control
+                            as="select"
+                            className="form-control"
+                            style={{ height: 'auto' }}
+                            value={documentType}
+                            onChange={(e) => setDocumentType(e.target.value)}
+                            onClick={toggleCategoryDropdown}
+                          >
+                            <option value="all">All Categories</option>
+                            <option value="publications">Publications</option>
+                            <option value="hedgeFundReports">Hedge Fund Reports</option>
+                            <option value="managedAccountReports">Managed Account Reports</option>
+                          </Form.Control>
+                          <FontAwesomeIcon
                             icon={isCategoryOpen ? faChevronUp : faChevronDown}
                             className="dropdown-arrow position-absolute"
                           />
@@ -307,22 +311,22 @@ const Pages = () => {
                       <Form.Group controlId="HedgeFundReportstypes">
                         <Form.Label>Hedge Fund Reports Types</Form.Label>
                         <div className="custom-select-wrapper" ref={reportsRef}>
-                        <Form.Control
-                          as="select"
-                          className="form-control custom-select"
-                          value={hedgeFundReportstypes}
-                          onChange={(e) => setHedgeFundReportstypes(e.target.value)}
-                          onClick={toggleReportsDropdown}
+                          <Form.Control
+                            as="select"
+                            className="form-control custom-select"
+                            value={hedgeFundReportstypes}
+                            onChange={(e) => setHedgeFundReportstypes(e.target.value)}
+                            onClick={toggleReportsDropdown}
 
-                        >
-                          <option value="">Select Report Type</option>
-                          <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
-                          <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
-                          <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
-                          <option value="fundDocumentation">Fund Documentation</option>
-                          <option value="auditedFinancialStatements">Audited Financial Statements</option>
-                        </Form.Control>
-                        <FontAwesomeIcon
+                          >
+                            <option value="">Select Report Type</option>
+                            <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
+                            <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
+                            <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
+                            <option value="fundDocumentation">Fund Documentation</option>
+                            <option value="auditedFinancialStatements">Audited Financial Statements</option>
+                          </Form.Control>
+                          <FontAwesomeIcon
                             icon={isReportsOpen ? faChevronUp : faChevronDown}
                             className="dropdown-arrow position-absolute"
                           />
@@ -335,24 +339,24 @@ const Pages = () => {
                       <Form.Group controlId="postingYears">
                         <Form.Label>Posting Year</Form.Label>
                         <div className="custom-select-wrapper" ref={yearsRef}>
-                        <Form.Control
-                          as="select"
-                          className="form-control custom-select"
-                          value={postingYear}
-                          onChange={(e) => setPostingYear(e.target.value)}
-                          onClick={toggleYearsDropdown}
-                        >
-                          <option value="">Select a year</option>
-                          {Array.from({ length: 15 }, (_, i) => {
-                            const year = 2010 + i;
-                            return (
-                              <option key={year} value={year}>
-                                {year}
-                              </option>
-                            );
-                          })}
-                        </Form.Control>
-                        <FontAwesomeIcon
+                          <Form.Control
+                            as="select"
+                            className="form-control custom-select"
+                            value={postingYear}
+                            onChange={(e) => setPostingYear(e.target.value)}
+                            onClick={toggleYearsDropdown}
+                          >
+                            <option value="">Select a year</option>
+                            {Array.from({ length: 15 }, (_, i) => {
+                              const year = 2010 + i;
+                              return (
+                                <option key={year} value={year}>
+                                  {year}
+                                </option>
+                              );
+                            })}
+                          </Form.Control>
+                          <FontAwesomeIcon
                             icon={isYearsOpen ? faChevronUp : faChevronDown}
                             className="dropdown-arrow position-absolute"
                           />
@@ -491,15 +495,16 @@ const Pages = () => {
                       <th>Category</th>
                       <th>Reports types</th>
                       <th>Years</th>
+                      <th>Copy Link</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {isLoading ? (
                       <>
-                        <Skeleton type="row" columns={6} />
-                        <Skeleton type="row" columns={6} />
-                        <Skeleton type="row" columns={6} />
+                        <Skeleton type="row" columns={7} />
+                        <Skeleton type="row" columns={7} />
+                        <Skeleton type="row" columns={7} />
                       </>
                     ) : page.length > 0 ? (
                       page.map((page) => (
@@ -528,6 +533,16 @@ const Pages = () => {
                             {page?.hedge_fund_report_type === "auditedFinancialStatements" && "Audited Financial Statements"}
                           </td>
                           <td>{page.year}</td>
+                          <td>
+                            <Button
+                              text=""
+                              onClick={() => handleCopy(page?.file_path)}
+                              className="btn btn-sm btn-primary ms-2"
+                              icon={faCopy}
+                              iconSize="lg"
+                              disabled={false}
+                            />
+                          </td>
                           <td>
                             <Button
                               text=""
