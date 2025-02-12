@@ -4,10 +4,14 @@ import { toast } from 'react-toastify';
 import AdminServices from "../../../Services/AdminServices";
 import { notifyError, notifySuccess } from "../ToastComponents/ToastComponents";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 function AddUserModal({ show, onHide, userData }) {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
+  const [isRoleOpen, setIsRoleOpen] = useState(false);
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [formData, setFormData] = useState({
     id: "",
     first_name: "",
@@ -111,6 +115,13 @@ function AddUserModal({ show, onHide, userData }) {
       setLoading(false);
     }
   };
+  const toggleRoleDropdown = () => {
+    setIsRoleOpen(!isRoleOpen);
+  };
+
+  const toggleStatusDropdown = () => {
+    setIsStatusOpen(!isStatusOpen);
+  };
   return (
     <Modal show={show} centered>
       <Modal.Header >
@@ -139,29 +150,6 @@ function AddUserModal({ show, onHide, userData }) {
             />
           </Form.Group>
 
-          {/* Username */}
-          {/* <Form.Group controlId="username" className="mb-3">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group> */}
-          {/* Name */}
-          {/* <Form.Group controlId="name" className="mb-3">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group> */}
-
           <Form.Group controlId="email" className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -175,13 +163,16 @@ function AddUserModal({ show, onHide, userData }) {
 
 
 
-          <Form.Group controlId="role" className="mb-3">
+          <Form.Group controlId="role" className="mb-3 position-relative">
             <Form.Label>Role</Form.Label>
+            <div className="custom-dropdown-wrapper">
             <Form.Control
               as="select"
               name="role"
               value={formData.role}
               onChange={handleChange}
+              className="custom-dropdown"
+              onClick={toggleRoleDropdown}
               required
             >  <option value="">Select role</option>
               <option value="admin">Admin</option>
@@ -189,24 +180,34 @@ function AddUserModal({ show, onHide, userData }) {
               <option value="user">User</option>
 
             </Form.Control>
+            <FontAwesomeIcon
+                  icon={isRoleOpen ? faChevronUp : faChevronDown}
+                  className="dropdown-arrow position-absolute"
+                />
+              </div>
           </Form.Group>
           {userData && (
-            <Form.Group controlId="role" className="mb-3">
+            <Form.Group controlId="role" className="mb-3 position-relative">
               <Form.Label>User Status</Form.Label>
-              <Form.Control
-                as="select"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-              // required
-              >
-                <option value="pending">Pending</option>
-                <option value="approve">Approve</option>
-                <option value="rejected">Rejected</option>
-                <option value="inActive">Inactive</option>
-
-
-              </Form.Control>
+              <div className="custom-dropdown-wrapper">
+                <Form.Control
+                  as="select"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="custom-dropdown"
+                  onClick={toggleStatusDropdown}
+                >
+                  <option value="pending">Pending</option>
+                  <option value="approve">Approve</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="inActive">Inactive</option>
+                </Form.Control>
+                <FontAwesomeIcon
+                  icon={isStatusOpen ? faChevronUp : faChevronDown}
+                  className="dropdown-arrow position-absolute"
+                />
+              </div>
             </Form.Group>
           )}
           {!userData ? (

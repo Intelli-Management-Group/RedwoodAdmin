@@ -715,3 +715,21 @@ video {
 .custom-media-modal{
     min-width: 600px !important;
 }
+
+/* Form Group Select */
+.custom-dropdown-wrapper {
+    position: relative;
+  }
+  
+  .custom-dropdown {
+    width: 100%;
+    padding-right: 30px;
+  }
+  
+  .dropdown-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
