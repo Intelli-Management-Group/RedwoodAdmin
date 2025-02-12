@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap"; // Import React Bootstrap components
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import AdminServices from "../../../Services/AdminServices";
 import { notifyError, notifySuccess } from "../ToastComponents/ToastComponents";
 import { useNavigate } from "react-router-dom";
@@ -22,18 +22,17 @@ function AddUserModal({ show, onHide, userData }) {
     status: ''
   });
 
-  // Pre-fill form fields when userData changes
   useEffect(() => {
     if (userData) {
       setFormData({
-        id: userData?.id ? userData?.id : "",
+        id: userData?.id || "",
         first_name: userData?.first_name || "",
         last_name: userData?.last_name || "",
-        username: userData.username || "",
-        email: userData.email || "",
-        name: userData.name || "",
-        role: userData.role || "",
-        status: userData.status || "approve",
+        username: userData?.username || "",
+        email: userData?.email || "",
+        name: userData?.name || "",
+        role: userData?.role || "",
+        status: userData?.status || "approve",
         password: "",
         confirmPassword: "",
         sendEmail: false
@@ -41,7 +40,6 @@ function AddUserModal({ show, onHide, userData }) {
     }
   }, [userData]);
 
-  // Handle form field changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -66,12 +64,10 @@ function AddUserModal({ show, onHide, userData }) {
     return null;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Validate the form
     const validationError = validateForm();
     if (validationError) {
       toast.error(validationError, { position: "top-center", autoClose: 3000 });
@@ -100,26 +96,12 @@ function AddUserModal({ show, onHide, userData }) {
       console.log("res", response)
       if (response?.status_code === 200) {
         notifySuccess(formData?.id ? "User Updated SuccessFully!" : "User Created SuccessFully");
-        setFormData({
-          id: "",
-          username: "",
-          name: "",
-          email: "",
-          role: "",
-          password: "",
-          confirmPassword: "",
-          sendEmail: false,
-        });
-        // 
         setTimeout(() => {
           navigate(`/usersManagement?status=all`);
           onHide()
 
         }, 3000);
 
-
-        // if (onSave) onSave(); // Optional callback for parent component
-        // onHide();
       } else {
         throw new Error(response.message || "Something went wrong!");
       }
@@ -180,7 +162,6 @@ function AddUserModal({ show, onHide, userData }) {
             />
           </Form.Group> */}
 
-          {/* Email */}
           <Form.Group controlId="email" className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -194,7 +175,6 @@ function AddUserModal({ show, onHide, userData }) {
 
 
 
-          {/* Role */}
           <Form.Group controlId="role" className="mb-3">
             <Form.Label>Role</Form.Label>
             <Form.Control
@@ -208,7 +188,6 @@ function AddUserModal({ show, onHide, userData }) {
               <option value="siteAdmin">Site Admin</option>
               <option value="user">User</option>
 
-              {/* Add other roles here */}
             </Form.Control>
           </Form.Group>
           {userData && (
@@ -227,13 +206,11 @@ function AddUserModal({ show, onHide, userData }) {
                 <option value="inActive">Inactive</option>
 
 
-                {/* Add other roles here */}
               </Form.Control>
             </Form.Group>
           )}
           {!userData ? (
             <>
-              {/* Password */}
               <Form.Group controlId="password" className="mb-3">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
@@ -245,7 +222,6 @@ function AddUserModal({ show, onHide, userData }) {
                 />
               </Form.Group>
 
-              {/* Confirm Password */}
               <Form.Group controlId="confirmPassword" className="mb-3">
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
@@ -260,7 +236,6 @@ function AddUserModal({ show, onHide, userData }) {
           ) : null}
 
 
-          {/* Send Email Checkbox */}
           <Form.Group className="mb-3" controlId="sendEmail">
             <Form.Check
               type="checkbox"

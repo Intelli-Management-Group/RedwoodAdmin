@@ -39,6 +39,9 @@ const UserManagement = () => {
 
     }, [])
     useEffect(() => {
+        fetchAllUser();
+    }, [isModalVisible]);
+    useEffect(() => {
         if (filter === "all") {
             console.log("filter", filter)
             fetchAllUser()
