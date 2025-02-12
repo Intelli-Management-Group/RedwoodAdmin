@@ -8,6 +8,7 @@ import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import PostServices from "../../Services/PostServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Pagination from "react-js-pagination";
+import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const Post = () => {
     const navigate = useNavigate();
@@ -33,12 +34,12 @@ const Post = () => {
     useEffect(() => {
 
         if (category || searchString) {
-            fetchPost(currentPage, );
-        }else{
+            fetchPost(currentPage,);
+        } else {
             setCategory('')
             fetchPost(currentPage);
         }
-    }, [category,searchString])
+    }, [category, searchString])
     const fetchPost = async (pageNumbers) => {
         setIsLoading(true);
         try {
@@ -435,18 +436,22 @@ const Post = () => {
                                                     <td>{post.title}</td>
                                                     <td>{post.category}</td>
                                                     <td>
+                                                        <Button
+                                                            text=""
+                                                            onClick={() => redirectToCreatePage(post.id)}
+                                                            className="btn btn-sm btn-primary"
+                                                            icon={faPencilSquare}
+                                                            iconSize="lg"
+                                                            disabled={false}
+                                                        />
 
                                                         <Button
-                                                            text="Edit"
-                                                            onClick={() => redirectToCreatePage(post.id)}
-                                                            className={"btn btn-primary btn-sm me-2"}
-                                                            type="button"
-                                                        />
-                                                        <Button
-                                                            text="Delete"
+                                                            text=""
                                                             onClick={() => handleDelete(post.id)}
-                                                            className="btn btn-danger btn-sm ms-1"
-                                                            type="button"
+                                                            className="btn btn-sm btn-danger ms-2"
+                                                            icon={faTrash}
+                                                            iconSize="lg"
+                                                            disabled={false}
                                                         />
 
                                                     </td>

@@ -421,7 +421,7 @@ const UserManagement = () => {
                                                 </>
                                             </>
                                         ) : userData.length > 0 ? (
-                                            userData.map((user,index) => (
+                                            userData.map((user, index) => (
                                                 <tr key={index}>
                                                     <td>
                                                         <input
@@ -449,19 +449,27 @@ const UserManagement = () => {
                                                         {user.status === "deactivate" && "Deactivate"}
 
                                                         {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
-                                                  
+
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-sm btn-primary" onClick={() => openUserModal(user)}>
-                                                            <FontAwesomeIcon icon={faPencilSquare} size="lg" />
-                                                        </button>
-
-                                                        <button
+                                                        <Button
+                                                            text=""
+                                                            onClick={() => openUserModal(user)}
+                                                            className="btn btn-sm btn-primary"
+                                                            icon={faPencilSquare}
+                                                            iconSize="lg"
+                                                            disabled={false}
+                                                        />      
+                                                                                              
+                                                        <Button
+                                                            text=""
+                                                            onClick={() => openUserModal(user)}
                                                             className="btn btn-sm btn-danger ms-2"
-                                                            onClick={() => handleDelete(user.id)}
-                                                        >
-                                                            <FontAwesomeIcon icon={faTrash} size="lg" />
-                                                        </button></td>
+                                                            icon={faTrash}
+                                                            iconSize="lg"
+                                                            disabled={false}
+                                                        />
+                                                    </td>
                                                 </tr>
                                             ))) : (
                                             <tr>

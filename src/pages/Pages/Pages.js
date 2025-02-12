@@ -7,6 +7,7 @@ import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
 import PageServices from "../../Services/PageServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import Pagination from "react-js-pagination";
+import { faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const Pages = () => {
   const navigate = useNavigate();
@@ -326,8 +327,8 @@ const Pages = () => {
                   <tbody>
                     {isLoading ? (
                       <>
-                        <Skeleton type="row"columns={6} />
-                        <Skeleton type="row" columns={6}/>
+                        <Skeleton type="row" columns={6} />
+                        <Skeleton type="row" columns={6} />
                         <Skeleton type="row" columns={6} />
                       </>
                     ) : page.length > 0 ? (
@@ -358,22 +359,22 @@ const Pages = () => {
                           </td>
                           <td>{page.year}</td>
                           <td>
-
                             <Button
-                              variant="primary"
-                              className="btn btn-primary btn-sm me-2"
-                              type="button"
-                              text="Edit"
-                              disabled={true}
+                              text=""
                               onClick={redirectToCreatePage}
-
+                              className="btn btn-sm btn-primary"
+                              icon={faPencilSquare}
+                              iconSize="lg"
+                              disabled={true}
                             />
+
                             <Button
-                              variant="primary"
-                              className="btn btn-danger btn-sm ms-1"
-                              type="button"
-                              text="Delete"
+                              text=""
                               onClick={() => handleDelete(page.id)}
+                              className="btn btn-sm btn-danger ms-2"
+                              icon={faTrash}
+                              iconSize="lg"
+                              disabled={false}
                             />
 
                           </td>
