@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState, } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
@@ -10,6 +10,8 @@ import { useDropzone } from 'react-dropzone';
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import { ToastContainer } from "react-toastify";
 import PostServices from "../../Services/PostServices";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 
@@ -32,12 +34,22 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const MAX_FILE_SIZE = 3 * 1024 * 1024;
   const maxFileSizeInMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isYearsOpen, setIsYearsOpen] = useState(false);
+
+
+  const categoryRef = useRef();
+  const yearsRef = useRef();
+
+
 
   useEffect(() => {
     console.log('component mounted', id);
     if (id) {
       fetchPostData()
     }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -110,30 +122,16 @@ const CreatePost = () => {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: 'image/jpeg, image/png, image/jpg',
+    accept: {
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpeg'],
+      'image/jpg': ['.jpg'],
+      'image/webp': ['.webp'],
+      'image/gif': ['.gif'],
+    },
     multiple: true,
   });
 
-  const handleDragStart = (e, index) => {
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = "move";
-  };
-  const handleDragOver = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
-  const handleDrop = (e, index) => {
-    e.preventDefault();
-
-    const updatedFiles = [...selectedFiles];
-    const draggedFile = updatedFiles[draggedIndex];
-    updatedFiles.splice(draggedIndex, 1);
-    updatedFiles.splice(index, 0, draggedFile);
-
-    setSelectedFiles(updatedFiles);
-    setDraggedIndex(null);
-  };
   const handleRemoveFile = (index) => {
     const updatedFiles = [...selectedFiles];
     const deletedMediaId = updatedFiles[index]?.id;
@@ -147,29 +145,29 @@ const CreatePost = () => {
 
   const handleCaptionChange = (e, fileName) => {
     const newCaption = e.target.value;
-      setCaptions((prevCaptions) => ({
+    setCaptions((prevCaptions) => ({
       ...prevCaptions,
       [fileName]: newCaption,
     }));
-      if (id) {
+    if (id) {
       const result = selectedFiles.find((item) => item.name === fileName);
-        if (result && result.id) {
+      if (result && result.id) {
         const obj = { media_id: result.id, caption: newCaption };
-  
+
         setEditCaptionsList((prevList) => {
           const existsIndex = prevList.findIndex((item) => item.media_id === obj.media_id);
-  
+
           if (existsIndex > -1) {
             const updatedList = [...prevList];
             updatedList[existsIndex].caption = obj.caption;
             return updatedList;
           }
-            return [...prevList, obj];
+          return [...prevList, obj];
         });
       }
     }
   };
-  
+
 
 
   const validateForm = (title, category, content, postingYear, images) => {
@@ -304,6 +302,19 @@ const CreatePost = () => {
     // setDescription(encodedString);
     setEditorContent(encodedString)
   };
+  const toggleCategoryDropdown = () => setIsCategoryOpen(!isCategoryOpen);
+  const toggleYearsDropdown = () => setIsYearsOpen(!isYearsOpen);
+
+  const handleClickOutside = (e) => {
+    if (categoryRef.current && !categoryRef.current.contains(e.target)) {
+      setIsCategoryOpen(false);
+    }
+    if (yearsRef.current && !yearsRef.current.contains(e.target)) {
+      setIsYearsOpen(false);
+    }
+
+  };
+
 
   return (
     <React.Fragment>
@@ -323,48 +334,54 @@ const CreatePost = () => {
                   <h2 className="mb-4">Create New Post</h2>
 
                   {successMessage && <Alert variant="success">{successMessage}</Alert>}
-                  <div className="col-md-12 p-1">
-                    <label htmlFor="postCategory" className="col-form-label">
-                      Post Title
-                    </label>
-                    <input
+
+                  {/* Post Title Field */}
+                  <Form.Group className="col-md-12 p-1" controlId="postTitle">
+                    <Form.Label>Post Title</Form.Label>
+                    <Form.Control
                       type="text"
-                      id="postTitle"
-                      className="form-control search-input"
                       placeholder="Enter post title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
-                  </div>
+                  </Form.Group>
+
+                  {/* Post Category & Posting Year */}
                   <div className="px-2 mb-3 mt-2 row d-flex justify-content-between">
-                    <div className="col-md-6 p-1">
-                      <label htmlFor="postCategory" className="col-form-label">
-                      Choose Post Category
-                      </label>
-                      <div className="custom-select-wrapper">
-                        <select
-                          id="postCategory"
+                    {/* Post Category */}
+                    <Form.Group className="col-md-6 p-1" controlId="postCategory">
+                      <Form.Label>Choose Post Category</Form.Label>
+                      <div className="custom-select-wrapper" ref={categoryRef}>
+                        <Form.Control
+                          as="select"
                           className="form-control custom-select"
                           value={category}
                           onChange={(e) => setCategory(e.target.value)}
+                          onClick={toggleCategoryDropdown}
+
                         >
                           <option value="">All Categories</option>
                           <option value="news">News</option>
                           <option value="visit">Visit</option>
-                        </select>
+                        </Form.Control>
+                        <FontAwesomeIcon
+                          icon={isCategoryOpen ? faChevronUp : faChevronDown}
+                          className="dropdown-arrow position-absolute"
+                        />
                       </div>
-                    </div>
-                    <div className="col-md-6 p-1">
+                    </Form.Group>
 
-                      <label htmlFor="postingYears" className="col-form-label">
-                        Posting Years
-                      </label>
-                      <div className="custom-select-wrapper">
-                        <select
-                          id="postingYears"
+                    {/* Posting Year */}
+                    <Form.Group className="col-md-6 p-1" controlId="postingYears">
+                      <Form.Label>Posting Years</Form.Label>
+                      <div className="custom-select-wrapper" ref={yearsRef}>
+                        <Form.Control
+                          as="select"
                           className="form-control custom-select"
                           value={postingYear}
                           onChange={(e) => setPostingYear(e.target.value)}
+                          onClick={toggleYearsDropdown}
+
                         >
                           {Array.from({ length: 15 }, (_, i) => {
                             const year = 2010 + i;
@@ -374,25 +391,30 @@ const CreatePost = () => {
                               </option>
                             );
                           })}
-                        </select>
+                        </Form.Control>
+                        <FontAwesomeIcon
+                          icon={isYearsOpen ? faChevronUp : faChevronDown}
+                          className="dropdown-arrow position-absolute"
+                        />
                       </div>
-                    </div>
+                    </Form.Group>
                   </div>
 
-                  <div className="file-upload-container">
+                  {/* File Upload Section */}
+                  <Form.Group className="file-upload-container">
                     {/* Dropzone area */}
                     <div
-                      {...getRootProps()}  // Bind dropzone props to the container
+                      {...getRootProps()}
                       className="dropzone-area"
                       style={{
-                        border: '2px dashed #007bff',
-                        padding: '20px',
-                        textAlign: 'center',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
+                        border: "2px dashed #007bff",
+                        padding: "20px",
+                        textAlign: "center",
+                        borderRadius: "8px",
+                        cursor: "pointer",
                       }}
                     >
-                      <input {...getInputProps()} />  {/* Hidden file input */}
+                      <input {...getInputProps()} />
                       <p>Drag and drop some images here, or click to select files</p>
                     </div>
 
@@ -400,9 +422,8 @@ const CreatePost = () => {
                     {selectedFiles.length > 0 && (
                       <div className="file-preview">
                         <h4>Selected Files:</h4>
-                        <div className="preview-images" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
+                        <div className="preview-images" style={{ display: "flex", flexWrap: "wrap", marginTop: "10px" }}>
                           {selectedFiles.map((file, index) => (
-                            <>
                             <div
                               className="d-flex flex-column align-items-center"
                               key={index}
@@ -415,7 +436,7 @@ const CreatePost = () => {
                             >
                               <img
                                 key={file.name}
-                                src={file instanceof File ? URL.createObjectURL(file) : file.path} // Handle local or API-provided files
+                                src={file instanceof File ? URL.createObjectURL(file) : file.path}
                                 alt={file.name}
                                 style={{
                                   width: "100px",
@@ -443,7 +464,6 @@ const CreatePost = () => {
                               >
                                 &#10005;
                               </button>
-                              {/* Thumbnail label */}
                               {index === 0 && (
                                 <p
                                   style={{
@@ -455,7 +475,7 @@ const CreatePost = () => {
                                   Thumbnail Image
                                 </p>
                               )}
-                          
+
                               {/* Caption input */}
                               <input
                                 type="text"
@@ -468,15 +488,13 @@ const CreatePost = () => {
                                   padding: "5px",
                                   borderRadius: "4px",
                                   border: "1px solid #ccc",
-                                  textAlign: "center", // Center-align text inside input
+                                  textAlign: "center",
                                 }}
                               />
                             </div>
-                          </>
                           ))}
                         </div>
                       </div>
-
                     )}
 
                     {/* Default image label */}
@@ -485,36 +503,43 @@ const CreatePost = () => {
                         <p>No files selected. Please upload an image.</p>
                       </div>
                     )}
+                  </Form.Group>
 
-                  </div>
-
-                  <div className="col-md-12 p-1">
-                    <label htmlFor="postCategory" className="col-form-label">
-                      Post Content
-                    </label>
-                    {/* <Form>
-
-                    <Form.Group controlId="postContent" className="mb-3">
-                      <Form.Label>Post Content</Form.Label> */}
+                  {/* Post Content Field */}
+                  <Form.Group className="col-md-12 p-1" controlId="postContent">
+                    <Form.Label>Post Content</Form.Label>
                     <CKEditor
                       editor={ClassicEditor}
                       config={{
                         toolbar: [
-                          'heading', '|', 'bold', 'italic', 'blockQuote', 'link', 'numberedList', 'bulletedList',
-                          // 'imageUpload', 'imageStyle:full', 'imageStyle:alignLeft', 'imageStyle:alignCenter',
-                          'imageStyle:alignRight', 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells',
-                          // 'mediaEmbed', 
-                          '|', 'undo', 'redo', 'Subscript'],
+                          "heading",
+                          "|",
+                          "bold",
+                          "italic",
+                          "blockQuote",
+                          "link",
+                          "numberedList",
+                          "bulletedList",
+                          "imageStyle:alignRight",
+                          "insertTable",
+                          "tableColumn",
+                          "tableRow",
+                          "mergeTableCells",
+                          "|",
+                          "undo",
+                          "redo",
+                          "Subscript",
+                        ],
                         heading: {
                           options: [
-                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-                            { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
-                            { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
-                            { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
-                          ]
+                            { model: "paragraph", title: "Paragraph", class: "ck-heading_paragraph" },
+                            { model: "heading1", view: "h1", title: "Heading 1", class: "ck-heading_heading1" },
+                            { model: "heading2", view: "h2", title: "Heading 2", class: "ck-heading_heading2" },
+                            { model: "heading3", view: "h3", title: "Heading 3", class: "ck-heading_heading3" },
+                            { model: "heading4", view: "h4", title: "Heading 4", class: "ck-heading_heading4" },
+                            { model: "heading5", view: "h5", title: "Heading 5", class: "ck-heading_heading5" },
+                            { model: "heading6", view: "h6", title: "Heading 6", class: "ck-heading_heading6" },
+                          ],
                         },
                       }}
                       data={defaultContent ? defaultContent : ""}
@@ -523,9 +548,9 @@ const CreatePost = () => {
                         handleEditorChange(data);
                       }}
                     />
-                  </div>
-                  {/* </Form.Group>
-                  </Form> */}
+                  </Form.Group>
+
+                  {/* Submit Button */}
                   <Button
                     text={loading ? "Submitting..." : id ? "Update Post" : "Create Post"}
                     onClick={id ? handleUpdate : handleSubmit}
@@ -533,8 +558,6 @@ const CreatePost = () => {
                     disabled={loading ? true : false}
                     type="submit"
                   />
-
-
                 </div>
               </div>
             </div>
