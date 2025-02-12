@@ -16,7 +16,9 @@ const CreatePages = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [documentType, setDocumentType] = useState("publications");
-  const [postingYear, setPostingYear] = useState("2024");
+  const startYear = 2010;
+  const [postingYear, setPostingYear] = useState(new Date().getFullYear());
+  const range = postingYear - startYear + 1;
   const [hedgeFundReportstypes, setHedgeFundReportstypes] = useState("monthlyPortfolioSummary");
   const [isDocumentOpen, setIsDocumentOpen] = useState(false);
   const [isReportsOpen, setIsReportsOpen] = useState(false);
@@ -162,7 +164,7 @@ const CreatePages = () => {
               <h2 className="mt-5 mb-3">Upload Documents</h2>
               <Form className="mt-5 mb-5" onSubmit={handleSubmit}>
                 <div className="form-group row">
-                 
+
                   <div className="col-md-4 p-1">
                     <Form.Group controlId="postType">
                       <Form.Label>Documents Type</Form.Label>
@@ -192,24 +194,24 @@ const CreatePages = () => {
                       <Form.Group controlId="HedgeFundReportstypes">
                         <Form.Label>Hedge Fund Reports Types</Form.Label>
                         <div className="custom-select-wrapper" ref={reportsRef}>
-                        <Form.Control
-                          as="select"
-                          className="form-control custom-select"
-                          value={hedgeFundReportstypes}
-                          onChange={(e) => setHedgeFundReportstypes(e.target.value)}
-                          onClick={toggleReportsDropdown}
-                        >
-                          <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
-                          <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
-                          <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
-                          <option value="fundDocumentation">Fund Documentation</option>
-                          <option value="auditedFinancialStatements">Audited Financial Statements</option>
-                        </Form.Control>
-                        <FontAwesomeIcon
-                          icon={isReportsOpen ? faChevronUp : faChevronDown}
-                          className="dropdown-arrow position-absolute"
-                        />
-                      </div>
+                          <Form.Control
+                            as="select"
+                            className="form-control custom-select"
+                            value={hedgeFundReportstypes}
+                            onChange={(e) => setHedgeFundReportstypes(e.target.value)}
+                            onClick={toggleReportsDropdown}
+                          >
+                            <option value="monthlyPortfolioSummary">Monthly Portfolio Summary</option>
+                            <option value="quarterlyPerformanceAnalysis">Quarterly Performance Analysis</option>
+                            <option value="quarterlyShareholderLetter">Quarterly Shareholder Letter</option>
+                            <option value="fundDocumentation">Fund Documentation</option>
+                            <option value="auditedFinancialStatements">Audited Financial Statements</option>
+                          </Form.Control>
+                          <FontAwesomeIcon
+                            icon={isReportsOpen ? faChevronUp : faChevronDown}
+                            className="dropdown-arrow position-absolute"
+                          />
+                        </div>
                       </Form.Group>
                     </div>
                   )}
@@ -218,24 +220,24 @@ const CreatePages = () => {
                     <Form.Group controlId="postingYears">
                       <Form.Label>Posting Years</Form.Label>
                       <div className="custom-select-wrapper" ref={yearsRef}>
-                      <Form.Control
-                        as="select"
-                        className="form-control custom-select"
-                        value={postingYear}
-                        onChange={(e) => setPostingYear(e.target.value)}
-                        onClick={toggleYearsDropdown}
+                        <Form.Control
+                          as="select"
+                          className="form-control custom-select"
+                          value={postingYear}
+                          onChange={(e) => setPostingYear(e.target.value)}
+                          onClick={toggleYearsDropdown}
 
-                      >
-                        {Array.from({ length: 15 }, (_, i) => {
-                          const year = 2010 + i;
-                          return (
-                            <option key={year} value={year}>
-                              {year}
-                            </option>
-                          );
-                        })}
-                      </Form.Control>
-                      <FontAwesomeIcon
+                        >
+                          {Array.from({ length: range }, (_, i) => {
+                            const year = 2010 + i;
+                            return (
+                              <option key={year} value={year}>
+                                {year}
+                              </option>
+                            );
+                          })}
+                        </Form.Control>
+                        <FontAwesomeIcon
                           icon={isYearsOpen ? faChevronUp : faChevronDown}
                           className="dropdown-arrow position-absolute"
                         />

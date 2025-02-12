@@ -21,7 +21,9 @@ const CreatePost = () => {
   const [id, setId] = useState(location.state?.id ? location.state?.id : '');
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
-  const [postingYear, setPostingYear] = useState("2024");
+  const startYear = 2010;
+  const [postingYear, setPostingYear] = useState(new Date().getFullYear());
+  const range = postingYear - startYear + 1;
   const [loading, setLoading] = useState(false);
   const [editorContent, setEditorContent] = useState('');
   const [defaultContent, setDefaultContent] = useState()
@@ -383,7 +385,7 @@ const CreatePost = () => {
                           onClick={toggleYearsDropdown}
 
                         >
-                          {Array.from({ length: 15 }, (_, i) => {
+                          {Array.from({ length: range }, (_, i) => {
                             const year = 2010 + i;
                             return (
                               <option key={year} value={year}>

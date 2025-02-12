@@ -29,6 +29,8 @@ const Pages = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isReportsOpen, setIsReportsOpen] = useState(false);
   const [isYearsOpen, setIsYearsOpen] = useState(false);
+  const startYear = 2010;
+  const range = new Date().getFullYear() - startYear + 1;
 
   const actionsRef = useRef();
   const categoryRef = useRef();
@@ -347,7 +349,7 @@ const Pages = () => {
                             onClick={toggleYearsDropdown}
                           >
                             <option value="">Select a year</option>
-                            {Array.from({ length: 15 }, (_, i) => {
+                            {Array.from({ length: range }, (_, i) => {
                               const year = 2010 + i;
                               return (
                                 <option key={year} value={year}>
