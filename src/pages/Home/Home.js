@@ -94,11 +94,7 @@ const Home = () => {
                         className="btn-primary"
                         type="submit"
                     />
-
                 </form>
-                <div className="footer-text">
-                    Don't have an account? <a href="#">Sign up</a>
-                </div>
             </div>
             <ToastContainer/>
         </div>
