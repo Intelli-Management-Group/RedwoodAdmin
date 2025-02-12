@@ -43,7 +43,7 @@ const Post = () => {
     useEffect(() => {
 
         if (category || searchString) {
-            fetchPost(currentPage,);
+            fetchPost(1,);
         } else {
             setCategory('')
             fetchPost(currentPage);
@@ -96,114 +96,6 @@ const Post = () => {
         navigate('/post/create', { state: { id: id } });
     };
 
-
-
-    // useEffect(() => {
-    //     // Simulate data fetch
-    //     setTimeout(() => {
-    //         setPosts([
-    //             {
-    //                 id: 1,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-    //                 title: "Post Title 1",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 2,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-    //                 title: "Post Title 2",
-    //                 category: "Visit"
-    //             },
-    //             {
-    //                 id: 3,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-    //                 title: "Post Title 3",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 4,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-    //                 title: "Post Title 4",
-    //                 category: "Visit"
-    //             },
-
-    //             {
-    //                 id: 5,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-    //                 title: "Post Title 5",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 6,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-    //                 title: "Post Title 6",
-    //                 category: "Visit"
-    //             },
-    //             {
-    //                 id: 7,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-    //                 title: "Post Title 7",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 8,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-    //                 title: "Post Title 8",
-    //                 category: "Visit"
-    //             },
-    //             {
-    //                 id: 9,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-    //                 title: "Post Title 9",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 10,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-    //                 title: "Post Title 10",
-    //                 category: "Visit"
-    //             },
-    //             {
-    //                 id: 11,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-    //                 title: "Post Title 11",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 12,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-    //                 title: "Post Title 12",
-    //                 category: "Visit"
-    //             },
-
-    //             {
-    //                 id: 13,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture2-1-150x150.png",
-    //                 title: "Post Title 13",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 14,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture3-1-150x150.png",
-    //                 title: "Post Title 14",
-    //                 category: "Visit"
-    //             },
-    //             {
-    //                 id: 15,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture4-1-150x150.png",
-    //                 title: "Post Title 15",
-    //                 category: "Latest News"
-    //             },
-    //             {
-    //                 id: 16,
-    //                 image: "http://localhost/redwood/wp-content/uploads/2019/08/Picture5-1-150x150.png",
-    //                 title: "Post Title 16",
-    //                 category: "Visit"
-    //             }
-    //         ]);
-    //         setIsLoading(false);
-    //     }, 2000);
-    // }, []);
     const handleTableAction = (action) => {
         if (action === "Delete") {
             const checkedItems = Array.from(
