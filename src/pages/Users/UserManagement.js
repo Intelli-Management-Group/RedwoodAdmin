@@ -332,7 +332,6 @@ const UserManagement = () => {
             setIsLoading(false);
         }
     };
-    console.log(statusWiseUser)
     const filtersUsers = async (selectedStatus) => {
         SetFilter(selectedStatus)
     }
@@ -340,7 +339,7 @@ const UserManagement = () => {
     const toggleActionsDropdown = () => setIsActionsOpen(!isActionsOpen);
     const toggleRolesDropdown = () => setIsRolesOpen(!isRolesOpen);
 
-    
+
     const handleClickOutside = (e) => {
         if (filterRef.current && !filterRef.current.contains(e.target)) {
             setIsFilterOpen(false);
@@ -378,26 +377,25 @@ const UserManagement = () => {
                                 <div className="px-2 mb-2 mt-5 d-flex justify-content-between align-items-center">
                                     <div className="d-flex align-items-center">
                                         <div className="">
-                                            <span
-                                                className=""
+                                            <Form.Label
                                                 onClick={() => filtersUsers("all")}
                                                 style={{ cursor: 'pointer' }}
+                                                className="mb-0 me-3"
                                             >
                                                 All ({totalUserCount})
-                                            </span>
+                                            </Form.Label>
                                         </div>
 
                                         {statusWiseUser?.map((statusData, index) => {
-                                            console.log(statusData)
                                             return (
                                                 <div key={index} className={"mx-3"}>
-                                                    <span
-                                                        className={``}
+                                                    <Form.Label
                                                         onClick={() => filtersUsers(statusData.status)}
                                                         style={{ cursor: 'pointer' }}
+                                                        className="mb-0"
                                                     >
                                                         {`${statusData.status.charAt(0).toUpperCase() + statusData.status.slice(1)} (${statusData.total})`}
-                                                    </span>
+                                                    </Form.Label>                                        
                                                 </div>
                                             );
                                         })}
@@ -467,150 +465,150 @@ const UserManagement = () => {
                                     </div>
                                     <div className="col-md-4 p-1">
                                         <Form.Group controlId="roleAction">
-                                        <div className="custom-select-wrapper" ref={rolesRef}>
-                                            <Form.Control
-                                                as="select"
-                                                value={roleAction}
-                                                onChange={(e) => handleRoleChange(e.target.value)}
-                                                className="custom-select"
-                                                onClick={toggleRolesDropdown}
+                                            <div className="custom-select-wrapper" ref={rolesRef}>
+                                                <Form.Control
+                                                    as="select"
+                                                    value={roleAction}
+                                                    onChange={(e) => handleRoleChange(e.target.value)}
+                                                    className="custom-select"
+                                                    onClick={toggleRolesDropdown}
 
-                                            >
-                                                <option value="">Change role to...</option>
-                                                <option value="admin">Admin</option>
-                                                <option value="siteAdmin">Site Admin</option>
-                                                <option value="user">User</option>
-                                                <option value="Contributor" disabled>Contributor</option>
-                                                <option value="Subscriber" disabled>Subscriber</option>
-                                            </Form.Control>
-                                            <FontAwesomeIcon
+                                                >
+                                                    <option value="">Change role to...</option>
+                                                    <option value="admin">Admin</option>
+                                                    <option value="siteAdmin">Site Admin</option>
+                                                    <option value="user">User</option>
+                                                    <option value="Contributor" disabled>Contributor</option>
+                                                    <option value="Subscriber" disabled>Subscriber</option>
+                                                </Form.Control>
+                                                <FontAwesomeIcon
                                                     icon={isRolesOpen ? faChevronUp : faChevronDown}
                                                     className="dropdown-arrow position-absolute"
                                                 />
                                             </div>
                                         </Form.Group>
 
+                                    </div>
+                                </div>
+
+                                <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <input
+                                                    type="checkbox"
+                                                    id="select-all"
+                                                    checked={areAllSelected}
+                                                    onChange={(e) => handleSelectAll(e.target.checked)}
+                                                />
+                                            </th>
+                                            {/* <th>Username</th> */}
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {isLoading ? (
+                                            <>
+                                                <>
+                                                    <Skeleton columns={6} /> {/* 5 columns for the Post table */}
+                                                    <Skeleton columns={6} />
+                                                    <Skeleton columns={6} />
+                                                </>
+                                            </>
+                                        ) : userData.length > 0 ? (
+                                            userData.map((user, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        <input
+                                                            type="checkbox"
+                                                            className="user-select"
+                                                            checked={selectedCheckboxes.includes(user.id)}
+                                                            onChange={(e) =>
+                                                                handleCheckboxChange(user.id, e.target.checked)
+                                                            }
+                                                        />
+                                                    </td>
+                                                    {/* <td>{user.username}</td> */}
+                                                    <td>{user.name}</td>
+                                                    <td>{user.email}</td>
+                                                    <td>
+                                                        {user.role === "user" && "User"}
+                                                        {user.role === "admin" && "Admin"}
+                                                        {user.role === "siteAdmin" && "Site Admin"}
+                                                        {!(user.role === "user" || user.role === "admin" || user.role === "siteAdmin") && "Unknown"}
+                                                    </td>
+                                                    <td>
+                                                        {user.status === "approve" && "Approve"}
+                                                        {user.status === "pending" && "Pending"}
+                                                        {user.status === "rejected" && "Rejected"}
+                                                        {user.status === "deactivate" && "Deactivate"}
+
+                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
+
+                                                    </td>
+                                                    <td>
+                                                        <Button
+                                                            text=""
+                                                            onClick={() => openUserModal(user)}
+                                                            className="btn btn-sm btn-primary"
+                                                            icon={faPencilSquare}
+                                                            iconSize="lg"
+                                                            disabled={false}
+                                                        />
+
+                                                        <Button
+                                                            text=""
+                                                            onClick={() => openUserModal(user)}
+                                                            className="btn btn-sm btn-danger ms-2"
+                                                            icon={faTrash}
+                                                            iconSize="lg"
+                                                            disabled={false}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))) : (
+                                            <tr>
+                                                <td colSpan="7">No user available yet.</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                                <div className="d-flex justify-content-end">
+                                    <Pagination
+                                        activePage={currentPage}
+                                        itemsCountPerPage={perPageRecords}
+                                        totalItemsCount={totalRecords}
+                                        pageRangeDisplayed={5}
+                                        onChange={handlePageChange}
+                                        itemClass="custom-page-item"
+                                        linkClass="custom-page-link"
+                                        activeClass="custom-active"
+                                    />
                                 </div>
                             </div>
-
-                            <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <input
-                                                type="checkbox"
-                                                id="select-all"
-                                                checked={areAllSelected}
-                                                onChange={(e) => handleSelectAll(e.target.checked)}
-                                            />
-                                        </th>
-                                        {/* <th>Username</th> */}
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {isLoading ? (
-                                        <>
-                                            <>
-                                                <Skeleton columns={6} /> {/* 5 columns for the Post table */}
-                                                <Skeleton columns={6} />
-                                                <Skeleton columns={6} />
-                                            </>
-                                        </>
-                                    ) : userData.length > 0 ? (
-                                        userData.map((user, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    <input
-                                                        type="checkbox"
-                                                        className="user-select"
-                                                        checked={selectedCheckboxes.includes(user.id)}
-                                                        onChange={(e) =>
-                                                            handleCheckboxChange(user.id, e.target.checked)
-                                                        }
-                                                    />
-                                                </td>
-                                                {/* <td>{user.username}</td> */}
-                                                <td>{user.name}</td>
-                                                <td>{user.email}</td>
-                                                <td>
-                                                    {user.role === "user" && "User"}
-                                                    {user.role === "admin" && "Admin"}
-                                                    {user.role === "siteAdmin" && "Site Admin"}
-                                                    {!(user.role === "user" || user.role === "admin" || user.role === "siteAdmin") && "Unknown"}
-                                                </td>
-                                                <td>
-                                                    {user.status === "approve" && "Approve"}
-                                                    {user.status === "pending" && "Pending"}
-                                                    {user.status === "rejected" && "Rejected"}
-                                                    {user.status === "deactivate" && "Deactivate"}
-
-                                                    {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
-
-                                                </td>
-                                                <td>
-                                                    <Button
-                                                        text=""
-                                                        onClick={() => openUserModal(user)}
-                                                        className="btn btn-sm btn-primary"
-                                                        icon={faPencilSquare}
-                                                        iconSize="lg"
-                                                        disabled={false}
-                                                    />
-
-                                                    <Button
-                                                        text=""
-                                                        onClick={() => openUserModal(user)}
-                                                        className="btn btn-sm btn-danger ms-2"
-                                                        icon={faTrash}
-                                                        iconSize="lg"
-                                                        disabled={false}
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))) : (
-                                        <tr>
-                                            <td colSpan="7">No user available yet.</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                            <div className="d-flex justify-content-end">
-                                <Pagination
-                                    activePage={currentPage}
-                                    itemsCountPerPage={perPageRecords}
-                                    totalItemsCount={totalRecords}
-                                    pageRangeDisplayed={5}
-                                    onChange={handlePageChange}
-                                    itemClass="custom-page-item"
-                                    linkClass="custom-page-link"
-                                    activeClass="custom-active"
-                                />
-                            </div>
                         </div>
-                    </div>
-                    {/* <AddUserModal isOpen={isModalVisible} onHide={closeModal} UserData={selectedUser}/> */}
-                    <AddUserModal
-                        show={isModalVisible}
-                        onHide={() => setIsModalVisible(false)}
-                        userData={selectedUser}
-                    />
+                        {/* <AddUserModal isOpen={isModalVisible} onHide={closeModal} UserData={selectedUser}/> */}
+                        <AddUserModal
+                            show={isModalVisible}
+                            onHide={() => setIsModalVisible(false)}
+                            userData={selectedUser}
+                        />
 
-                    <ConfirmationDialog
-                        isVisible={isConfiremdModalVisible}
-                        title="Confirm Deletion"
-                        message="Are you sure you want to delete this item? This action cannot be undone."
-                        onConfirm={handleConfirmDelete}
-                        onCancel={handleCancelDelete}
-                    />
+                        <ConfirmationDialog
+                            isVisible={isConfiremdModalVisible}
+                            title="Confirm Deletion"
+                            message="Are you sure you want to delete this item? This action cannot be undone."
+                            onConfirm={handleConfirmDelete}
+                            onCancel={handleCancelDelete}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
         </React.Fragment >
     );
 };
