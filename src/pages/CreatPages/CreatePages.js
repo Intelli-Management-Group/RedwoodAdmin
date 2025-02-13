@@ -5,7 +5,7 @@ import Button from '../Component/ButtonComponents/ButtonComponents';
 import PageServices from "../../Services/PageServices";
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 import { Form } from 'react-bootstrap';
-import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const CreatePages = () => {
@@ -23,6 +23,8 @@ const CreatePages = () => {
   const [isDocumentOpen, setIsDocumentOpen] = useState(false);
   const [isReportsOpen, setIsReportsOpen] = useState(false);
   const [isYearsOpen, setIsYearsOpen] = useState(false);
+  const [updatedFileName, setUpdatedFileName] = useState("")
+  const [isEditing, setIsEditing] = useState(false);
 
   const documentRef = useRef();
   const reportsRef = useRef();
@@ -84,6 +86,7 @@ const CreatePages = () => {
       formdata.append("type", documentType);
       formdata.append("year", postingYear);
       formdata.append("hedge_fund_report_type", hedgeFundReportstypes)
+      formdata.append("name", updatedFileName ? updatedFileName : "")
       const resp = await PageServices.uploadPages(formdata);
 
       if (resp?.status_code === 200) {
@@ -100,11 +103,38 @@ const CreatePages = () => {
       setLoading(false);
     }
   };
+  const validateFileName = (file, updatedFileName, requiredPrefix) => {
+    const fileName = file.name;
+    const updatedFilesName = updatedFileName || fileName;
+    
+    if (!updatedFilesName.startsWith(requiredPrefix)) {
+      return `File name must start with '${requiredPrefix}'.`;
+    }
+  };
 
   const validateForm = (file, type, year) => {
     if (!file) return "Please select a file before submitting.";
     if (!type || type.trim() === "") return "Please select a valid document type.";
     if (!year || isNaN(year) || year <= 0) return "Please provide a valid posting year.";
+    if (type === "publications") {
+      const fileName = file.name;
+      const updatedFilesName = updatedFileName || fileName;
+      if (!updatedFilesName.startsWith("Redwood Peak China Outlook")) {
+        return "File name must start with 'Redwood Peak China Outlook'.";
+      }
+    } else if (type === "hedgeFundReports") {
+      if (hedgeFundReportstypes === "monthlyPortfolioSummary" || hedgeFundReportstypes === "quarterlyPerformanceAnalysis" || hedgeFundReportstypes === "fundDocumentation") {
+        const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Portfolio Summary");
+        if (result) {
+          return result;
+        }
+      } else if (hedgeFundReportstypes === "quarterlyShareholderLetter") {
+        const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Shareholders Letter");
+        if (result) {
+          return result;
+        }
+      }
+    }
     return null;
   };
 
@@ -145,6 +175,15 @@ const CreatePages = () => {
     if (yearsRef.current && !yearsRef.current.contains(e.target)) {
       setIsYearsOpen(false);
     }
+  };
+  const handleFileNameChange = (event) => {
+    setUpdatedFileName(event.target.value);
+  };
+  const toggleEditing = () => {
+    setIsEditing(!isEditing);
+  };
+  const handleSaveFileName = () => {
+    setIsEditing(false);
   };
 
 
@@ -265,12 +304,14 @@ const CreatePages = () => {
                       onChange={handleFileChange}
                     />
                   </Form.Group>
+
                   <div className="upload-button">
                     <Button
                       text="Select PDF"
                       className="btn-primary"
                       type="button"
                       onClick={() => document.getElementById("documentUpload").click()}
+                      disabled={isEditing}
                     />
                   </div>
                   <small className="form-text text-muted">
@@ -278,14 +319,76 @@ const CreatePages = () => {
                   </small>
                 </div>
 
+                <Form.Group>
+                  <h4 className="text-center">
+                    {selectedFile ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {!isEditing && (
+                          <FontAwesomeIcon
+                            icon={faEdit}
+                            onClick={toggleEditing}
+                            className="primaryColor"
+                            style={{
+                              cursor: "pointer",
+                            }}
+                          />
+                        )}
+
+                        {isEditing ? (
+                          <>
+                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                              <input
+                                type="text"
+                                value={updatedFileName}
+                                placeholder="New files name here"
+                                onChange={handleFileNameChange}
+                                className="file-name-input"
+                                style={{
+                                  border: "none",
+                                  borderBottom: "2px solid #000",
+                                  outline: "none",
+                                  padding: "5px 0",
+                                  fontSize: "16px",
+                                  width: "400px",
+                                  backgroundColor: 'transparent',
+                                }}
+                              />
+
+                              <Button
+                                text={"Update File Name"}
+                                className="btn-primary"
+                                type="submit"
+                                onClick={handleSaveFileName}
+                                style={{
+                                  marginTop: "10px",
+                                }}
+                              />
+                            </div>
+                          </>
+
+                        ) : (
+                          <span>{updatedFileName ? updatedFileName : selectedFile.name}</span>
+                        )}
+                      </div>
+                    ) : null}
+                  </h4>
+                </Form.Group>
+
                 <div className="text-center">
                   <Button
                     text={loading ? "Submitting..." : "Submit"}
                     className="btn-primary"
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || isEditing}
                   />
-                  {loading && <div className="spinner-border text-primary" role="status"></div>}
+                  {/* {loading && <div className="spinner-border text-primary" role="status"></div>} */}
                 </div>
               </Form>
             </div>
