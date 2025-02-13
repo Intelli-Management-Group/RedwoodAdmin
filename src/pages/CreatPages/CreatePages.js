@@ -285,7 +285,7 @@ const CreatePages = () => {
                     type="submit"
                     disabled={loading}
                   />
-                  {loading && <div className="spinner-border text-primary" role="status"></div>}
+                  {/* {loading && <div className="spinner-border text-primary" role="status"></div>} */}
                 </div>
               </Form>
             </div>
