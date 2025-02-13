@@ -176,8 +176,10 @@ const CreatePost = () => {
     if (!title || title.trim() === "") return "Title is required.";
     if (!category || category.trim() === "") return "Category is required.";
     if (!content || content.trim() === "") return "Content cannot be empty.";
-    if (!postingYear || postingYear.trim() === "") return "Years cannot be empty.";
-    if (!images || images.length === 0) return 'At least one file is required';
+    if (!postingYear || (typeof postingYear === 'string' && postingYear.trim() === "")) {
+      return "Years cannot be empty.";
+    }
+      if (!images || images.length === 0) return 'At least one file is required';
     return null;
   };
 

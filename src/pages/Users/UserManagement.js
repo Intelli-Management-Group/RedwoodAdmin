@@ -401,11 +401,11 @@ const UserManagement = () => {
                                         })}
                                     </div>
 
-                                    <div className="d-flex align-items-center">
+                                    <div className="d-flex align-items-center me-0">
                                         <Button
                                             text="Add User"
                                             onClick={() => setIsModalVisible(true)}
-                                            className="btn btn-primary me-2"
+                                            className="btn btn-primary "
                                             type="button"
                                         />
                                     </div>

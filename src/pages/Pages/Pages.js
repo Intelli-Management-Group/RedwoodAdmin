@@ -248,14 +248,21 @@ const Pages = () => {
             {/* Dashboard Content */}
             <div className="dashboard-content">
               <div className="container-fluid">
-                <Button
-                  onClick={redirectToCreatePage}
-                  text="Upload New Document"
-                  className="btn btn-primary"
-                  type="button"
-                >
-                  Upload New Document
-                </Button>
+                <div className="row mt-5 align-items-center">
+                  <div className="col-3">
+                    <h3>Reports</h3>
+                  </div>
+                  <div className="col-9 d-flex justify-content-end">
+                    <Button
+                      onClick={redirectToCreatePage}
+                      text="Upload New Document"
+                      className="btn btn-primary"
+                      type="button"
+                    >
+                      Upload New Document
+                    </Button>
+                  </div>
+                </div>
 
                 <Form>
                   <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
