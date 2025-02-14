@@ -123,12 +123,17 @@ const CreatePages = () => {
         return "File name must start with 'Redwood Peak China Outlook'.";
       }
     } else if (type === "hedgeFundReports") {
-      if (hedgeFundReportstypes === "monthlyPortfolioSummary" || hedgeFundReportstypes === "quarterlyPerformanceAnalysis" || hedgeFundReportstypes === "fundDocumentation") {
+      if (hedgeFundReportstypes === "monthlyPortfolioSummary" ) {
         const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Portfolio Summary");
         if (result) {
           return result;
         }
-      } else if (hedgeFundReportstypes === "quarterlyShareholderLetter") {
+      }else if (hedgeFundReportstypes === "quarterlyPerformanceAnalysis") {
+        const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Performance Analysis");
+        if (result) {
+          return result;
+        }
+      }else if (hedgeFundReportstypes === "quarterlyShareholderLetter") {
         const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Shareholders Letter");
         if (result) {
           return result;
