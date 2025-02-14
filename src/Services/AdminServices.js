@@ -1,7 +1,13 @@
 import requests from "./api";
 
 const AdminServices = {
-    adminLogin:  async (body) => {
+      tokenVerify: async(body) => {
+        return requests.post("/customer/signup", body);
+      },
+      getUserDetails: async (id) =>{
+        return requests.get(`/user/${id}/get-by-id`);
+      },
+      adminLogin:  async (body) => {
         return requests.post("/customer/login", body);
       },
       addUser: async(body) => {

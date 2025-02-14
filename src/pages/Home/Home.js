@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Home.css';
 import '../../Assetes/Css/style.css'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, json } from 'react-router-dom';
 import Logo from "../../Assetes/images/logo.png"
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import Input from '../Component/InputComponents/InputComponents';
@@ -17,6 +17,59 @@ const Home = () => {
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();    
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const token = params.get('token');
+        const id = params.get('id');
+        if (token && id) {
+            try {
+                getUserDetila(id)
+                const decodedToken = atob(token);
+                console.log(decodedToken);
+                if (decodedToken) {
+                    //Currently Direct  Access Admin without Api
+                    // localStorage.setItem("authToken", token);
+                    login();
+                    navigate("/dashboard")
+                }
+            } catch (error) {
+                console.error("Invalid token:", error);
+                notifyError("Invalid token in URL.");
+            }
+        }
+    }, [location]);
+    const getUserDetila = async (id) => {
+        try {
+            const resp = await AdminServices.getUserDetails(id);
+            if (resp?.status_code === 200) {
+                // console.log(resp);
+                if (resp?.data) {
+                    localStorage.setItem('userData', JSON.stringify(resp?.data));
+
+                } else {
+                    notifyError("No data found. Please try again.");
+                }
+            } else {
+                console.error("Failed to fetch data: ", resp?.message);
+                notifyError("Please try again.");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            notifyError("An error occurred during fetching data. Please try again.");
+        } finally {
+        }
+
+    };
+    const getTokenVerify = async (token) => {
+        const resp = await AdminServices.tokenVerify(token);
+        if (resp?.status_code === 200) {
+            setTimeout(() => navigate("/dashboard"), 1500);
+        }else {
+            notifyError(resp?.message || "Invalid email or password",);
+        }
+    }
 
 
     const handleLogin = async (event) => {
