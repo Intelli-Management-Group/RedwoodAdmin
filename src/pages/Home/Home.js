@@ -8,7 +8,9 @@ import Input from '../Component/InputComponents/InputComponents';
 import AdminServices from '../../Services/AdminServices';
 import { useAuth } from '../Component/AuthContext/AuthContextComponents';
 import { ToastContainer } from 'react-toastify';
-import {notifyError, notifySuccess} from "../Component/ToastComponents/ToastComponents";
+import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
+import axios from 'axios';
+import CustomLoader from '../Component/LoaderComponent/LoaderComponent';
 
 const Home = () => {
     const [loading, setLoading] = useState(false)
@@ -17,22 +19,23 @@ const Home = () => {
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();    
+    const location = useLocation();
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
-        const id = params.get('id');
-        if (token && id) {
+        if (token) {
             try {
-                getUserDetila(id)
+                setLoading(true)
                 const decodedToken = atob(token);
                 console.log(decodedToken);
                 if (decodedToken) {
                     //Currently Direct  Access Admin without Api
                     // localStorage.setItem("authToken", token);
-                    login();
-                    navigate("/dashboard")
+                    // getTokenVerify(decodedToken)
+                    staticAPiCall(decodedToken)
+                    // login();
+                    // navigate("/dashboard")
                 }
             } catch (error) {
                 console.error("Invalid token:", error);
@@ -40,36 +43,46 @@ const Home = () => {
             }
         }
     }, [location]);
-    const getUserDetila = async (id) => {
-        try {
-            const resp = await AdminServices.getUserDetails(id);
-            if (resp?.status_code === 200) {
-                // console.log(resp);
-                if (resp?.data) {
-                    localStorage.setItem('userData', JSON.stringify(resp?.data));
+    const staticAPiCall = async (tokens) => {
+        const apiUrl = "https://dev.jackychee.com/api/authenticate";
+        const headers = {
+            Authorization: `Bearer ${tokens}`,
+        };
 
-                } else {
-                    notifyError("No data found. Please try again.");
-                }
-            } else {
-                console.error("Failed to fetch data: ", resp?.message);
-                notifyError("Please try again.");
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            notifyError("An error occurred during fetching data. Please try again.");
-        } finally {
-        }
+        axios
+            .post(apiUrl, {}, { headers })
+            .then((response) => {
+                // console.log("API Response:", response.data);
+                // console.log("OBJ",JSON.stringify(response?.data?.message))
+                console.log("This Token set",tokens)
+                localStorage.setItem("authToken", tokens);
+                localStorage.setItem("tokens", JSON.stringify({token:tokens}));
+                localStorage.setItem('userData',JSON.stringify(response?.data?.message));
+                login();
+                navigate("/dashboard");
+                // console.log("HERE")
 
-    };
-    const getTokenVerify = async (token) => {
-        const resp = await AdminServices.tokenVerify(token);
-        if (resp?.status_code === 200) {
-            setTimeout(() => navigate("/dashboard"), 1500);
-        }else {
-            notifyError(resp?.message || "Invalid email or password",);
-        }
+                setLoading(false)
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
     }
+
+    // const getTokenVerify = async (token) => {
+    //     console.log('Token:', token);
+    //     try {
+    //         const resp = await AdminServices.tokenVerify(`eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2Rldi5qYWNreWNoZWUuY29tL2FwaS9jdXN0b21lci9sb2dpbiIsImlhdCI6MTczOTYwMzA2MCwiZXhwIjoxNzM5NjA2NjYwLCJuYmYiOjE3Mzk2MDMwNjAsImp0aSI6InlRRmxZdEtkcGFJWlBKTUsiLCJzdWIiOiIxNzEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Y1-qSzD_BpzKF8gbtGFCNkIqfksxPOPm8nn7di_OExs`);
+    //         if (resp?.status_code === 200) {
+    //             setTimeout(() => navigate("/dashboard"), 1500);
+    //         } else {
+    //             notifyError(resp?.message || "Invalid email or password");
+    //         }
+    //     } catch (error) {
+    //         console.error("Token verification error:", error);
+    //         notifyError("An error occurred during token verification. Please try again.");
+    //     }
+    // };
 
 
     const handleLogin = async (event) => {
@@ -85,14 +98,14 @@ const Home = () => {
                 const response = await AdminServices.adminLogin(loginData);
 
                 if (response?.status_code === 200) {
-                    const { token,user } = response;
-                    if(user?.role === "admin") {
-                    localStorage.setItem("authToken", token);
-                    localStorage.setItem('userData', JSON.stringify(user));
-                    login();
-                    notifySuccess("Login successful!");
-                    setTimeout(() => navigate("/dashboard"), 1500);
-                    }else{
+                    const { token, user } = response;
+                    if (user?.role === "admin") {
+                        localStorage.setItem("authToken", token);
+                        localStorage.setItem('userData', JSON.stringify(user));
+                        login();
+                        notifySuccess("Login successful!");
+                        setTimeout(() => navigate("/dashboard"), 1500);
+                    } else {
                         notifyError(`${user?.email} is not authenticated to access the Admin site.`);
                     }
                 } else {
@@ -101,7 +114,7 @@ const Home = () => {
             } catch (error) {
                 console.error("Login Error:", error);
                 notifyError("An error occurred during login. Please try again.",);
-            }finally{
+            } finally {
                 setLoading(false)
             }
         } else {
@@ -110,6 +123,8 @@ const Home = () => {
     };
     return (
         <div className="login-page">
+            {loading && <CustomLoader />} {/* Show the custom loader when loading */}
+
             <div className="login-container whiteBg">
                 <div className="centerLogo mb-5">
                     <Link to="#">
@@ -143,15 +158,14 @@ const Home = () => {
                     />
                     <Button
                         text={loading ? "Submitting..." : "Login"}
-                        disabled={loading ? true : false}
+                        disabled={loading}
                         className="btn-primary"
                         type="submit"
                     />
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer />
         </div>
-
     );
 };
 

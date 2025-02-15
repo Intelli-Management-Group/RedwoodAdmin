@@ -5,11 +5,8 @@ import Cookies from 'js-cookie';
 
 const Navbar = ({ toggleSidebar }) => {
   const location = useLocation();
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  let token;
-  if (Cookies.get('userToken')) {
-    token = JSON.parse(Cookies.get('userToken'));
-  }
+  const storedToken = JSON.parse(localStorage.getItem("tokens"));
+  
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
@@ -24,8 +21,10 @@ const Navbar = ({ toggleSidebar }) => {
     }, 3000);
   };
   const encodeToken = (token) => {
+    // console.log("token",token)
     return btoa(token);
 };
+
   return (
     <React.Fragment>
       <nav className="navbar navbar-expand-lg customWhiteBg shadow-sm">
@@ -47,7 +46,7 @@ const Navbar = ({ toggleSidebar }) => {
             <li className="nav-item">
               <a
                 className={`nav-link`}
-                href={`http://localhost:3001/?token=${encodeToken(token)}&id=${userData?.id}`}
+                href={`http://localhost:3001/?token=${encodeToken(storedToken.token)}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
