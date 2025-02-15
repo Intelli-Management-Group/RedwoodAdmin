@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 const Navbar = ({ toggleSidebar }) => {
   const location = useLocation();
   const storedToken = JSON.parse(localStorage.getItem("tokens"));
-  
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
@@ -46,7 +46,7 @@ const Navbar = ({ toggleSidebar }) => {
             <li className="nav-item">
               <a
                 className={`nav-link`}
-                href={`http://localhost:3001/?token=${encodeToken(storedToken.token)}`}
+                href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken.token)}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
