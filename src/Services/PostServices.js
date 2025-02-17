@@ -2,10 +2,10 @@ import requests from "./api";
 
 const PostServices = {
   uploadPost: async (body) => {
-    return requests.post("/post/upload", body);
+    return requests.uploadPosts("/post/upload", body);
   },
   updatePost:async(body) =>{
-    return requests.post(`/post/edit`,body);
+    return requests.uploadPosts(`/post/edit`,body);
   },
   getPostList: async ({ page, perPageRecords, body }) => {
     // if (body) {

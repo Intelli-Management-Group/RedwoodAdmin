@@ -2,7 +2,7 @@ import requests from "./api";
 
 const PageServices = {
   uploadPages: async (body) => {
-    return requests.post("/page/upload", body);
+    return requests.uploadPosts("/page/upload", body);
   },
   getPageList: async ({ page, perPageRecords, documentType }) => {
     console.log("getPageList")
