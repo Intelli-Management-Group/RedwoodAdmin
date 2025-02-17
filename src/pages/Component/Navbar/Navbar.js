@@ -43,7 +43,7 @@ const Navbar = ({ toggleSidebar }) => {
             <li className="nav-item">
               <a
                 className={`nav-link`}
-                href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken.token)}`}
+                href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken)}`}
                 // href={`http://localhost:3001/?token=${encodeToken(storedToken)}`}
                 target="_blank"
                 rel="noopener noreferrer"
