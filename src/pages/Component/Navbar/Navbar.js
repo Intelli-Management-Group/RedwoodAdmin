@@ -15,7 +15,7 @@ const Navbar = ({ toggleSidebar }) => {
 
     setTimeout(() => {
       window.location.href = '/';
-    }, 3000);
+    }, 2000);
   };
   const encodeToken = (token) => {
     // console.log("token",token)
