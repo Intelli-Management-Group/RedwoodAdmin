@@ -14,7 +14,7 @@ import CustomLoader from '../Component/LoaderComponent/LoaderComponent';
 
 const Home = () => {
     const [loading, setLoading] = useState(false)
-
+    const [tokenLoading, setTokenLoading] = useState(false)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useAuth();
@@ -26,7 +26,7 @@ const Home = () => {
         const token = params.get('token');
         if (token) {
             try {
-                setLoading(true)
+                setTokenLoading(true)
                 const decodedToken = atob(token);
                 console.log(decodedToken);
                 if (decodedToken) {
@@ -49,11 +49,13 @@ const Home = () => {
                 localStorage.setItem('userData', JSON.stringify(resp?.message));
                 login();
                 navigate("/dashboard");
+                setTokenLoading(false)
             } else {
                 notifyError(resp?.message || "Invalid email or password");
             }
         } catch (error) {
             console.error("Token verification error:", error);
+            setTokenLoading(false)
             notifyError("An error occurred during token verification. Please try again.");
         }
     };
@@ -98,8 +100,7 @@ const Home = () => {
     };
     return (
         <div className="login-page">
-            {loading && <CustomLoader />} {/* Show the custom loader when loading */}
-
+            {tokenLoading && <CustomLoader />}
             <div className="login-container whiteBg">
                 <div className="centerLogo mb-5">
                     <Link to="#">
