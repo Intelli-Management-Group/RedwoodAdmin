@@ -103,15 +103,23 @@ const CreatePages = () => {
       setLoading(false);
     }
   };
+  const normalize = (name) => 
+    name.toLowerCase()
+        .replace(/[-–]/g, " ") 
+        .replace(/\s+/g, " ")
+        .trim();  
+
   const validateFileName = (file, updatedFileName, requiredPrefix) => {
     const fileName = file.name;
     const updatedFilesName = updatedFileName || fileName;
-
-    if (!updatedFilesName.startsWith(requiredPrefix)) {
-      return `File name must start with '${requiredPrefix}'.`;
+  
+    const normalizedFileName = normalize(updatedFilesName);
+    const normalizedPrefix = normalize(requiredPrefix);
+  
+    if (!normalizedFileName.startsWith(normalizedPrefix)) {
+      return `File name must start with '${requiredPrefix}' (case-insensitive, hyphens allowed).`;
     }
   };
-
   const validateForm = (file, type, year) => {
     if (!file) return "Please select a file before submitting.";
     if (!type || type.trim() === "") return "Please select a valid document type.";
@@ -119,27 +127,43 @@ const CreatePages = () => {
     if (type === "publications") {
       const fileName = file.name;
       const updatedFilesName = updatedFileName || fileName;
-      if (!updatedFilesName.startsWith("Redwood Peak China Outlook")) {
-        return "File name must start with 'Redwood Peak China Outlook'.";
+    
+      const normalizedFileName = updatedFilesName.toLowerCase().replace(/-/g, " ");
+    
+      if (!normalizedFileName.startsWith("redwood peak china outlook")) {
+        return "File name must start with 'Redwood Peak China Outlook' (case-insensitive, hyphens allowed).";
       }
-    } else if (type === "hedgeFundReports") {
-      if (hedgeFundReportstypes === "monthlyPortfolioSummary" ) {
-        const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Portfolio Summary");
+    } else if (type === "hedgeFundReports") {    
+      if (hedgeFundReportstypes === "monthlyPortfolioSummary") {
+        const result = validateFileName(
+          file,
+          updatedFileName,
+          "Redwood Peak Opportunities Master Fund Portfolio Summary"
+        );
         if (result) {
           return result;
         }
-      }else if (hedgeFundReportstypes === "quarterlyPerformanceAnalysis") {
-        const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Performance Analysis");
+      } else if (hedgeFundReportstypes === "quarterlyPerformanceAnalysis") {
+        const result = validateFileName(
+          file,
+          updatedFileName,
+          "Redwood Peak Opportunities Master Fund Performance Analysis"
+        );
         if (result) {
           return result;
         }
-      }else if (hedgeFundReportstypes === "quarterlyShareholderLetter") {
-        const result = validateFileName(file, updatedFileName, "Redwood Peak Opportunities Master Fund Shareholders Letter");
+      } else if (hedgeFundReportstypes === "quarterlyShareholderLetter") {
+        const result = validateFileName(
+          file,
+          updatedFileName,
+          "Redwood Peak Opportunities Master Fund Shareholders Letter"
+        );
         if (result) {
           return result;
         }
       }
     }
+    
     return null;
   };
 
@@ -147,6 +171,7 @@ const CreatePages = () => {
     setSelectedFile(null);
     setDocumentType("publications");
     // setPostingYear("2024");
+    setUpdatedFileName("")
   };
 
   const toggleSidebar = () => {
