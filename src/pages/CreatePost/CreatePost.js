@@ -23,7 +23,7 @@ const CreatePost = () => {
   const [category, setCategory] = useState('');
   const startYear = 2010;
   const [postingYear, setPostingYear] = useState(new Date().getFullYear());
-  const range = postingYear - startYear + 1;
+  const range = new Date().getFullYear() - startYear + 1;
   const [loading, setLoading] = useState(false);
   const [editorContent, setEditorContent] = useState('');
   const [defaultContent, setDefaultContent] = useState()
