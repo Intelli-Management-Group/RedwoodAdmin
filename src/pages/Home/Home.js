@@ -30,12 +30,7 @@ const Home = () => {
                 const decodedToken = atob(token);
                 console.log(decodedToken);
                 if (decodedToken) {
-                    //Currently Direct  Access Admin without Api
-                    // localStorage.setItem("authToken", token);
-                    // getTokenVerify(decodedToken)
-                    staticAPiCall(decodedToken)
-                    // login();
-                    // navigate("/dashboard")
+                    getTokenVerify(decodedToken);
                 }
             } catch (error) {
                 console.error("Invalid token:", error);
@@ -43,46 +38,25 @@ const Home = () => {
             }
         }
     }, [location]);
-    const staticAPiCall = async (tokens) => {
-        const apiUrl = "https://dev.jackychee.com/api/authenticate";
-        const headers = {
-            Authorization: `Bearer ${tokens}`,
-        };
 
-        axios
-            .post(apiUrl, {}, { headers })
-            .then((response) => {
-                // console.log("API Response:", response.data);
-                // console.log("OBJ",JSON.stringify(response?.data?.message))
-                console.log("This Token set",tokens)
+    const getTokenVerify = async (tokens) => {
+        console.log('Token:', tokens);
+        try {
+            const resp = await AdminServices.tokenVerify(tokens);
+            if (resp?.status_code === 200) {
                 localStorage.setItem("authToken", tokens);
-                localStorage.setItem("tokens", JSON.stringify({token:tokens}));
-                localStorage.setItem('userData',JSON.stringify(response?.data?.message));
+                localStorage.setItem("tokens", JSON.stringify({ token: tokens}));
+                localStorage.setItem('userData', JSON.stringify(resp?.message));
                 login();
                 navigate("/dashboard");
-                // console.log("HERE")
-
-                setLoading(false)
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-    }
-
-    // const getTokenVerify = async (token) => {
-    //     console.log('Token:', token);
-    //     try {
-    //         const resp = await AdminServices.tokenVerify(`eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2Rldi5qYWNreWNoZWUuY29tL2FwaS9jdXN0b21lci9sb2dpbiIsImlhdCI6MTczOTYwMzA2MCwiZXhwIjoxNzM5NjA2NjYwLCJuYmYiOjE3Mzk2MDMwNjAsImp0aSI6InlRRmxZdEtkcGFJWlBKTUsiLCJzdWIiOiIxNzEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Y1-qSzD_BpzKF8gbtGFCNkIqfksxPOPm8nn7di_OExs`);
-    //         if (resp?.status_code === 200) {
-    //             setTimeout(() => navigate("/dashboard"), 1500);
-    //         } else {
-    //             notifyError(resp?.message || "Invalid email or password");
-    //         }
-    //     } catch (error) {
-    //         console.error("Token verification error:", error);
-    //         notifyError("An error occurred during token verification. Please try again.");
-    //     }
-    // };
+            } else {
+                notifyError(resp?.message || "Invalid email or password");
+            }
+        } catch (error) {
+            console.error("Token verification error:", error);
+            notifyError("An error occurred during token verification. Please try again.");
+        }
+    };
 
 
     const handleLogin = async (event) => {
@@ -101,6 +75,7 @@ const Home = () => {
                     const { token, user } = response;
                     if (user?.role === "admin") {
                         localStorage.setItem("authToken", token);
+                        localStorage.setItem("token", token);
                         localStorage.setItem('userData', JSON.stringify(user));
                         login();
                         notifySuccess("Login successful!");
