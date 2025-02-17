@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Button, Form, Modal } from "react-bootstrap"; // Import React Bootstrap components
 import { toast } from 'react-toastify';
 import AdminServices from "../../../Services/AdminServices";
@@ -6,9 +6,12 @@ import { notifyError, notifySuccess } from "../ToastComponents/ToastComponents";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import Select from "react-select";
+import countryList from 'react-select-country-list'
 
 function AddUserModal({ show, onHide, userData }) {
   const navigate = useNavigate()
+  const options = useMemo(() => countryList().getData(), [])
   const [loading, setLoading] = useState(false);
   const [isRoleOpen, setIsRoleOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
@@ -32,10 +35,10 @@ function AddUserModal({ show, onHide, userData }) {
     status: ''
   });
 
-    useEffect(() => {
-          document.addEventListener('mousedown', handleClickOutside);
-          return () => document.removeEventListener('mousedown', handleClickOutside);
-      }, [])
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [])
   useEffect(() => {
     if (userData) {
       setFormData({
@@ -47,10 +50,10 @@ function AddUserModal({ show, onHide, userData }) {
         name: userData?.name || "",
         role: userData?.role || "",
         status: userData?.status || "approve",
-        country:userData?.country || "",
-        companyName:userData?.companyName || "",
-        contact:userData?.contact || "",
-        position:userData?.position || "",
+        country: userData?.country || "",
+        companyName: userData?.companyName || "",
+        contact: userData?.contact_no || "",
+        position: userData?.position || "",
         password: "",
         confirmPassword: "",
         sendEmail: false
@@ -80,6 +83,8 @@ function AddUserModal({ show, onHide, userData }) {
       if (formData.password !== formData.confirmPassword)
         return "Passwords do not match.";
     }
+    if (!formData.role.trim()) return "Role is required.";
+
     return null;
   };
 
@@ -106,10 +111,10 @@ function AddUserModal({ show, onHide, userData }) {
       }
       formdata.append("username", "");
       // formdata.append("name", formData?.name);
-      formData.append("country", formData.country);
-      formData.append("contact_no", formData.contact);
-      formData.append("company_name", formData.companyName);
-      formData.append("position", formData.position);
+      formdata.append("country", formData.country);
+      formdata.append("contact_no", formData.contact);
+      formdata.append("company_name", formData.companyName);
+      formdata.append("position", formData.position);
       formdata.append("role", formData?.role);
       formdata.append("status", formData?.id ? formData?.status : "approve");
       formdata.append("send_user_notification", "1");
@@ -139,14 +144,17 @@ function AddUserModal({ show, onHide, userData }) {
   const toggleRoleDropdown = () => setIsRoleOpen(!isRoleOpen);
   const toggleStatusDropdown = () => setIsStatusOpen(!isStatusOpen);
 
-    const handleClickOutside = (e) => {
-        if (roleRef.current && !roleRef.current.contains(e.target)) {
-          setIsRoleOpen(false);
-        }
-        if (statusRef.current && !statusRef.current.contains(e.target)) {
-          setIsStatusOpen(false);
-        }
-    };
+  const handleClickOutside = (e) => {
+    if (roleRef.current && !roleRef.current.contains(e.target)) {
+      setIsRoleOpen(false);
+    }
+    if (statusRef.current && !statusRef.current.contains(e.target)) {
+      setIsStatusOpen(false);
+    }
+  };
+  const handleCountryChange = (selectedOption) => {
+    setFormData({ ...formData, country: selectedOption ? selectedOption.value : "" });
+  };
   return (
     <Modal show={show} centered>
       <Modal.Header >
@@ -155,7 +163,7 @@ function AddUserModal({ show, onHide, userData }) {
       <Form onSubmit={handleSubmit}>
         <Modal.Body style={{ height: 400, overflow: "auto" }}>
           <Form.Group controlId="firstName" className="mb-3">
-            <Form.Label>First Name <span style={{color:"red"}}>*</span></Form.Label>
+            <Form.Label>First Name <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control
               type="text"
               name="first_name"
@@ -165,7 +173,7 @@ function AddUserModal({ show, onHide, userData }) {
             />
           </Form.Group>
           <Form.Group controlId="lastName" className="mb-3">
-            <Form.Label>Last Name <span style={{color:"red"}}>*</span></Form.Label>
+            <Form.Label>Last Name <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control
               type="text"
               name="last_name"
@@ -176,7 +184,7 @@ function AddUserModal({ show, onHide, userData }) {
           </Form.Group>
 
           <Form.Group controlId="email" className="mb-3">
-            <Form.Label>Email <span style={{color:"red"}}>*</span></Form.Label>
+            <Form.Label>Email <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control
               type="email"
               name="email"
@@ -189,7 +197,7 @@ function AddUserModal({ show, onHide, userData }) {
 
 
           <Form.Group controlId="role" className="mb-3 position-relative">
-            <Form.Label>Role <span style={{color:"red"}}>*</span></Form.Label>
+            <Form.Label>Role <span style={{ color: "red" }}>*</span></Form.Label>
             <div className="custom-dropdown-wrapper" ref={roleRef}>
               <Form.Control
                 as="select"
@@ -238,7 +246,7 @@ function AddUserModal({ show, onHide, userData }) {
           {!userData ? (
             <>
               <Form.Group controlId="password" className="mb-3">
-                <Form.Label>Password <span style={{color:"red"}}>*</span></Form.Label>
+                <Form.Label>Password <span style={{ color: "red" }}>*</span></Form.Label>
                 <Form.Control
                   type="password"
                   name="password"
@@ -259,25 +267,29 @@ function AddUserModal({ show, onHide, userData }) {
                 />
               </Form.Group>
 
-              <Form.Group controlId="contact" className="mb-3">
+            </>
+          ) : null}
+           <Form.Group controlId="contact" className="mb-3">
                 <Form.Label>Contact</Form.Label>
                 <Form.Control
                   type="text"
                   name="contact"
                   value={formData.contact}
                   onChange={handleChange}
-                  required
                 />
               </Form.Group>
 
               <Form.Group controlId="country" className="mb-3">
                 <Form.Label>Country</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  required
+                <Select
+                  id="country"
+                  options={options} // Country options from react-select-country-list
+                  className={`basic-single`}
+                  classNamePrefix="select"
+                  onChange={handleCountryChange}
+                  value={options.find((option) => option.value === formData.country)} // Set selected value
+                  placeholder="Select a country..."
+                  isClearable
                 />
               </Form.Group>
 
@@ -288,7 +300,6 @@ function AddUserModal({ show, onHide, userData }) {
                   name="companyName"
                   value={formData.companyName}
                   onChange={handleChange}
-                  required
                 />
               </Form.Group>
 
@@ -299,11 +310,8 @@ function AddUserModal({ show, onHide, userData }) {
                   name="position"
                   value={formData.position}
                   onChange={handleChange}
-                  required
                 />
               </Form.Group>
-            </>
-          ) : null}
 
 
           <Form.Group className="mb-3" controlId="sendEmail">
