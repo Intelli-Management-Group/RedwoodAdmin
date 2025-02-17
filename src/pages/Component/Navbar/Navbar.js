@@ -24,7 +24,7 @@ const Navbar = ({ toggleSidebar }) => {
     // console.log("token",token)
     return btoa(token);
 };
-
+  // console.log(storedToken)
   return (
     <React.Fragment>
       <nav className="navbar navbar-expand-lg customWhiteBg shadow-sm">
@@ -46,8 +46,8 @@ const Navbar = ({ toggleSidebar }) => {
             <li className="nav-item">
               <a
                 className={`nav-link`}
-                // href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken.token)}`}
-                href={`http://localhost:3001/?token=${encodeToken(storedToken.token)}`}
+                href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken.token)}`}
+                // href={`http://localhost:3001/?token=${encodeToken(storedToken)}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
