@@ -267,7 +267,7 @@ const Pages = () => {
                 <Form>
                   <div className="px-2 mb-3 mt-5 row d-flex justify-content-between">
                     {/* Table Action Dropdown */}
-                    <div className="col-md-3 p-1">
+                    <div className="col-md-6 col-lg-3 p-1">
                       <Form.Group controlId="tableActions">
                         <Form.Label>Table Action</Form.Label>
                         <div className="custom-select-wrapper" ref={actionsRef}>
@@ -290,7 +290,7 @@ const Pages = () => {
                     </div>
 
                     {/* Document Type Dropdown */}
-                    <div className="col-md-3 p-1">
+                    <div className="col-md-6 col-lg-3 p-1">
                       <Form.Group controlId="postCategories">
                         <Form.Label>Document Categories</Form.Label>
                         <div className="custom-select-wrapper" ref={categoryRef}>
@@ -316,7 +316,7 @@ const Pages = () => {
                     </div>
 
                     {/* Hedge Fund Reports Type Dropdown */}
-                    <div className="col-md-3 p-1">
+                    <div className="col-md-6 col-lg-3 p-1">
                       <Form.Group controlId="HedgeFundReportstypes">
                         <Form.Label>Hedge Fund Reports Types</Form.Label>
                         <div className="custom-select-wrapper" ref={reportsRef}>
@@ -344,7 +344,7 @@ const Pages = () => {
                     </div>
 
                     {/* Posting Year Dropdown */}
-                    <div className="col-md-3 p-1">
+                    <div className="col-md-6  col-lg-3 p-1">
                       <Form.Group controlId="postingYears">
                         <Form.Label>Posting Year</Form.Label>
                         <div className="custom-select-wrapper" ref={yearsRef}>
