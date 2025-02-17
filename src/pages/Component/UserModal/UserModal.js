@@ -51,7 +51,7 @@ function AddUserModal({ show, onHide, userData }) {
         role: userData?.role || "",
         status: userData?.status || "approve",
         country: userData?.country || "",
-        companyName: userData?.companyName || "",
+        companyName: userData?.company_name || "",
         contact: userData?.contact_no || "",
         position: userData?.position || "",
         password: "",
