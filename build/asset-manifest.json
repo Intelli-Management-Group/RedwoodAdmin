@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/static/css/main.db0fa16b.css",
-    "main.js": "/static/js/main.4bcd91d9.js",
+    "main.js": "/static/js/main.37753898.js",
     "static/js/453.f878ccfa.chunk.js": "/static/js/453.f878ccfa.chunk.js",
     "static/media/user.png": "/static/media/user.557587208eb9e232f2ca.png",
     "static/media/Redwood-Investor-Quarterly-Q2-June-2024-pdf-212x300.jpg": "/static/media/Redwood-Investor-Quarterly-Q2-June-2024-pdf-212x300.c92754a796046ce8ae8d.jpg",
     "static/media/openSans.woff2": "/static/media/openSans.b82713a8cd03fb7dfde8.woff2",
     "index.html": "/index.html",
     "main.db0fa16b.css.map": "/static/css/main.db0fa16b.css.map",
-    "main.4bcd91d9.js.map": "/static/js/main.4bcd91d9.js.map",
+    "main.37753898.js.map": "/static/js/main.37753898.js.map",
     "453.f878ccfa.chunk.js.map": "/static/js/453.f878ccfa.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.db0fa16b.css",
-    "static/js/main.4bcd91d9.js"
+    "static/js/main.37753898.js"
   ]
 }
