@@ -18,7 +18,7 @@ const CreatePages = () => {
   const [documentType, setDocumentType] = useState("publications");
   const startYear = 2010;
   const [postingYear, setPostingYear] = useState(new Date().getFullYear());
-  const range = postingYear - startYear + 1;
+  const range = new Date().getFullYear() - startYear + 1;
   const [hedgeFundReportstypes, setHedgeFundReportstypes] = useState("monthlyPortfolioSummary");
   const [isDocumentOpen, setIsDocumentOpen] = useState(false);
   const [isReportsOpen, setIsReportsOpen] = useState(false);
@@ -106,7 +106,7 @@ const CreatePages = () => {
   const validateFileName = (file, updatedFileName, requiredPrefix) => {
     const fileName = file.name;
     const updatedFilesName = updatedFileName || fileName;
-    
+
     if (!updatedFilesName.startsWith(requiredPrefix)) {
       return `File name must start with '${requiredPrefix}'.`;
     }
