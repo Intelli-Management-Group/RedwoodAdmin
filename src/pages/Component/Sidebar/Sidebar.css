@@ -63,10 +63,9 @@
         /* Show sidebar by default */
     }
 
-    .main-content {
+    /* .main-content {
         margin-left: 250px;
-        /* Adjust main content space */
-    }
+    } */
 }
 
 /* Hide Content Shift on Mobile */
