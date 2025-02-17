@@ -10,29 +10,23 @@ const instance = axios.create({
   },
 });
 
-// Add a request interceptor
+
 instance.interceptors.request.use(function (config) {
-  // Do something before request is sent
   let token;
   if (Cookies.get('userToken')) {
-    token = JSON.parse(Cookies.get('userToken'));
+    token = JSON.parse(Cookies.get('userToken')).token;  // Ensure you're accessing the correct field
+  }
+  const isAuthenticated = localStorage.getItem('token');
+  // console.log("isAuthenticated",isAuthenticated)
+
+
+  console.log("TOKEN ====>>", token);
+
+  if (isAuthenticated && !config.headers['Authorization']) {
+    config.headers['Authorization'] = `Bearer ${isAuthenticated}`;
   }
 
-  let company;
-
-  if (Cookies.get('company')) {
-    company = Cookies.get('company');
-  }
-
-  // console.log('Admin Http Services Cookie Read : ' + company);
-  // let companyName = JSON.stringify(company);
-console.log("TOKEN ====>>",token)
-  return {
-    ...config,
-    headers: {
-      authorization: token ? `Bearer ${token}` : null,
-    },
-  };
+  return config;
 });
 
 const responseBody = (response) => response.data;
@@ -42,9 +36,23 @@ const requests = {
     instance.get(url, body, headers).then(responseBody),
 
   post: (url, body) => instance.post(url, body).then(responseBody),
+  uploadPosts: (url, body) =>  instance.post(url, body, {
+    headers: {
+      'Content-Type': 'multipart/form-data', 
+    },
+  }).then(responseBody),
 
-  put: (url, body, headers) =>
-    instance.put(url, body, headers).then(responseBody),
+  customPost: (url, body, token) => {
+    return instance.post(url, body, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    }).then(responseBody);
+  },
+
+  put: (url, body,) =>
+    instance.put(url, body, ).then(responseBody),
 
   patch: (url, body) => instance.patch(url, body).then(responseBody),
 
