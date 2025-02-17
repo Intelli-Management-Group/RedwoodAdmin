@@ -576,7 +576,7 @@ const Pages = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6">No page available yet.</td>
+                        <td colSpan="7">No page available yet.</td>
                       </tr>
                     )}
                   </tbody>
