@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import Cookies from 'js-cookie';
+import { notifySuccess } from '../ToastComponents/ToastComponents';
 
 const Navbar = ({ toggleSidebar }) => {
   const location = useLocation();
@@ -10,11 +11,7 @@ const Navbar = ({ toggleSidebar }) => {
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
-
-    toast.success('You have logged out successfully!', {
-      position: "top-center",
-      autoClose: 3000,
-    });
+    notifySuccess("You’ve been logged out successfully.!");
 
     setTimeout(() => {
       window.location.href = '/';
