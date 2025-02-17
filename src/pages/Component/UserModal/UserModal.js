@@ -25,6 +25,10 @@ function AddUserModal({ show, onHide, userData }) {
     password: "",
     confirmPassword: "",
     sendEmail: false,
+    country: "",
+    companyName: "",
+    contact: "",
+    position: "",
     status: ''
   });
 
@@ -43,6 +47,10 @@ function AddUserModal({ show, onHide, userData }) {
         name: userData?.name || "",
         role: userData?.role || "",
         status: userData?.status || "approve",
+        country:userData?.country || "",
+        companyName:userData?.companyName || "",
+        contact:userData?.contact || "",
+        position:userData?.position || "",
         password: "",
         confirmPassword: "",
         sendEmail: false
@@ -58,6 +66,7 @@ function AddUserModal({ show, onHide, userData }) {
     });
   };
   const validateForm = () => {
+    const contactRegex = /^[0-9]{10}$/;
     if (!formData.first_name.trim()) return "FirstName is required.";
     if (!formData.last_name.trim()) return "LastName is required.";
 
@@ -97,6 +106,10 @@ function AddUserModal({ show, onHide, userData }) {
       }
       formdata.append("username", "");
       // formdata.append("name", formData?.name);
+      formData.append("country", formData.country);
+      formData.append("contact_no", formData.contact);
+      formData.append("company_name", formData.companyName);
+      formData.append("position", formData.position);
       formdata.append("role", formData?.role);
       formdata.append("status", formData?.id ? formData?.status : "approve");
       formdata.append("send_user_notification", "1");
@@ -121,11 +134,11 @@ function AddUserModal({ show, onHide, userData }) {
       setLoading(false);
     }
   };
- 
+
 
   const toggleRoleDropdown = () => setIsRoleOpen(!isRoleOpen);
   const toggleStatusDropdown = () => setIsStatusOpen(!isStatusOpen);
-    
+
     const handleClickOutside = (e) => {
         if (roleRef.current && !roleRef.current.contains(e.target)) {
           setIsRoleOpen(false);
@@ -142,7 +155,7 @@ function AddUserModal({ show, onHide, userData }) {
       <Form onSubmit={handleSubmit}>
         <Modal.Body style={{ height: 400, overflow: "auto" }}>
           <Form.Group controlId="firstName" className="mb-3">
-            <Form.Label>First Name</Form.Label>
+            <Form.Label>First Name <span style={{color:"red"}}>*</span></Form.Label>
             <Form.Control
               type="text"
               name="first_name"
@@ -152,7 +165,7 @@ function AddUserModal({ show, onHide, userData }) {
             />
           </Form.Group>
           <Form.Group controlId="lastName" className="mb-3">
-            <Form.Label>Last Name</Form.Label>
+            <Form.Label>Last Name <span style={{color:"red"}}>*</span></Form.Label>
             <Form.Control
               type="text"
               name="last_name"
@@ -163,7 +176,7 @@ function AddUserModal({ show, onHide, userData }) {
           </Form.Group>
 
           <Form.Group controlId="email" className="mb-3">
-            <Form.Label>Email</Form.Label>
+            <Form.Label>Email <span style={{color:"red"}}>*</span></Form.Label>
             <Form.Control
               type="email"
               name="email"
@@ -176,7 +189,7 @@ function AddUserModal({ show, onHide, userData }) {
 
 
           <Form.Group controlId="role" className="mb-3 position-relative">
-            <Form.Label>Role</Form.Label>
+            <Form.Label>Role <span style={{color:"red"}}>*</span></Form.Label>
             <div className="custom-dropdown-wrapper" ref={roleRef}>
               <Form.Control
                 as="select"
@@ -225,7 +238,7 @@ function AddUserModal({ show, onHide, userData }) {
           {!userData ? (
             <>
               <Form.Group controlId="password" className="mb-3">
-                <Form.Label>Password</Form.Label>
+                <Form.Label>Password <span style={{color:"red"}}>*</span></Form.Label>
                 <Form.Control
                   type="password"
                   name="password"
@@ -241,6 +254,50 @@ function AddUserModal({ show, onHide, userData }) {
                   type="password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="contact" className="mb-3">
+                <Form.Label>Contact</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="country" className="mb-3">
+                <Form.Label>Country</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="companyName" className="mb-3">
+                <Form.Label>Company Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="position" className="mb-3">
+                <Form.Label>position</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="position"
+                  value={formData.position}
                   onChange={handleChange}
                   required
                 />
