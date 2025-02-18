@@ -113,11 +113,11 @@ const Home = () => {
                 </div>
                 <form onSubmit={handleLogin}>
                     <Input
-                        label="Your Name"
+                        label="Email"
                         id="user_name"
                         type="text"
                         name="userName"
-                        placeholder="Enter User Name"
+                        placeholder="Enter User Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
