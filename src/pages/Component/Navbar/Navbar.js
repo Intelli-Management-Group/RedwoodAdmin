@@ -45,7 +45,7 @@ const Navbar = ({ toggleSidebar }) => {
                 className={`nav-link`}
                 href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken)}`}
                 // href={`http://localhost:3001/?token=${encodeToken(storedToken)}`}
-                target="_blank"
+                target=""
                 rel="noopener noreferrer"
               >
                 Visit Site</a>
