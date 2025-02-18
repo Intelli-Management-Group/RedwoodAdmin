@@ -63,6 +63,7 @@ const CreatePages = () => {
         return;
       }
       setSelectedFile(file);
+      setUpdatedFileName(file?.name)
     } else {
       alert('Only PDF files are allowed.');
     }
@@ -103,66 +104,69 @@ const CreatePages = () => {
       setLoading(false);
     }
   };
-  const normalize = (name) => 
-    name.toLowerCase()
-        .replace(/[-–]/g, " ") 
-        .replace(/\s+/g, " ")
-        .trim();  
+  //  Files Name Validation Temperory Commented 
+  // const normalize = (name) => 
+  //   name.toLowerCase()
+  //       .replace(/[-–]/g, " ") 
+  //       .replace(/\s+/g, " ")
+  //       .trim();  
 
-  const validateFileName = (file, updatedFileName, requiredPrefix) => {
-    const fileName = file.name;
-    const updatedFilesName = updatedFileName || fileName;
+  //  Files Name Validation Temperory Commented 
+  // const validateFileName = (file, updatedFileName, requiredPrefix) => {
+  //   const fileName = file.name;
+  //   const updatedFilesName = updatedFileName || fileName;
   
-    const normalizedFileName = normalize(updatedFilesName);
-    const normalizedPrefix = normalize(requiredPrefix);
+  //   const normalizedFileName = normalize(updatedFilesName);
+  //   const normalizedPrefix = normalize(requiredPrefix);
   
-    if (!normalizedFileName.startsWith(normalizedPrefix)) {
-      return `File name must start with '${requiredPrefix}' (case-insensitive, hyphens allowed).`;
-    }
-  };
+  //   if (!normalizedFileName.startsWith(normalizedPrefix)) {
+  //     return `File name must start with '${requiredPrefix}' (case-insensitive, hyphens allowed).`;
+  //   }
+  // };
   const validateForm = (file, type, year) => {
     if (!file) return "Please select a file before submitting.";
     if (!type || type.trim() === "") return "Please select a valid document type.";
     if (!year || isNaN(year) || year <= 0) return "Please provide a valid posting year.";
-    if (type === "publications") {
-      const fileName = file.name;
-      const updatedFilesName = updatedFileName || fileName;
+  //  Files Name Validation Temperory Commented 
+    // if (type === "publications") {
+    //   const fileName = file.name;
+    //   const updatedFilesName = updatedFileName || fileName;
     
-      const normalizedFileName = updatedFilesName.toLowerCase().replace(/-/g, " ");
+    //   const normalizedFileName = updatedFilesName.toLowerCase().replace(/-/g, " ");
     
-      if (!normalizedFileName.startsWith("redwood peak china outlook")) {
-        return "File name must start with 'Redwood Peak China Outlook' (case-insensitive, hyphens allowed).";
-      }
-    } else if (type === "hedgeFundReports") {    
-      if (hedgeFundReportstypes === "monthlyPortfolioSummary") {
-        const result = validateFileName(
-          file,
-          updatedFileName,
-          "Redwood Peak Opportunities Master Fund Portfolio Summary"
-        );
-        if (result) {
-          return result;
-        }
-      } else if (hedgeFundReportstypes === "quarterlyPerformanceAnalysis") {
-        const result = validateFileName(
-          file,
-          updatedFileName,
-          "Redwood Peak Opportunities Master Fund Performance Analysis"
-        );
-        if (result) {
-          return result;
-        }
-      } else if (hedgeFundReportstypes === "quarterlyShareholderLetter") {
-        const result = validateFileName(
-          file,
-          updatedFileName,
-          "Redwood Peak Opportunities Master Fund Shareholders Letter"
-        );
-        if (result) {
-          return result;
-        }
-      }
-    }
+    //   if (!normalizedFileName.startsWith("redwood peak china outlook")) {
+    //     return "File name must start with 'Redwood Peak China Outlook' (case-insensitive, hyphens allowed).";
+    //   }
+    // } else if (type === "hedgeFundReports") {    
+    //   if (hedgeFundReportstypes === "monthlyPortfolioSummary") {
+    //     const result = validateFileName(
+    //       file,
+    //       updatedFileName,
+    //       "Redwood Peak Opportunities Master Fund Portfolio Summary"
+    //     );
+    //     if (result) {
+    //       return result;
+    //     }
+    //   } else if (hedgeFundReportstypes === "quarterlyPerformanceAnalysis") {
+    //     const result = validateFileName(
+    //       file,
+    //       updatedFileName,
+    //       "Redwood Peak Opportunities Master Fund Performance Analysis"
+    //     );
+    //     if (result) {
+    //       return result;
+    //     }
+    //   } else if (hedgeFundReportstypes === "quarterlyShareholderLetter") {
+    //     const result = validateFileName(
+    //       file,
+    //       updatedFileName,
+    //       "Redwood Peak Opportunities Master Fund Shareholders Letter"
+    //     );
+    //     if (result) {
+    //       return result;
+    //     }
+    //   }
+    // }
     
     return null;
   };
