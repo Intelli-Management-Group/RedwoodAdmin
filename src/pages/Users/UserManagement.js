@@ -83,6 +83,11 @@ const UserManagement = () => {
             }
         } catch (error) {
             console.error("Error uploading images:", error);
+            if (error?.status === 401) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userData');
+                window.location.href = '/';
+            }
             notifyError("An error occurred during fetch Data. Please try again.",);
         } finally {
             setIsLoading(false);
@@ -327,6 +332,11 @@ const UserManagement = () => {
             }
         } catch (error) {
             console.error("Error uploading images:", error);
+            if (error?.status === 401) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userData');
+                window.location.href = '/';
+            }
             notifyError("An error occurred during fetch Data. Please try again.",);
         } finally {
             setIsLoading(false);
@@ -395,7 +405,7 @@ const UserManagement = () => {
                                                         className="mb-0"
                                                     >
                                                         {`${statusData.status.charAt(0).toUpperCase() + statusData.status.slice(1)} (${statusData.total})`}
-                                                    </Form.Label>                                        
+                                                    </Form.Label>
                                                 </div>
                                             );
                                         })}
