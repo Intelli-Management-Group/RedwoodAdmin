@@ -22,7 +22,7 @@ const Navbar = ({ toggleSidebar }) => {
   };
   const handleRedirectWithToken = () => {
     const token = encodeToken(storedToken);
-    const targetDomain = "http://localhost:3000/";
+    const targetDomain = "https://frontend.jackychee.com/";
 
     const newWindow = window.open(targetDomain, "_blank");
 
