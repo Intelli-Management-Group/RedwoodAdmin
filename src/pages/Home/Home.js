@@ -18,9 +18,12 @@ const Home = () => {
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
-
-
     useEffect(() => {
+
+        const timeoutId = setTimeout(() => {
+            setTokenLoading(false);
+        }, 7000);
+    
         const handleTokenMessage = (event) => {
             const token = event?.data?.token;
             if (token) {
@@ -29,15 +32,33 @@ const Home = () => {
                     getTokenVerify(decodedToken);
                 }
             }
-            setTimeout(() => {
-                setTokenLoading(false);
-            }, 4000);
         };
-        window.addEventListener("message", handleTokenMessage);
-        return () => {
+            window.addEventListener("message", handleTokenMessage);
+            return () => {
             window.removeEventListener("message", handleTokenMessage);
+            clearTimeout(timeoutId); // Clear the timeout when the component is unmounted or rerendered
         };
     }, []);
+
+
+    // useEffect(() => {
+    //     const handleTokenMessage = (event) => {
+    //         const token = event?.data?.token;
+    //         if (token) {
+    //             const decodedToken = atob(token);
+    //             if (decodedToken) {
+    //                 getTokenVerify(decodedToken);
+    //             }
+    //         }
+    //         setTimeout(() => {
+    //             setTokenLoading(false);
+    //         }, 4000);
+    //     };
+    //     window.addEventListener("message", handleTokenMessage);
+    //     return () => {
+    //         window.removeEventListener("message", handleTokenMessage);
+    //     };
+    // }, []);
 
     const getTokenVerify = async (tokens) => {
         try {
