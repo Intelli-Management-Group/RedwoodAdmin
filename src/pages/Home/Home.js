@@ -9,61 +9,60 @@ import AdminServices from '../../Services/AdminServices';
 import { useAuth } from '../Component/AuthContext/AuthContextComponents';
 import { ToastContainer } from 'react-toastify';
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
-import axios from 'axios';
-import CustomLoader from '../Component/LoaderComponent/LoaderComponent';
+
 
 const Home = () => {
-    const [loading, setLoading] = useState(false)
-    const [tokenLoading, setTokenLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [tokenLoading, setTokenLoading] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
+
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const token = params.get('token');
-        if (token) {
-            try {
-                setTokenLoading(true)
+        const handleTokenMessage = (event) => {
+            const token = event?.data?.token;
+            if (token) {
                 const decodedToken = atob(token);
-                console.log(decodedToken);
                 if (decodedToken) {
                     getTokenVerify(decodedToken);
                 }
-            } catch (error) {
-                console.error("Invalid token:", error);
-                notifyError("Invalid token in URL.");
             }
-        }
-    }, [location]);
+            setTimeout(() => {
+                setTokenLoading(false);
+            }, 4000);
+        };
+        window.addEventListener("message", handleTokenMessage);
+        return () => {
+            window.removeEventListener("message", handleTokenMessage);
+        };
+    }, []);
 
     const getTokenVerify = async (tokens) => {
-        console.log('Token:', tokens);
         try {
             const resp = await AdminServices.tokenVerify(tokens);
             if (resp?.status_code === 200) {
                 localStorage.setItem("authToken", tokens);
-                localStorage.setItem("tokens", JSON.stringify({ token: tokens}));
+                localStorage.setItem("tokens", JSON.stringify({ token: tokens }));
                 localStorage.setItem('userData', JSON.stringify(resp?.message));
                 login();
                 navigate("/dashboard");
-                setTokenLoading(false)
+                setTokenLoading(false);
             } else {
-                notifyError(resp?.message || "Invalid email or password");
+                notifyError(resp?.message || "Invalid token.");
+                setTokenLoading(false);
             }
         } catch (error) {
             console.error("Token verification error:", error);
-            setTokenLoading(false)
+            setTokenLoading(false);
             notifyError("An error occurred during token verification. Please try again.");
         }
     };
 
-
     const handleLogin = async (event) => {
         event.preventDefault();
-        setLoading(true)
+        setLoading(true);
         if (email.trim() && password.trim()) {
             try {
                 const loginData = {
@@ -86,60 +85,70 @@ const Home = () => {
                         notifyError(`${user?.email} is not authenticated to access the Admin site.`);
                     }
                 } else {
-                    notifyError(response?.message || "Invalid email or password",);
+                    notifyError(response?.message || "Invalid email or password.");
                 }
             } catch (error) {
                 console.error("Login Error:", error);
-                notifyError("An error occurred during login. Please try again.",);
+                notifyError("An error occurred during login. Please try again.");
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
         } else {
-            notifyError("Please enter both email and password.",);
+            notifyError("Please enter both email and password.");
         }
     };
+
     return (
         <div className="login-page">
-            {tokenLoading && <CustomLoader />}
-            <div className="login-container whiteBg">
-                <div className="centerLogo mb-5">
-                    <Link to="#">
-                        <img
-                            src={Logo}
-                            className="d-inline-block align-top"
-                            alt="Our Mission Banner"
-                        />
-                    </Link>
+            {tokenLoading ? (
+                <div className="centered-logo-loading">
+                    <div className="logo-containerss">
+                        <img src={Logo} className="d-inline-block align-top" alt="Logo" />
+                        <p className="mt-3 text-center bouncing-dots">Loading<span></span><span></span><span></span></p>
+                    </div>
+
                 </div>
-                <form onSubmit={handleLogin}>
-                    <Input
-                        label="Email"
-                        id="user_name"
-                        type="text"
-                        name="userName"
-                        placeholder="Enter User Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                    <Input
-                        label="Password"
-                        id="password"
-                        type="password"
-                        name="password"
-                        placeholder="Enter Your Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                    <Button
-                        text={loading ? "Submitting..." : "Login"}
-                        disabled={loading}
-                        className="btn-primary"
-                        type="submit"
-                    />
-                </form>
-            </div>
+            ) : (
+                <div className="login-container whiteBg">
+                    <div className="centerLogo mb-5">
+                        <Link to="#">
+                            <img
+                                src={Logo}
+                                className="d-inline-block align-top"
+                                alt="Logo"
+                            />
+                        </Link>
+                    </div>
+                    <form onSubmit={handleLogin}>
+                        <Input
+                            label="Email"
+                            id="user_name"
+                            type="text"
+                            name="userName"
+                            placeholder="Enter User Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <Input
+                            label="Password"
+                            id="password"
+                            type="password"
+                            name="password"
+                            placeholder="Enter Your Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <Button
+                            text={loading ? "Submitting..." : "Login"}
+                            disabled={loading}
+                            className="btn-primary"
+                            type="submit"
+                        />
+                    </form>
+                </div>
+            )}
             <ToastContainer />
         </div>
     );

@@ -18,9 +18,18 @@ const Navbar = ({ toggleSidebar }) => {
     }, 2000);
   };
   const encodeToken = (token) => {
-    // console.log("token",token)
     return btoa(token);
-};
+  };
+  const handleRedirectWithToken = () => {
+    const token = encodeToken(storedToken);
+    const targetDomain = "http://localhost:3000/";
+
+    const newWindow = window.open(targetDomain, "_blank");
+
+    setTimeout(() => {
+      newWindow.postMessage({ token }, targetDomain);
+    }, 2000);
+  };
   // console.log(storedToken)
   return (
     <React.Fragment>
@@ -41,14 +50,17 @@ const Navbar = ({ toggleSidebar }) => {
         <div className="collapse navbar-collapse me-2" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <a
-                className={`nav-link`}
-                href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken)}`}
-                // href={`http://localhost:3001/?token=${encodeToken(storedToken)}`}
-                target=""
-                rel="noopener noreferrer"
-              >
-                Visit Site</a>
+              <a className={`nav-link`} href='#' onClick={handleRedirectWithToken}>
+                Visit Site
+              </a>
+                  {/* <a
+                    className={`nav-link`}
+                    // href={`https://frontend.jackychee.com/?token=${encodeToken(storedToken)}`}
+                    href={`http://localhost:3000/?token=${encodeToken(storedToken)}`}
+                    target=""
+                    rel="noopener noreferrer"
+                  >
+                    Visit Site</a> */}
             </li>
             {location.pathname !== '/profile' && (
               <li className="nav-item">

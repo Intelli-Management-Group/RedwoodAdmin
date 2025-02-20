@@ -731,3 +731,54 @@ video {
     transform: translateY(-50%);
     pointer-events: none;
   }
+  /* loading-animation  */
+  .logo-containerss {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  .bouncing-dots {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #511515;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  .bouncing-dots span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 2px;
+    background-color: #511515;
+    border-radius: 50%;
+    animation: bounce 1.5s infinite ease-in-out;
+  }
+  
+  .bouncing-dots span:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .bouncing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .bouncing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  
+  
