@@ -115,7 +115,7 @@ const Post = () => {
 
     const handleConfirmDelete = async () => {
         console.log("Deleted items:", selectedCheckboxes);
-        setIsConfirmedAlertLoading(true); 
+        setIsConfirmedAlertLoading(true);
 
         const formData = new FormData();
 
@@ -204,7 +204,7 @@ const Post = () => {
 
     const toggleTableActionsDropdown = () => setIsActionsOpen(!isActionsOpen);
     const toggleTableCategoryDropdown = () => setIsCategoryOpen(!isCategoryOpen);
-    
+
     const handleClickOutside = (e) => {
         if (actionsRef.current && !actionsRef.current.contains(e.target)) {
             setIsActionsOpen(false);
@@ -321,82 +321,91 @@ const Post = () => {
                                     </Form>
                                 </div>
 
-                                <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <input
-                                                    type="checkbox"
-                                                    id="select-all"
-                                                    checked={areAllSelected}
-                                                    onChange={(e) => handleSelectAll(e.target.checked)}
-                                                />
-                                            </th>
-                                            <th>Post Image</th>
-                                            <th>Title</th>
-                                            <th>Category</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {isLoading ? (
-                                            <>
-                                                <Skeleton type="row" />
-                                                <Skeleton type="row" />
-                                                <Skeleton type="row" />
-                                            </>
-                                        ) : posts.length > 0 ? (
-                                            posts.map((post) => (
-                                                <tr key={post.id}>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="user-select"
-                                                            checked={selectedCheckboxes.includes(post.id)}
-                                                            onChange={(e) =>
-                                                                handleCheckboxChange(post.id, e.target.checked)
-                                                            }
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <img
-                                                            src={post?.thumbnail?.path}
-                                                            style={{ width: '50px' }}
-                                                            className="bannerHeight"
-                                                            alt="News Banner"
-                                                        />
-                                                    </td>
-                                                    <td>{post.title.length > 60 ? `${post.title.substring(0, 60)}...` : post.title}</td>
-                                                    <td>{post.category}</td>
-                                                    <td>
-                                                        <Button
-                                                            text=""
-                                                            onClick={() => redirectToCreatePage(post.id)}
-                                                            className="btn btn-sm btn-primary"
-                                                            icon={faPencilSquare}
-                                                            iconSize="lg"
-                                                            disabled={false}
-                                                        />
-
-                                                        <Button
-                                                            text=""
-                                                            onClick={() => handleDelete(post.id)}
-                                                            className="btn btn-sm btn-danger ms-2"
-                                                            icon={faTrash}
-                                                            iconSize="lg"
-                                                            disabled={false}
-                                                        />
-
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
+                                <div className="table-responsive">
+                                    <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
+                                        <thead>
                                             <tr>
-                                                <td colSpan="5">No post available yet.</td>
+                                                <th>
+                                                    <input
+                                                        type="checkbox"
+                                                        id="select-all"
+                                                        checked={areAllSelected}
+                                                        onChange={(e) => handleSelectAll(e.target.checked)}
+                                                    />
+                                                </th>
+                                                <th>Post Image</th>
+                                                <th>Title</th>
+                                                <th>Category</th>
+                                                <th>Actions</th>
                                             </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {isLoading ? (
+                                                <>
+                                                    <Skeleton type="row" columns={5} />
+                                                    <Skeleton type="row" columns={5} />
+                                                    <Skeleton type="row" columns={5} />
+                                                </>
+                                            ) : posts.length > 0 ? (
+                                                posts.map((post) => (
+                                                    <tr key={post.id} className="customWhiteBg">
+                                                        <td>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="user-select"
+                                                                checked={selectedCheckboxes.includes(post.id)}
+                                                                onChange={(e) =>
+                                                                    handleCheckboxChange(post.id, e.target.checked)
+                                                                }
+                                                            />
+                                                        </td>
+                                                        <td>
+                                                            <img
+                                                                src={post?.thumbnail?.path}
+                                                                style={{ width: '50px' }}
+                                                                className="bannerHeight"
+                                                                alt="News Banner"
+                                                            />
+                                                        </td>
+                                                        <td>
+                                                            <span
+                                                                className="file-name-tooltip"
+                                                                title={post.title}
+                                                            >
+                                                                {post.title.length > 60 ? `${post.title.substring(0, 60)}...` : post.title}
+                                                            </span>
+                                                        </td>
+                                                        <td>{post.category}</td>
+                                                        <td className=" align-items-center">
+                                                            <Button
+                                                                text=""
+                                                                onClick={() => redirectToCreatePage(post.id)}
+                                                                className="btn btn-sm btn-primary mb-2 mx-2 mb-sm-0"
+                                                                icon={faPencilSquare}
+                                                                iconSize="lg"
+                                                                disabled={false}
+                                                            />
+                                                            <Button
+                                                                text=""
+                                                                onClick={() => handleDelete(post.id)}
+                                                                className="btn btn-sm btn-danger mx-2 "
+                                                                icon={faTrash}
+                                                                iconSize="lg"
+                                                                disabled={false}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="5">No post available yet.</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
                                 <div className="d-flex justify-content-end">
                                     <Pagination
                                         activePage={currentPage}

@@ -779,6 +779,20 @@ video {
       transform: translateY(-10px);
     }
   }
+
+  /*  */
+  .file-name-tooltip {
+    padding: 2px 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.3s ease; 
+  }
   
+  .file-name-tooltip:hover {
+    background-color: #f0f0f0;
+  }
+  
+ 
   
   

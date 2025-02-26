@@ -117,6 +117,7 @@ const UserManagement = () => {
     })
 
     const handleDelete = (id) => {
+        console.log("id",id)
         setIsConfiremdModalVisible(true)
         setDeletedItemId(id)
         // deleteUser(id)
@@ -500,94 +501,114 @@ const UserManagement = () => {
 
                                     </div>
                                 </div>
-
-                                <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <input
-                                                    type="checkbox"
-                                                    id="select-all"
-                                                    checked={areAllSelected}
-                                                    onChange={(e) => handleSelectAll(e.target.checked)}
-                                                />
-                                            </th>
-                                            {/* <th>Username</th> */}
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {isLoading ? (
-                                            <>
-                                                <>
-                                                    <Skeleton columns={6} /> {/* 5 columns for the Post table */}
-                                                    <Skeleton columns={6} />
-                                                    <Skeleton columns={6} />
-                                                </>
-                                            </>
-                                        ) : userData.length > 0 ? (
-                                            userData.map((user, index) => (
-                                                <tr key={index}>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="user-select"
-                                                            checked={selectedCheckboxes.includes(user.id)}
-                                                            onChange={(e) =>
-                                                                handleCheckboxChange(user.id, e.target.checked)
-                                                            }
-                                                        />
-                                                    </td>
-                                                    {/* <td>{user.username}</td> */}
-                                                    <td>{user.name}</td>
-                                                    <td>{user.email}</td>
-                                                    <td>
-                                                        {user.role === "user" && "User"}
-                                                        {user.role === "admin" && "Admin"}
-                                                        {user.role === "siteAdmin" && "Site Admin"}
-                                                        {!(user.role === "user" || user.role === "admin" || user.role === "siteAdmin") && "Unknown"}
-                                                    </td>
-                                                    <td>
-                                                        {user.status === "approve" && "Approve"}
-                                                        {user.status === "pending" && "Pending"}
-                                                        {user.status === "rejected" && "Rejected"}
-                                                        {user.status === "deactivate" && "Deactivate"}
-
-                                                        {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
-
-                                                    </td>
-                                                    <td>
-                                                        <Button
-                                                            text=""
-                                                            onClick={() => openUserModal(user)}
-                                                            className="btn btn-sm btn-primary"
-                                                            icon={faPencilSquare}
-                                                            iconSize="lg"
-                                                            disabled={false}
-                                                        />
-
-                                                        <Button
-                                                            text=""
-                                                            onClick={() => openUserModal(user)}
-                                                            className="btn btn-sm btn-danger ms-2"
-                                                            icon={faTrash}
-                                                            iconSize="lg"
-                                                            disabled={false}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            ))) : (
+                                <div className="table-responsive">
+                                    <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
+                                        <thead>
                                             <tr>
-                                                <td colSpan="7">No user available yet.</td>
+                                                <th>
+                                                    <input
+                                                        type="checkbox"
+                                                        id="select-all"
+                                                        checked={areAllSelected}
+                                                        onChange={(e) => handleSelectAll(e.target.checked)}
+                                                    />
+                                                </th>
+                                                {/* <th>Username</th> */}
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+
                                             </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {isLoading ? (
+                                                <>
+                                                    <>
+                                                        <Skeleton columns={6} /> {/* 5 columns for the Post table */}
+                                                        <Skeleton columns={6} />
+                                                        <Skeleton columns={6} />
+                                                    </>
+                                                </>
+                                            ) : userData.length > 0 ? (
+                                                userData.map((user, index) => (
+                                                    <tr key={index}>
+                                                        <td>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="user-select"
+                                                                checked={selectedCheckboxes.includes(user.id)}
+                                                                onChange={(e) =>
+                                                                    handleCheckboxChange(user.id, e.target.checked)
+                                                                }
+                                                            />
+                                                        </td>
+                                                        {/* <td>{user.username}</td> */}
+                                                        <td>{user.name}</td>
+                                                        <td>{user.email}</td>
+                                                        <td>
+                                                            {user.role === "user" && "User"}
+                                                            {user.role === "admin" && "Admin"}
+                                                            {user.role === "siteAdmin" && "Site Admin"}
+                                                            {!(user.role === "user" || user.role === "admin" || user.role === "siteAdmin") && "Unknown"}
+                                                        </td>
+                                                        <td>
+                                                            {user.status === "approve" && "Approve"}
+                                                            {user.status === "pending" && "Pending"}
+                                                            {user.status === "rejected" && "Rejected"}
+                                                            {user.status === "deactivate" && "Deactivate"}
+
+                                                            {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
+
+                                                        </td>
+                                                        <td className="d-flex flex-column flex-sm-row justify-content-center align-items-center">
+                                                            <Button
+                                                                text=""
+                                                                onClick={() => openUserModal(user)}
+                                                                className="btn btn-sm btn-primary mb-2 mb-sm-0"
+                                                                icon={faPencilSquare}
+                                                                iconSize="lg"
+                                                                disabled={false}
+                                                            />
+
+                                                            <Button
+                                                                text=""
+                                                                onClick={() => handleDelete(user?.id)}
+                                                                className="btn btn-sm btn-danger ms-0 ms-sm-2"
+                                                                icon={faTrash}
+                                                                iconSize="lg"
+                                                                disabled={false}
+                                                            />
+                                                        </td>
+                                                        {/* <td>
+                                                            <Button
+                                                                text=""
+                                                                onClick={() => openUserModal(user)}
+                                                                className="btn btn-sm btn-primary"
+                                                                icon={faPencilSquare}
+                                                                iconSize="lg"
+                                                                disabled={false}
+                                                            />
+
+                                                            <Button
+                                                                text=""
+                                                                onClick={() => openUserModal(user)}
+                                                                className="btn btn-sm btn-danger ms-2"
+                                                                icon={faTrash}
+                                                                iconSize="lg"
+                                                                disabled={false}
+                                                            />
+                                                        </td> */}
+                                                    </tr>
+                                                ))) : (
+                                                <tr>
+                                                    <td colSpan="7">No user available yet.</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <div className="d-flex justify-content-end">
                                     <Pagination
                                         activePage={currentPage}

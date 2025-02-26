@@ -248,11 +248,12 @@ const Pages = () => {
             {/* Dashboard Content */}
             <div className="dashboard-content">
               <div className="container-fluid">
+                
                 <div className="row mt-5 align-items-center">
-                  <div className="col-3">
+                  <div className="col-4 col-md-3">
                     <h3>Reports</h3>
                   </div>
-                  <div className="col-9 d-flex justify-content-end">
+                  <div className="col-8 col-md-9 d-flex justify-content-end">
                     <Button
                       onClick={redirectToCreatePage}
                       text="Upload New Document"
@@ -518,7 +519,7 @@ const Pages = () => {
                         </>
                       ) : page.length > 0 ? (
                         page.map((page) => (
-                          <tr key={page.id}>
+                          <tr key={page.id} className="customWhiteBg" >
                             <td>
                               <input
                                 type="checkbox"
@@ -530,9 +531,14 @@ const Pages = () => {
                               />
                             </td>
                             <td>
-                              {page.file_name.split('.').slice(0, -1).join('.').length > 30
-                                ? page.file_name.split('.').slice(0, -1).join('.').substring(0, 30) + "..."
-                                : page.file_name.split('.').slice(0, -1).join('.')}
+                              <span
+                                className="file-name-tooltip"
+                                title={page.file_name.split('.').slice(0, -1).join('.')}
+                              >
+                                {page.file_name.split('.').slice(0, -1).join('.').length > 30
+                                  ? page.file_name.split('.').slice(0, -1).join('.').substring(0, 30) + "..."
+                                  : page.file_name.split('.').slice(0, -1).join('.')}
+                              </span>
                             </td>
                             <td>{page.type}</td>
                             <td>
