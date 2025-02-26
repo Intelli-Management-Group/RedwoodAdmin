@@ -36,7 +36,7 @@ const Navbar = ({ toggleSidebar }) => {
       <nav className="navbar navbar-expand-lg customWhiteBg shadow-sm">
         <a className="navbar-brand ps-2" href="#">My Admin</a>
         <button
-          className="navbar-toggler"
+          className="navbar-toggler me-2"
           type="button"
           data-toggle="collapse"
           data-target="#navbarNav"
