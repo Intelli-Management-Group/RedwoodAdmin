@@ -14,12 +14,9 @@ const instance = axios.create({
 instance.interceptors.request.use(function (config) {
   let token;
   if (Cookies.get('userToken')) {
-    token = JSON.parse(Cookies.get('userToken')).token;  // Ensure you're accessing the correct field
+    token = JSON.parse(Cookies.get('userToken')).token; // Ensure you're accessing the correct field
   }
   const isAuthenticated = localStorage.getItem('token');
-  // console.log("isAuthenticated",isAuthenticated)
-
-
   console.log("TOKEN ====>>", token);
 
   if (isAuthenticated && !config.headers['Authorization']) {
@@ -27,7 +24,28 @@ instance.interceptors.request.use(function (config) {
   }
 
   return config;
+}, function (error) {
+  // Handle request errors
+  return Promise.reject(error);
 });
+
+// Response Interceptor
+instance.interceptors.response.use(
+  response => response, // If response is successful, return it
+  error => {
+    if (error.response && error.response.status === 401) {
+      // Clear authentication data (cookies/localStorage)
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userData');
+      Cookies.remove('authToken');
+
+      window.location.href = '/';
+
+      // Optionally, you can redirect to the login page
+    }
+    return Promise.reject(error);
+  }
+);
 
 const responseBody = (response) => response.data;
 
@@ -36,9 +54,9 @@ const requests = {
     instance.get(url, body, headers).then(responseBody),
 
   post: (url, body) => instance.post(url, body).then(responseBody),
-  uploadPosts: (url, body) =>  instance.post(url, body, {
+  uploadPosts: (url, body) => instance.post(url, body, {
     headers: {
-      'Content-Type': 'multipart/form-data', 
+      'Content-Type': 'multipart/form-data',
     },
   }).then(responseBody),
 
@@ -51,8 +69,8 @@ const requests = {
     }).then(responseBody);
   },
 
-  put: (url, body,) =>
-    instance.put(url, body, ).then(responseBody),
+  put: (url, body) =>
+    instance.put(url, body).then(responseBody),
 
   patch: (url, body) => instance.patch(url, body).then(responseBody),
 
@@ -60,7 +78,7 @@ const requests = {
   upload: (url, formData) =>
     instance.post(url, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data', 
+        'Content-Type': 'multipart/form-data',
       },
     }).then(responseBody),
 };
