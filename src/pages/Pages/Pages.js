@@ -489,98 +489,99 @@ const Pages = () => {
                 </div> */}
 
 
-                <table className="table table-striped " id="user-data-table" style={{ border: '1px solid #ccc' }}>
-                  <thead>
-                    <tr>
-                      <th>
-                        <input
-                          type="checkbox"
-                          id="select-all"
-                          checked={areAllSelected}
-                          onChange={(e) => handleSelectAll(e.target.checked)}
-                        />
-                      </th>
-                      <th>Document Title</th>
-                      <th>Category</th>
-                      <th>Reports types</th>
-                      <th>Years</th>
-                      <th>Copy Link</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {isLoading ? (
-                      <>
-                        <Skeleton type="row" columns={7} />
-                        <Skeleton type="row" columns={7} />
-                        <Skeleton type="row" columns={7} />
-                      </>
-                    ) : page.length > 0 ? (
-                      page.map((page) => (
-                        <tr key={page.id}>
-                          <td>
-                            <input
-                              type="checkbox"
-                              className="user-select"
-                              checked={selectedCheckboxes.includes(page.id)}
-                              onChange={(e) =>
-                                handleCheckboxChange(page.id, e.target.checked)
-                              }
-                            />
-                          </td>
-                          <td>
-                            {page.file_name.split('.').slice(0, -1).join('.').length > 30
-                              ? page.file_name.split('.').slice(0, -1).join('.').substring(0, 30) + "..."
-                              : page.file_name.split('.').slice(0, -1).join('.')}
-                          </td>
-                          <td>{page.type}</td>
-                          <td>
-                            {(page?.hedge_fund_report_type === "monthlyPortfolioSummary" || page?.hedge_fund_report_type === null) && "Monthly Portfolio Summary"}
-                            {page?.hedge_fund_report_type === "quarterlyPerformanceAnalysis" && "Quarterly Performance Analysis"}
-                            {page?.hedge_fund_report_type === "quarterlyShareholderLetter" && "Quarterly Shareholder Letter"}
-                            {page?.hedge_fund_report_type === "fundDocumentation" && "Fund Documentation"}
-                            {page?.hedge_fund_report_type === "auditedFinancialStatements" && "Audited Financial Statements"}
-                          </td>
-                          <td>{page.year}</td>
-                          <td>
-                            <Button
-                              text=""
-                              onClick={() => handleCopy(page?.file_path)}
-                              className="btn btn-sm btn-primary ms-2"
-                              icon={faCopy}
-                              iconSize="lg"
-                              disabled={false}
-                            />
-                          </td>
-                          <td>
-                            <Button
-                              text=""
-                              onClick={redirectToCreatePage}
-                              className="btn btn-sm btn-primary"
-                              icon={faPencilSquare}
-                              iconSize="lg"
-                              disabled={true}
-                            />
-
-                            <Button
-                              text=""
-                              onClick={() => handleDelete(page.id)}
-                              className="btn btn-sm btn-danger ms-2"
-                              icon={faTrash}
-                              iconSize="lg"
-                              disabled={false}
-                            />
-
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
+                <div className="table-responsive">
+                  <table className="table table-striped" id="user-data-table" style={{ border: '1px solid #ccc' }}>
+                    <thead>
                       <tr>
-                        <td colSpan="7">No page available yet.</td>
+                        <th>
+                          <input
+                            type="checkbox"
+                            id="select-all"
+                            checked={areAllSelected}
+                            onChange={(e) => handleSelectAll(e.target.checked)}
+                          />
+                        </th>
+                        <th>Document Title</th>
+                        <th>Category</th>
+                        <th>Reports types</th>
+                        <th>Years</th>
+                        <th>Copy Link</th>
+                        <th>Actions</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {isLoading ? (
+                        <>
+                          <Skeleton type="row" columns={7} />
+                          <Skeleton type="row" columns={7} />
+                          <Skeleton type="row" columns={7} />
+                        </>
+                      ) : page.length > 0 ? (
+                        page.map((page) => (
+                          <tr key={page.id}>
+                            <td>
+                              <input
+                                type="checkbox"
+                                className="user-select"
+                                checked={selectedCheckboxes.includes(page.id)}
+                                onChange={(e) =>
+                                  handleCheckboxChange(page.id, e.target.checked)
+                                }
+                              />
+                            </td>
+                            <td>
+                              {page.file_name.split('.').slice(0, -1).join('.').length > 30
+                                ? page.file_name.split('.').slice(0, -1).join('.').substring(0, 30) + "..."
+                                : page.file_name.split('.').slice(0, -1).join('.')}
+                            </td>
+                            <td>{page.type}</td>
+                            <td>
+                              {(page?.hedge_fund_report_type === "monthlyPortfolioSummary" || page?.hedge_fund_report_type === null) && "Monthly Portfolio Summary"}
+                              {page?.hedge_fund_report_type === "quarterlyPerformanceAnalysis" && "Quarterly Performance Analysis"}
+                              {page?.hedge_fund_report_type === "quarterlyShareholderLetter" && "Quarterly Shareholder Letter"}
+                              {page?.hedge_fund_report_type === "fundDocumentation" && "Fund Documentation"}
+                              {page?.hedge_fund_report_type === "auditedFinancialStatements" && "Audited Financial Statements"}
+                            </td>
+                            <td>{page.year}</td>
+                            <td>
+                              <Button
+                                text=""
+                                onClick={() => handleCopy(page?.file_path)}
+                                className="btn btn-sm btn-primary ms-2"
+                                icon={faCopy}
+                                iconSize="lg"
+                                disabled={false}
+                              />
+                            </td>
+                            <td className="d-flex flex-column flex-sm-row justify-content-center align-items-center">
+                              <Button
+                                text=""
+                                onClick={redirectToCreatePage}
+                                className="btn btn-sm btn-primary mb-2 mb-sm-0"
+                                icon={faPencilSquare}
+                                iconSize="lg"
+                                disabled={true}
+                              />
+
+                              <Button
+                                text=""
+                                onClick={() => handleDelete(page.id)}
+                                className="btn btn-sm btn-danger ms-0 ms-sm-2"
+                                icon={faTrash}
+                                iconSize="lg"
+                                disabled={false}
+                              />
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="7">No page available yet.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
                 <div className="d-flex justify-content-end">
                   <Pagination
                     activePage={currentPage}
