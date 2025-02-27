@@ -793,6 +793,93 @@ video {
     background-color: #f0f0f0;
   }
   
- 
-  
-  
+ /* navbar */
+
+ .custom-admin-dropdown {
+   right: 0 !important;
+   left: auto !important;
+ }
+
+ /* Flexbox to align toggle and user icon in one row */
+ .navbar-nav {
+   display: flex;
+   justify-content: flex-end;
+   /* Align everything to the right */
+   align-items: center;
+   /* Vertically center the items */
+   flex-wrap: nowrap;
+   /* Prevent wrapping of items */
+ }
+
+ /* Ensure navbar toggle button is pushed to the right on small screens */
+ .navbar-toggler {
+   margin-left: auto;
+   /* Push the toggle button to the right */
+ }
+
+ /* Ensuring dropdown is aligned to the right of the user icon */
+ .custom-admin-dropdown .dropdown-menu {
+   right: 0;
+   /* Align dropdown to the right of the user icon */
+   position: absolute;
+   /* Position dropdown relative to its parent */
+   z-index: 1050;
+   /* Ensure dropdown is on top of other content */
+ }
+
+ /* For smaller screens, make sure both user icon and menu toggle are in the same row */
+ @media (max-width: 991px) {
+   .navbar-nav {
+     display: flex;
+     justify-content: flex-end;
+     /* Align items to the right */
+     align-items: center;
+     flex-wrap: nowrap;
+     /* Prevent wrapping */
+   }
+
+   .navbar-toggler {
+     margin-left: auto;
+     /* Ensure toggle button aligns to the right */
+   }
+
+   .dropdown-menu {
+     right: 0;
+     /* Align dropdown to the right */
+   }
+ }
+
+ /* Fix for dropdown showing up properly when the menu is expanded */
+ .dropdown-menu.show {
+   display: block;
+   /* Ensure dropdown is visible when active */
+ }
+
+ /* Ensure the user icon stays in the same place when the dropdown is opened */
+ .navbar-nav .nav-item {
+   position: relative;
+   /* Make sure the dropdown is positioned relative to its parent */
+ }
+
+ /* Close dropdown when clicking outside */
+ body {
+   position: relative;
+ }
+
+ /* Close the dropdown when clicked outside */
+ body.clickable-area {
+   pointer-events: none;
+ }
+
+ /* Make sure user icon and menu toggle are in one row */
+ @media (max-width: 991px) {
+   .navbar-nav {
+     display: flex;
+     justify-content: flex-end;
+     align-items: center;
+   }
+
+   .navbar-toggler {
+     margin-left: auto;
+   }
+ }     
