@@ -883,3 +883,40 @@ video {
      margin-left: auto;
    }
  }     
+
+/*home page*/
+
+ .input-group {
+   display: flex;
+   flex-direction: column;
+   margin-bottom: 1rem;
+ }
+
+ .input-field {
+   width: 100%;
+   padding: 10px 40px 10px 10px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   font-size: 16px;
+ }
+
+ .password-wrapper {
+   position: relative;
+   width: 100%;
+ }
+
+ .toggle-password {
+   position: absolute;
+   right: 10px;
+   top: 50%;
+   transform: translateY(-50%);
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 18px;
+   color: gray;
+ }
+
+ .toggle-password:focus {
+   outline: none;
+ }
