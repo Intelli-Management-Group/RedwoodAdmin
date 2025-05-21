@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
@@ -15,9 +15,9 @@ import { Form } from 'react-bootstrap';
 
 const UserManagement = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-    const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
     const [isConfiremdModalVisible, setIsConfiremdModalVisible] = useState(false); // State to control modal visibility
     const [currentPage, setCurrentPage] = useState(1);
     const perPageRecords = (10)
@@ -46,11 +46,6 @@ const UserManagement = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [])
-    useEffect(() => {
-        if (isModalVisible === false) {
-            fetchAllUser(currentPage, filter);
-        }
-    }, [isModalVisible]);
     useEffect(() => {
         if (filter === "all") {
             fetchAllUser()
@@ -96,20 +91,6 @@ const UserManagement = () => {
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
     };
-    const closeModal = () => {
-        setIsModalVisible(false);
-    };
-
-    const openUserModal = (user) => {
-        setSelectedUser(user);
-        setIsModalVisible(true);
-    };
-
-    // Function to close the modal
-    const closeUserModal = () => {
-        setIsModalVisible(false);
-        setSelectedUser(null);
-    };
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false)
@@ -117,7 +98,7 @@ const UserManagement = () => {
     })
 
     const handleDelete = (id) => {
-        console.log("id",id)
+        console.log("id", id)
         setIsConfiremdModalVisible(true)
         setDeletedItemId(id)
         // deleteUser(id)
@@ -261,6 +242,11 @@ const UserManagement = () => {
         }
     };
 
+    const redirectToUserCreatePage = (data) => {
+        console.log(data)
+        navigate('/usersCreate', { state: { userData: data } });
+    };
+
     const updateStatus = async (ids, status) => {
         console.log("here")
         try {
@@ -378,9 +364,6 @@ const UserManagement = () => {
                                 <div className="card mb-4" id="users-overview-card">
                                     <div className="card-header d-flex justify-content-between">
                                         <h2>Users Overview</h2>
-                                        <span>
-                                            <AddUserModal show={isModalVisible} onHide={closeModal} />
-                                        </span>
                                     </div>
 
 
@@ -415,7 +398,7 @@ const UserManagement = () => {
                                     <div className="d-flex align-items-center me-0">
                                         <Button
                                             text="Add User"
-                                            onClick={() => setIsModalVisible(true)}
+                                            onClick={() => redirectToUserCreatePage()}
                                             className="btn btn-primary "
                                             type="button"
                                         />
@@ -565,7 +548,7 @@ const UserManagement = () => {
                                                         <td className="d-flex flex-column flex-sm-row justify-content-center align-items-center">
                                                             <Button
                                                                 text=""
-                                                                onClick={() => openUserModal(user)}
+                                                                onClick={() => redirectToUserCreatePage(user)}
                                                                 className="btn btn-sm btn-primary mb-2 mb-sm-0"
                                                                 icon={faPencilSquare}
                                                                 iconSize="lg"
@@ -580,26 +563,7 @@ const UserManagement = () => {
                                                                 iconSize="lg"
                                                                 disabled={false}
                                                             />
-                                                        </td>
-                                                        {/* <td>
-                                                            <Button
-                                                                text=""
-                                                                onClick={() => openUserModal(user)}
-                                                                className="btn btn-sm btn-primary"
-                                                                icon={faPencilSquare}
-                                                                iconSize="lg"
-                                                                disabled={false}
-                                                            />
-
-                                                            <Button
-                                                                text=""
-                                                                onClick={() => openUserModal(user)}
-                                                                className="btn btn-sm btn-danger ms-2"
-                                                                icon={faTrash}
-                                                                iconSize="lg"
-                                                                disabled={false}
-                                                            />
-                                                        </td> */}
+                                                        </td>                                                     
                                                     </tr>
                                                 ))) : (
                                                 <tr>
@@ -623,13 +587,7 @@ const UserManagement = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* <AddUserModal isOpen={isModalVisible} onHide={closeModal} UserData={selectedUser}/> */}
-                        <AddUserModal
-                            show={isModalVisible}
-                            onHide={() => setIsModalVisible(false)}
-                            userData={selectedUser}
-                        />
-
+    
                         <ConfirmationDialog
                             isVisible={isConfiremdModalVisible}
                             title="Confirm Deletion"
