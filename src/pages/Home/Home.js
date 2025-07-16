@@ -65,7 +65,7 @@ const Home = () => {
             const resp = await AdminServices.tokenVerify(tokens);
             if (resp?.status_code === 200) {
                 localStorage.setItem("authToken", tokens);
-                localStorage.setItem("tokens", JSON.stringify({ token: tokens }));
+                localStorage.setItem("token", tokens);
                 localStorage.setItem('userData', JSON.stringify(resp?.message));
                 login();
                 navigate("/dashboard");
