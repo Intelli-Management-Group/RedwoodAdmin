@@ -72,7 +72,7 @@ const Navbar = ({ toggleSidebar }) => {
   return (
     <React.Fragment>
       <nav className="navbar navbar-expand-lg customWhiteBg shadow-sm">
-        <a className="navbar-brand ps-2" href="#">
+        <a className="navbar-brand ps-2 nav-title" href="#">
           My Admin
         </a>
 
@@ -91,7 +91,7 @@ const Navbar = ({ toggleSidebar }) => {
         <div className="navbar-nav ms-lg-auto ms-sm-0 d-flex align-items-center">
           <li className="nav-item dropdown position-relative">
             <a
-              className="nav-link dropdown-toggle"
+              className="nav-link dropdown-toggle nav-title"
               href="#"
               id="userDropdown"
               role="button"
@@ -107,15 +107,15 @@ const Navbar = ({ toggleSidebar }) => {
               aria-labelledby="userDropdown"
               style={{ right: 0, left: 'auto', top: '100%', position: 'absolute', zIndex: 1050 }}
             >
-              <a className="dropdown-item" href="#" onClick={handleRedirectWithToken}>
+              <a className="dropdown-item nav-item-color" href="#" onClick={handleRedirectWithToken}>
                 Visit Site
               </a>
               {location.pathname !== '/profile' && (
-                <Link className="dropdown-item" to="/profile">
+                <Link className="dropdown-item nav-item-color" to="/profile">
                   Profile
                 </Link>
               )}
-              <a className="dropdown-item" href="#" onClick={handleLogout}>
+              <a className="dropdown-item nav-item-color" href="#" onClick={handleLogout}>
                 Logout
               </a>
             </div>

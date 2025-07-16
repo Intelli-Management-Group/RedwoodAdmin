@@ -817,6 +817,13 @@ video {
    /* Push the toggle button to the right */
  }
 
+ .nav-title{
+    color: #823535 !important;
+ }
+ .nav-item-color{
+    color: #000 !important;
+ }
+
  /* Ensuring dropdown is aligned to the right of the user icon */
  .custom-admin-dropdown .dropdown-menu {
    right: 0;
