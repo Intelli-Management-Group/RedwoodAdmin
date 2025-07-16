@@ -64,7 +64,7 @@ const Post = () => {
                 body: formData,
             });
             if (resp?.status_code === 200) {
-                console.log(resp);
+                //console.log(resp);
 
                 setPosts(resp?.list?.data || [])
                 setTotalRecords(resp?.list?.total)
@@ -114,7 +114,7 @@ const Post = () => {
 
 
     const handleConfirmDelete = async () => {
-        console.log("Deleted items:", selectedCheckboxes);
+        //console.log("Deleted items:", selectedCheckboxes);
         setIsConfirmedAlertLoading(true);
 
         const formData = new FormData();
@@ -142,7 +142,7 @@ const Post = () => {
     };
 
     const handleCancelDelete = () => {
-        console.log("Deletion canceled.");
+        //console.log("Deletion canceled.");
 
         // Clear selected checkboxes and reset table action
         clearSelectedCheckboxes();
@@ -177,14 +177,14 @@ const Post = () => {
         }
     };
     const handleDelete = (id) => {
-        console.log("page.id", id)
+        //console.log("page.id", id)
         deletePost(id)
     };
     const deletePost = async (id) => {
         try {
             const resp = await PostServices.deletePost(id);
             if (resp?.status_code === 200) {
-                console.log(resp);
+                //console.log(resp);
                 notifySuccess(resp?.message,);
                 setTimeout(() =>
                     setIsLoading(true),

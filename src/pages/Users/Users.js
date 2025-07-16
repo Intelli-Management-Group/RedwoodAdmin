@@ -28,7 +28,7 @@ const Users = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
   useEffect(() => {
-    console.log('component mounted');
+    //console.log('component mounted');
     getUserWiseCounts()
   }, []);
 
@@ -39,7 +39,7 @@ const Users = () => {
     try {
       const resp = await AdminServices.getUserWiseCount();
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
 
         const processedData = resp?.list.map((item) => ({
           status: item.status || "Unknown", // Replace null with "Unknown"

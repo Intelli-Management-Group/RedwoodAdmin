@@ -5,7 +5,7 @@ const PageServices = {
     return requests.uploadPosts("/page/upload", body);
   },
   getPageList: async ({ page, perPageRecords, documentType }) => {
-    console.log("getPageList")
+    //console.log("getPageList")
 
     if (documentType === "all") {
       return requests.post(`/page/list?page=${page}&pageSize=${perPageRecords}`,);

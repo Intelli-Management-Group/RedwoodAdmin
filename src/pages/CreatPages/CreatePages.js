@@ -91,7 +91,7 @@ const CreatePages = () => {
       const resp = await PageServices.uploadPages(formdata);
 
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
         resetFormFields();
         notifySuccess(resp?.message || "File uploaded successfully!");
       } else {
@@ -182,14 +182,14 @@ const CreatePages = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
   const handldeDocumentUpdate = (e) => {
-    console.log("e", e.target.value)
+    //console.log("e", e.target.value)
     if (e.target.value !== "hedgeFundReports") {
       setHedgeFundReportstypes("monthlyPortfolioSummary")
     }
     setDocumentType(e.target.value)
   }
   useEffect(() => {
-    console.log('component mounted');
+    //console.log('component mounted');
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);

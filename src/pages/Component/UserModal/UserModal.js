@@ -98,7 +98,7 @@ function AddUserModal({ show, onHide, userData }) {
       setLoading(false);
       return;
     }
-    console.log("formData", formData)
+    //console.log("formData", formData)
     try {
       const formdata = new FormData();
       formdata.append("id", formData?.id ? formData?.id : "");
@@ -121,7 +121,7 @@ function AddUserModal({ show, onHide, userData }) {
       formdata.append("role_id", "");
       // Call API to register user
       const response = await AdminServices.addUser(formdata);
-      console.log("res", response)
+      //console.log("res", response)
       if (response?.status_code === 200) {
         notifySuccess(formData?.id ? "User Updated SuccessFully!" : "User Created SuccessFully");
         setTimeout(() => {

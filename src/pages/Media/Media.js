@@ -56,7 +56,7 @@ function Media() {
 
       const resp = await MediaServices.getMediaList(formdata);
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
 
         if (page === 1) {
           setMediaList(resp?.list?.data || []);
@@ -86,7 +86,7 @@ function Media() {
     try {
       const resp = await MediaServices.deleteMedia(id);
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
         notifySuccess(resp?.message,);
         setTimeout(() =>
           setLoading(true),

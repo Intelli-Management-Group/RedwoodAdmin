@@ -59,7 +59,7 @@ const Pages = () => {
 
   const logFormData = (formData) => {
     for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
+      //console.log(`${key}: ${value}`);
     }
   };
 
@@ -79,7 +79,7 @@ const Pages = () => {
         body: formData,
       });
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
 
         if (page === 1) {
           setpage(resp?.list?.data || []);
@@ -103,7 +103,7 @@ const Pages = () => {
     try {
       const resp = await PageServices.getPageList({ page, perPageRecords, documentType });
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
 
         if (page === 1) {
           setpage(resp?.list?.data || []);
@@ -128,7 +128,7 @@ const Pages = () => {
     try {
       const resp = await PageServices.deletePages(id);
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
         notifySuccess(resp?.message,);
         setTimeout(() =>
           setLoading(true),
@@ -198,7 +198,7 @@ const Pages = () => {
     }
   };
   const handleDelete = (id) => {
-    console.log("page.id", id)
+    //console.log("page.id", id)
     deletePages(id)
   };
 
@@ -229,7 +229,7 @@ const Pages = () => {
     }
   };
   const handleCopy = (text) => {
-    console.log("text", text);
+    //console.log("text", text);
     navigator.clipboard.writeText(text).then();
   };
   const areAllSelected =

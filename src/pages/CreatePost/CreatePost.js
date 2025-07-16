@@ -46,7 +46,7 @@ const CreatePost = () => {
 
 
   useEffect(() => {
-    console.log('component mounted', id);
+    //console.log('component mounted', id);
     if (id) {
       fetchPostData()
     }
@@ -61,7 +61,7 @@ const CreatePost = () => {
     try {
       const resp = await PostServices.getPostDetails(id);
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
         setId(resp?.data[0]?.id)
         setTitle(resp?.data[0]?.title);
         setCategory(resp?.data[0]?.category);
@@ -196,9 +196,9 @@ const CreatePost = () => {
       return;
     }
     try {
-      console.log("selectedFiles", selectedFiles)
+      //console.log("selectedFiles", selectedFiles)
 
-      console.log(captions)
+      //console.log(captions)
       const captionData = JSON.stringify(captions);
       const formdata = new FormData();
 
@@ -219,14 +219,14 @@ const CreatePost = () => {
 
       // Debugging: Log FormData key-value pairs
       for (let [key, value] of formdata.entries()) {
-        console.log(`${key}:`, value);
+        //console.log(`${key}:`, value);
       }
 
 
       const resp = await PostServices.uploadPost(formdata);
 
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
         notifySuccess("Post uploaded successfully!");
       } else {
         notifyError(resp?.message || "Please try again.");
@@ -249,11 +249,11 @@ const CreatePost = () => {
       return;
     }
     try {
-      console.log("selectedFiles", selectedFiles)
+      //console.log("selectedFiles", selectedFiles)
       const newImgesAdd = selectedFiles.filter(item =>
         Object.keys(item).length === 2 && 'path' in item && 'relativePath' in item
       );
-      console.log(newImgesAdd)
+      //console.log(newImgesAdd)
       const captionData = JSON.stringify(captions);
 
       const formdata = new FormData();
@@ -282,11 +282,11 @@ const CreatePost = () => {
       const deletedMediaString = deletedMediaList.join(",");
       formdata.append("delete_media", deletedMediaString);
       for (let [key, value] of formdata.entries()) {
-        console.log(`${key}:`, value);
+        //console.log(`${key}:`, value);
       }
       const resp = await PostServices.updatePost(formdata)
       if (resp?.status_code === 200) {
-        console.log(resp);
+        //console.log(resp);
         notifySuccess("Post uploaded successfully!");
       } else {
         notifyError(resp?.message || "Please try again.");
@@ -300,7 +300,7 @@ const CreatePost = () => {
   };
 
   const handleEditorChange = (data) => {
-    console.log(data)
+    //console.log(data)
     var encodedString = encodeURIComponent(data);
     // var encodedString = btoa(data);
     // setDescription(encodedString);

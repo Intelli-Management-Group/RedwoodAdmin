@@ -21,7 +21,7 @@ const UserProfile = () => {
     //     // Logic for editing user details
     //     alert("Edit profile functionality not implemented yet.");
     // };
-console.log(user)
+//console.log(user)
     return (
         <React.Fragment>
             <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}

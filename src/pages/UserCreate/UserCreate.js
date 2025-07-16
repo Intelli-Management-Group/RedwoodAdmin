@@ -31,7 +31,7 @@ function UserCreate() {
     const [formSubmitted, setFormSubmitted] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-    console.log(location)
+    //console.log(location)
     const userData = location.state?.userData || null;
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const options = useMemo(() => countryList().getData(), []);
@@ -178,11 +178,11 @@ function UserCreate() {
     };
 
     const handleSubmit = async (e) => {
-        console.log("call")
+        //console.log("call")
         e.preventDefault();
         setFormSubmitted(true);
         const errors = validateForm();
-        console.log(errors)
+        //console.log(errors)
         setValidationErrors(errors);
         // if (Object.keys(errors).length > 0) {
         //     setLoading(false);

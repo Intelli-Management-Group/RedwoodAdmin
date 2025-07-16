@@ -67,7 +67,7 @@ const UserManagement = () => {
                 body: formData,
             });
             if (resp?.status_code === 200) {
-                console.log(resp);
+                //console.log(resp);
 
                 setUserData(resp?.list?.data || [])
                 setTotalRecords(resp?.list?.total)
@@ -98,7 +98,7 @@ const UserManagement = () => {
     })
 
     const handleDelete = (id) => {
-        console.log("id", id)
+        //console.log("id", id)
         setIsConfiremdModalVisible(true)
         setDeletedItemId(id)
         // deleteUser(id)
@@ -134,7 +134,7 @@ const UserManagement = () => {
         try {
             const resp = await AdminServices.userDelete(id);
             if (resp?.status_code === 200) {
-                console.log(resp);
+                //console.log(resp);
                 notifySuccess(resp?.message,);
                 setTimeout(() =>
                     setIsLoading(true),
@@ -207,7 +207,7 @@ const UserManagement = () => {
         await updateRoles(selectedCheckboxes, action);
     }
     const handleActionChange = async (action) => {
-        console.log("Selected Action:", action); // Debugging log for selected action
+        //console.log("Selected Action:", action); // Debugging log for selected action
         setAction(action); // Update the state with the selected action
 
         try {
@@ -217,13 +217,13 @@ const UserManagement = () => {
                     return;
                 }
                 setIsConfiremdModalVisible(true);
-                console.log("Deleting selected users:", selectedCheckboxes);
+                //console.log("Deleting selected users:", selectedCheckboxes);
             } else if (["approve", "rejected", "deactivate",].includes(action)) {
                 if (selectedCheckboxes.length === 0) {
                     notifyError("No users selected for this action.");
                     return;
                 }
-                // console.log("Updating status for selected users:", selectedCheckboxes);
+                // //console.log("Updating status for selected users:", selectedCheckboxes);
                 await updateStatus(selectedCheckboxes, action);
             }
             // else if (action === "resend") {
@@ -243,12 +243,12 @@ const UserManagement = () => {
     };
 
     const redirectToUserCreatePage = (data) => {
-        console.log(data)
+        //console.log(data)
         navigate('/usersCreate', { state: { userData: data } });
     };
 
     const updateStatus = async (ids, status) => {
-        console.log("here")
+        //console.log("here")
         try {
             const formData = new FormData();
             const idsAsString = ids.join(",");
@@ -275,7 +275,7 @@ const UserManagement = () => {
         }
     };
     const updateRoles = async (ids, role) => {
-        console.log("here")
+        //console.log("here")
         try {
             const formData = new FormData();
             const idsAsString = ids.join(",");
@@ -307,7 +307,7 @@ const UserManagement = () => {
         try {
             const resp = await AdminServices.getUserWiseCount();
             if (resp?.status_code === 200) {
-                console.log(resp);
+                //console.log(resp);
 
                 const processedData = resp?.list.map((item) => ({
                     status: item.status || "Unknown", // Replace null with "Unknown"
