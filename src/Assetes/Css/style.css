@@ -890,3 +890,16 @@ video {
      margin-left: auto;
    }
  }     
+
+ .dropdown-arrow {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 1.1em;
+    color: #888;
+}
+.role-dropdown-wrapper {
+    position: relative;
+}

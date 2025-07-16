@@ -11,6 +11,24 @@ import AdminServices from "../../Services/AdminServices";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from "../Component/Navbar/Navbar";
 function UserCreate() {
+    // Add custom error style
+    const errorStyle = `
+        .custom-error-text {
+            color: #d32f2f;
+            font-size: 0.95em;
+            margin-top: 2px;
+        }
+    `;
+    // Helper for length check
+    const checkLength = (value, min, max) => {
+        if (value.length < min) return `must be at least ${min} characters.`;
+        if (value.length > max) return `must be at most ${max} characters.`;
+        return null;
+    };
+    // Name regex: letters, numbers, spaces, hyphens, apostrophes
+    const nameRegex = /^[A-Za-z0-9\s\-']+$/;
+    const [validationErrors, setValidationErrors] = useState({});
+    const [formSubmitted, setFormSubmitted] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     console.log(location)
@@ -72,36 +90,109 @@ function UserCreate() {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        const newValue = type === "checkbox" ? checked : value;
         setFormData({
             ...formData,
-            [name]: type === "checkbox" ? checked : value
+            [name]: newValue
         });
+        // Validate only the changed field
+        const error = validateField(name, newValue);
+        setValidationErrors((prev) => ({
+            ...prev,
+            [name]: error
+        }));
     };
-    const validateForm = () => {
-        if (!formData.first_name.trim()) return "FirstName is required.";
-        if (!formData.last_name.trim()) return "LastName is required.";
-        if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
-            return "A valid email address is required.";
-        if (!formData?.id) {
-            if (!formData.password.trim() || formData.password.length < 6)
-                return "Password must be at least 6 characters long.";
-            if (formData.password !== formData.confirmPassword)
-                return "Passwords do not match.";
+    const validateField = (name, value) => {
+        switch (name) {
+            case "first_name": {
+                if (!value) return "First name is required.";
+                const err = checkLength(value, 3, 30);
+                if (err) return `First name ${err}`;
+                if (!nameRegex.test(value)) return "First name can only contain letters, spaces, hyphens, and apostrophes.";
+                return null;
+            }
+            case "last_name": {
+                if (!value) return "Last name is required.";
+                const err = checkLength(value, 3, 30);
+                if (err) return `Last name ${err}`;
+                if (!nameRegex.test(value)) return "Last name can only contain letters, spaces, hyphens, and apostrophes.";
+                return null;
+            }
+            case "email": {
+                if (!value || !value.trim()) return "Email is required.";
+                if (!/\S+@\S+\.\S+/.test(value)) return "A valid email address is required.";
+                return null;
+            }
+            case "password": {
+                if (!value || !value.trim()) return "Password is required.";
+                if (value.length < 6) return "Password must be at least 6 characters long.";
+                return null;
+            }
+            case "confirmPassword": {
+                if (!value || !value.trim()) return "Confirm Password is required.";
+                if (value !== formData.password) return "Passwords do not match.";
+                return null;
+            }
+            case "role": {
+                if (!value || !value.trim()) return "Role is required.";
+                return null;
+            }
+            case "contact": {
+                if (!value) return "Contact number is required.";
+                if (!/^[0-9]+$/.test(value)) return "Contact number must contain only numbers.";
+                if (value.length < 8 || value.length > 15) return "Contact number must be between 8 and 15 digits.";
+                return null;
+            }
+            case "companyName": {
+                if (value) {
+                    const err = checkLength(value, 3, 30);
+                    if (err) return `Company name ${err}`;
+                }
+                return null;
+            }
+            case "position": {
+                if (value) {
+                    const err = checkLength(value, 3, 30);
+                    if (err) return `Position ${err}`;
+                }
+                return null;
+            }
+            default:
+                return null;
         }
-        if (!formData.role.trim()) return "Role is required.";
-        return null;
+    };
+
+    const validateForm = () => {
+        const errors = {};
+        errors.first_name = validateField("first_name", formData.first_name);
+        errors.last_name = validateField("last_name", formData.last_name);
+        errors.email = validateField("email", formData.email);
+        errors.role = validateField("role", formData.role);
+        errors.contact = validateField("contact", formData.contact);
+        if (!formData?.id) {
+            errors.password = validateField("password", formData.password);
+            errors.confirmPassword = validateField("confirmPassword", formData.confirmPassword);
+        }
+        // Do not remove null errors, keep undefined or null so isInvalid works
+        return errors;
     };
 
     const handleSubmit = async (e) => {
+        console.log("call")
         e.preventDefault();
+        setFormSubmitted(true);
+        const errors = validateForm();
+        console.log(errors)
+        setValidationErrors(errors);
+        // if (Object.keys(errors).length > 0) {
+        //     setLoading(false);
+        //     return;
+        // } 
+        if (Object.values(errors).some((err) => err)) {
+    setLoading(false);
+    return;
+}
         setLoading(true);
-
-        const validationError = validateForm();
-        if (validationError) {
-            toast.error(validationError, { position: "top-center", autoClose: 3000 });
-            setLoading(false);
-            return;
-        }
         try {
             const formdata = new FormData();
             formdata.append("id", formData?.id ? formData?.id : "");
@@ -154,192 +245,249 @@ function UserCreate() {
 
     return (
         <React.Fragment>
-            <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
+            <style>{errorStyle}</style>
+            <div style={{ height: '100vh' }}>
                 <div className="">
-                    {/* Sidebar */}
                     <Sidebar isVisible={isSidebarVisible} />
-
-                    {/* Main Content */}
                     <div className={`main-content bodyBg ${isSidebarVisible ? 'shifted' : ''}`}>
                         <Navbar toggleSidebar={toggleSidebar} />
-                        {/* <Container className="py-4"> */}
                         <div className="dashboard-content">
                             <div className="container-fluid">
                                 <div className="container mt-5">
                                     <h2 className="mb-4">{userData ? "Edit User" : "Add User"}</h2>
-                                    <Row className="justify-content-center">
-                                        <Col md={12} lg={12}>
-                                            <Form onSubmit={handleSubmit} className="">
-                                                <Form.Group controlId="firstName" className="mb-3">
-                                                    <Form.Label>First Name <span style={{ color: "red" }}>*</span></Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="first_name"
-                                                        value={formData.first_name}
+                                    <form onSubmit={handleSubmit} className="custom-form">
+                                        <div className="mb-3">
+                                            <label htmlFor="first_name" className="form-label">First Name <span style={{ color: "red" }}>*</span></label>
+                                            <input
+                                                type="text"
+                                                id="first_name"
+                                                name="first_name"
+                                                className={`form-control${formSubmitted && validationErrors.first_name ? ' is-invalid' : ''}`}
+                                                value={formData.first_name}
+                                                onChange={handleChange}
+                                                autoComplete="off"
+                                            />
+                                            {formSubmitted && validationErrors.first_name && (
+                                                <div className="custom-error-text">{validationErrors.first_name}</div>
+                                            )}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="last_name" className="form-label">Last Name <span style={{ color: "red" }}>*</span></label>
+                                            <input
+                                                type="text"
+                                                id="last_name"
+                                                name="last_name"
+                                                className={`form-control${formSubmitted && validationErrors.last_name ? ' is-invalid' : ''}`}
+                                                value={formData.last_name}
+                                                onChange={handleChange}
+                                                autoComplete="off"
+                                            />
+                                            {formSubmitted && validationErrors.last_name && (
+                                                <div className="custom-error-text">{validationErrors.last_name}</div>
+                                            )}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="email" className="form-label">Email <span style={{ color: "red" }}>*</span></label>
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                className={`form-control${formSubmitted && validationErrors.email ? ' is-invalid' : ''}`}
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                autoComplete="off"
+                                            />
+                                            {formSubmitted && validationErrors.email && (
+                                                <div className="custom-error-text">{validationErrors.email}</div>
+                                            )}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="role" className="form-label">Role <span style={{ color: "red" }}>*</span></label>
+                                            <div className="role-dropdown-wrapper">
+                                                <select
+                                                    id="role"
+                                                    name="role"
+                                                    className={`form-control custom-dropdown${formSubmitted && validationErrors.role ? ' is-invalid' : ''}`}
+                                                    value={formData.role}
+                                                    onChange={handleChange}
+                                                    onClick={toggleRoleDropdown}
+                                                >
+                                                    <option value="">Select role</option>
+                                                    <option value="admin">Admin</option>
+                                                    <option value="siteAdmin">Site Admin</option>
+                                                    <option value="user">User</option>
+                                                </select>
+                                                <FontAwesomeIcon
+                                                    icon={isRoleOpen ? faChevronUp : faChevronDown}
+                                                    className="dropdown-arrow"
+                                                />
+                                            </div>
+                                            {formSubmitted && validationErrors.role && (
+                                                <div className="custom-error-text">{validationErrors.role}</div>
+                                            )}
+                                        </div>
+                                        {/* <div className="mb-3">
+                                            <label htmlFor="role" className="form-label">Role <span style={{ color: "red" }}>*</span></label>
+                                            <select
+                                                id="role"
+                                                name="role"
+                                                className={`form-control custom-dropdown${formSubmitted && validationErrors.role ? ' is-invalid' : ''}`}
+                                                value={formData.role}
+                                                onChange={handleChange}
+                                                onClick={toggleRoleDropdown}
+                                            >
+                                                <option value="">Select role</option>
+                                                <option value="admin">Admin</option>
+                                                <option value="siteAdmin">Site Admin</option>
+                                                <option value="user">User</option>
+                                            </select>
+                                            {formSubmitted && validationErrors.role && (
+                                                <div className="custom-error-text">{validationErrors.role}</div>
+                                            )}
+                                            <FontAwesomeIcon
+                                                icon={isRoleOpen ? faChevronUp : faChevronDown}
+                                                className="dropdown-arrow position-absolute"
+                                            />
+                                        </div> */}
+                                        {userData && (
+                                            <div className="mb-3">
+                                                <label htmlFor="status" className="form-label">User Status</label>
+                                                <select
+                                                    id="status"
+                                                    name="status"
+                                                    className="form-control custom-dropdown"
+                                                    value={formData.status}
+                                                    onChange={handleChange}
+                                                    onClick={toggleStatusDropdown}
+                                                >
+                                                    <option value="pending">Pending</option>
+                                                    <option value="approve">Approve</option>
+                                                    <option value="rejected">Rejected</option>
+                                                    <option value="inActive">Inactive</option>
+                                                </select>
+                                                <FontAwesomeIcon
+                                                    icon={isStatusOpen ? faChevronUp : faChevronDown}
+                                                    className="dropdown-arrow position-absolute"
+                                                />
+                                            </div>
+                                        )}
+                                        {!userData && (
+                                            <>
+                                                <div className="mb-3">
+                                                    <label htmlFor="password" className="form-label">Password <span style={{ color: "red" }}>*</span></label>
+                                                    <input
+                                                        type="password"
+                                                        id="password"
+                                                        name="password"
+                                                        className={`form-control${formSubmitted && validationErrors.password ? ' is-invalid' : ''}`}
+                                                        value={formData.password}
                                                         onChange={handleChange}
-                                                        required
+                                                        autoComplete="off"
                                                     />
-                                                </Form.Group>
-                                                <Form.Group controlId="lastName" className="mb-3">
-                                                    <Form.Label>Last Name <span style={{ color: "red" }}>*</span></Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="last_name"
-                                                        value={formData.last_name}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group controlId="email" className="mb-3">
-                                                    <Form.Label>Email <span style={{ color: "red" }}>*</span></Form.Label>
-                                                    <Form.Control
-                                                        type="email"
-                                                        name="email"
-                                                        value={formData.email}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group controlId="role" className="mb-3 position-relative">
-                                                    <Form.Label>Role <span style={{ color: "red" }}>*</span></Form.Label>
-                                                    <div className="custom-dropdown-wrapper" ref={roleRef}>
-                                                        <Form.Control
-                                                            as="select"
-                                                            name="role"
-                                                            value={formData.role}
-                                                            onChange={handleChange}
-                                                            className="custom-dropdown"
-                                                            onClick={toggleRoleDropdown}
-                                                            required
-                                                        >
-                                                            <option value="">Select role</option>
-                                                            <option value="admin">Admin</option>
-                                                            <option value="siteAdmin">Site Admin</option>
-                                                            <option value="user">User</option>
-                                                        </Form.Control>
-                                                        <FontAwesomeIcon
-                                                            icon={isRoleOpen ? faChevronUp : faChevronDown}
-                                                            className="dropdown-arrow position-absolute"
-                                                        />
-                                                    </div>
-                                                </Form.Group>
-                                                {userData && (
-                                                    <Form.Group controlId="role" className="mb-3 position-relative">
-                                                        <Form.Label>User Status</Form.Label>
-                                                        <div className="custom-dropdown-wrapper" ref={statusRef}>
-                                                            <Form.Control
-                                                                as="select"
-                                                                name="status"
-                                                                value={formData.status}
-                                                                onChange={handleChange}
-                                                                className="custom-dropdown"
-                                                                onClick={toggleStatusDropdown}
-                                                            >
-                                                                <option value="pending">Pending</option>
-                                                                <option value="approve">Approve</option>
-                                                                <option value="rejected">Rejected</option>
-                                                                <option value="inActive">Inactive</option>
-                                                            </Form.Control>
-                                                            <FontAwesomeIcon
-                                                                icon={isStatusOpen ? faChevronUp : faChevronDown}
-                                                                className="dropdown-arrow position-absolute"
-                                                            />
-                                                        </div>
-                                                    </Form.Group>
-                                                )}
-                                                {!userData ? (
-                                                    <>
-                                                        <Form.Group controlId="password" className="mb-3">
-                                                            <Form.Label>Password <span style={{ color: "red" }}>*</span></Form.Label>
-                                                            <Form.Control
-                                                                type="password"
-                                                                name="password"
-                                                                value={formData.password}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                        </Form.Group>
-                                                        <Form.Group controlId="confirmPassword" className="mb-3">
-                                                            <Form.Label>Confirm Password</Form.Label>
-                                                            <Form.Control
-                                                                type="password"
-                                                                name="confirmPassword"
-                                                                value={formData.confirmPassword}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                        </Form.Group>
-                                                    </>
-                                                ) : null}
-                                                <Form.Group controlId="contact" className="mb-3">
-                                                    <Form.Label>Contact</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="contact"
-                                                        value={formData.contact}
-                                                        onChange={handleChange}
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group controlId="country" className="mb-3">
-                                                    <Form.Label>Country</Form.Label>
-                                                    <Select
-                                                        id="country"
-                                                        options={options}
-                                                        className={`basic-single`}
-                                                        classNamePrefix="select"
-                                                        onChange={handleCountryChange}
-                                                        value={options.find((option) => option.value === formData.country)}
-                                                        placeholder="Select a country..."
-                                                        isClearable
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group controlId="companyName" className="mb-3">
-                                                    <Form.Label>Company Name</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="companyName"
-                                                        value={formData.companyName}
-                                                        onChange={handleChange}
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group controlId="position" className="mb-3">
-                                                    <Form.Label>Position</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="position"
-                                                        value={formData.position}
-                                                        onChange={handleChange}
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group className="mb-3" controlId="sendEmail">
-                                                    <Form.Check
-                                                        type="checkbox"
-                                                        name="sendEmail"
-                                                        label="Send User Notification"
-                                                        checked={formData.sendEmail}
-                                                        onChange={handleChange}
-                                                    />
-                                                </Form.Group>
-                                                <div className="d-flex justify-content-between">
-                                                    {/* <Button variant="secondary" onClick={() => navigate(-1)}>
-                                                        Cancel
-                                                    </Button> */}
-                                                    <Button type="submit" variant="primary" disabled={loading}>
-                                                        {userData ? "Update User" : "Add User"}
-                                                    </Button>
+                                                    {formSubmitted && validationErrors.password && (
+                                                        <div className="custom-error-text">{validationErrors.password}</div>
+                                                    )}
                                                 </div>
-                                            </Form>
-                                        </Col>
-                                    </Row>
+                                                <div className="mb-3">
+                                                    <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                                                    <input
+                                                        type="password"
+                                                        id="confirmPassword"
+                                                        name="confirmPassword"
+                                                        className={`form-control${formSubmitted && validationErrors.confirmPassword ? ' is-invalid' : ''}`}
+                                                        value={formData.confirmPassword}
+                                                        onChange={handleChange}
+                                                        autoComplete="off"
+                                                    />
+                                                    {formSubmitted && validationErrors.confirmPassword && (
+                                                        <div className="custom-error-text">{validationErrors.confirmPassword}</div>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
+                                        <div className="mb-3">
+                                            <label htmlFor="contact" className="form-label">Contact <span style={{ color: "red" }}>*</span></label>
+                                            <input
+                                                type="text"
+                                                id="contact"
+                                                name="contact"
+                                                className={`form-control${formSubmitted && validationErrors.contact ? ' is-invalid' : ''}`}
+                                                value={formData.contact}
+                                                onChange={handleChange}
+                                                autoComplete="off"
+                                            />
+                                            {formSubmitted && validationErrors.contact && (
+                                                <div className="custom-error-text">{validationErrors.contact}</div>
+                                            )}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="country" className="form-label">Country</label>
+                                            <Select
+                                                id="country"
+                                                options={options}
+                                                className={`basic-single`}
+                                                classNamePrefix="select"
+                                                onChange={handleCountryChange}
+                                                value={options.find((option) => option.value === formData.country)}
+                                                placeholder="Select a country..."
+                                                isClearable
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="companyName" className="form-label">Company Name</label>
+                                            <input
+                                                type="text"
+                                                id="companyName"
+                                                name="companyName"
+                                                className={`form-control${formSubmitted && validationErrors.companyName ? ' is-invalid' : ''}`}
+                                                value={formData.companyName}
+                                                onChange={handleChange}
+                                                autoComplete="off"
+                                            />
+                                            {formSubmitted && validationErrors.companyName && (
+                                                <div className="custom-error-text">{validationErrors.companyName}</div>
+                                            )}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="position" className="form-label">Position</label>
+                                            <input
+                                                type="text"
+                                                id="position"
+                                                name="position"
+                                                className={`form-control${formSubmitted && validationErrors.position ? ' is-invalid' : ''}`}
+                                                value={formData.position}
+                                                onChange={handleChange}
+                                                autoComplete="off"
+                                            />
+                                            {formSubmitted && validationErrors.position && (
+                                                <div className="custom-error-text">{validationErrors.position}</div>
+                                            )}
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="sendEmail" className="form-label">
+                                                <input
+                                                    type="checkbox"
+                                                    id="sendEmail"
+                                                    name="sendEmail"
+                                                    checked={formData.sendEmail}
+                                                    onChange={handleChange}
+                                                />
+                                                {' '}Send User Notification
+                                            </label>
+                                        </div>
+                                        <div className="d-flex justify-content-between">
+                                            <button type="submit" className="btn btn-primary" disabled={loading}>
+                                                {userData ? "Update User" : "Add User"}
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
-
-            </div >
-        </React.Fragment >
+            </div>
+        </React.Fragment>
     );
 }
 
