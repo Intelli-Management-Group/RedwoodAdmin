@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import "../Sidebar/Sidebar.css"
+import Logo from "../../../Assetes/images/admin-logo.png"
+import { Image } from 'react-bootstrap';
 
 const Sidebar = ({ isVisible }) => {
   return (
     <div
-      className={`col-md-3 col-lg-2 bg-dark text-white p-3 sidebar ${isVisible ? 'show' : ''}`}
+      className={`col-md-3 col-lg-2 text-white p-3 sidebar ${isVisible ? 'show' : ''}`}
       style={{
         width:250,
         position: 'fixed',
@@ -19,11 +21,11 @@ const Sidebar = ({ isVisible }) => {
       <div className='mt-2 mb-4'>
         <Link>
           <Link>
-            {/* <Image
+            <Image
               src={Logo}
               className="d-inline-block align-top"
-              alt="Our Mission Banner"
-            /> */}LOGO
+              alt="LOGO"
+            />
           </Link>
 
         </Link>
