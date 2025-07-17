@@ -18,6 +18,8 @@ import UserProfile from './pages/Profile/Profile';
 import UploadMedia from './pages/UploadMedia/UploadMedia';
 import UserCreate from './pages/UserCreate/UserCreate';
 
+import NotFound from './pages/NotFound/NotFound';
+
 function App() {
   return (
     <AuthProvider>
@@ -116,6 +118,7 @@ function App() {
             }
           />
 
+        <Route path="*" element={<NotFound />} />
 
         </Routes>
       </BrowserRouter>
