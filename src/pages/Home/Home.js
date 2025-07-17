@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
 import '../../Assetes/Css/style.css'
-import { Link, useNavigate, useLocation, json } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from "../../Assetes/images/logo.png"
 import Button from '../Component/ButtonComponents/ButtonComponents';
 import Input from '../Component/InputComponents/InputComponents';
@@ -10,20 +10,26 @@ import { useAuth } from '../Component/AuthContext/AuthContextComponents';
 import { ToastContainer } from 'react-toastify';
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
 
-
 const Home = () => {
     const [loading, setLoading] = useState(false);
     const [tokenLoading, setTokenLoading] = useState(true);
+    const { isAuthenticated } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
-    useEffect(() => {
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard', { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
+
+    useEffect(() => {
         const timeoutId = setTimeout(() => {
             setTokenLoading(false);
         }, 7000);
-    
+
         const handleTokenMessage = (event) => {
             const token = event?.data?.token;
             if (token) {
@@ -33,8 +39,8 @@ const Home = () => {
                 }
             }
         };
-            window.addEventListener("message", handleTokenMessage);
-            return () => {
+        window.addEventListener("message", handleTokenMessage);
+        return () => {
             window.removeEventListener("message", handleTokenMessage);
             clearTimeout(timeoutId); // Clear the timeout when the component is unmounted or rerendered
         };
