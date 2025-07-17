@@ -12,6 +12,7 @@ import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastCo
 import Pagination from "react-js-pagination";
 import ConfirmationDialog from "../Component/ConfirmationModal/ConfirmationModal";
 import { Form } from 'react-bootstrap';
+import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 
 const UserManagement = () => {
     const location = useLocation();
@@ -354,6 +355,7 @@ const UserManagement = () => {
     return (
 
         <React.Fragment>
+            <MetaTitle pageTitle={"User Management - Redwood Peak Limited"} />
             <div style={{ height: "100vh" }}>
                 <div className="">
                     <Sidebar isVisible={isSidebarVisible} />

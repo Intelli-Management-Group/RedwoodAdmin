@@ -10,6 +10,7 @@ import Pagination from "react-js-pagination";
 import { faChevronDown, faChevronUp, faCopy, faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 
 const Pages = () => {
   const navigate = useNavigate();
@@ -236,6 +237,7 @@ const Pages = () => {
     page.length > 0 && selectedCheckboxes.length === page.length;
   return (
     <React.Fragment>
+      <MetaTitle pageTitle={"Reports - Redwood Peak Limited"} />
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
         <div className="">
           {/* Sidebar */}

@@ -7,6 +7,7 @@ import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastCo
 import { Form } from 'react-bootstrap';
 import { faChevronDown, faChevronUp, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 
 const CreatePages = () => {
   const [loading, setLoading] = useState(false);
@@ -223,6 +224,7 @@ const CreatePages = () => {
 
   return (
     <React.Fragment>
+      <MetaTitle pageTitle={"Reports - Redwood Peak Limited"} />
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
         <div className="">
           {/* Sidebar */}

@@ -11,6 +11,7 @@ import Pagination from "react-js-pagination";
 import { faPencilSquare, faTrash, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Form } from 'react-bootstrap';
+import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 
 const Post = () => {
     const navigate = useNavigate();
@@ -220,6 +221,7 @@ const Post = () => {
 
     return (
         <React.Fragment>
+            <MetaTitle pageTitle={"Post - Redwood Peak Limited"} />
             <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
                 <div className="">
                     {/* Sidebar */}

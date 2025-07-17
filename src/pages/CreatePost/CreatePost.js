@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import PostServices from "../../Services/PostServices";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 
 
 
@@ -322,6 +323,7 @@ const CreatePost = () => {
 
   return (
     <React.Fragment>
+      <MetaTitle  pageTitle={"Post - Redwood Peak Limited"} />
       <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
         <div className="">
           {/* Sidebar */}

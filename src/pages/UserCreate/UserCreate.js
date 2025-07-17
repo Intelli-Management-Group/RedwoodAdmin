@@ -10,6 +10,7 @@ import countryList from 'react-select-country-list';
 import AdminServices from "../../Services/AdminServices";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from "../Component/Navbar/Navbar";
+import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 function UserCreate() {
     // Add custom error style
     const errorStyle = `
@@ -245,6 +246,7 @@ function UserCreate() {
 
     return (
         <React.Fragment>
+            <MetaTitle pageTitle={"User Management - Redwood Peak Limited"} />
             <style>{errorStyle}</style>
             <div style={{ height: '100vh' }}>
                 <div className="">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Dashboard.css';
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
+import MetaTitle from '../Component/MetaTitleComponents/MetaTitleComponents';
 
 function Dashboard() {
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -13,6 +14,7 @@ function Dashboard() {
     return (
         <React.Fragment>
             <div style={{ height: '100vh' }}> {/* Set height to 100vh to ensure full page */}
+                <MetaTitle pageTitle={"Dashboard - Redwood Peak Limited"} />
                 <div className="">
                     {/* Sidebar */}
                     <Sidebar isVisible={isSidebarVisible} />
