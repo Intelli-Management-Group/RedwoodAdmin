@@ -101,7 +101,7 @@ const Home = () => {
 
                 if (response?.status_code === 200) {
                     const { token, user } = response;
-                    if (user?.role === "admin") {
+                    if (user?.role === "admin" || user?.role === "siteAdmin") {
                         localStorage.setItem("authToken", token);
                         localStorage.setItem("token", token);
                         localStorage.setItem('userData', JSON.stringify(user));
