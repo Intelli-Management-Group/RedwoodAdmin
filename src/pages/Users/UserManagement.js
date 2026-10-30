@@ -543,8 +543,9 @@ const UserManagement = () => {
                                                             {user.status === "pending" && "Pending"}
                                                             {user.status === "rejected" && "Rejected"}
                                                             {user.status === "deactivate" && "Deactivate"}
+                                                            {user.status === "inActive" && "Deactivate"}
 
-                                                            {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
+                                                            {!(user.status === "approve" || user.status === "inActive"  ||  user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
 
                                                         </td>
                                                         <td className="d-flex flex-column flex-sm-row justify-content-center align-items-center">
