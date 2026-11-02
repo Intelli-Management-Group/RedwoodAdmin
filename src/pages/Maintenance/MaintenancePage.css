@@ -1,0 +1,56 @@
+.maintenance-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(181, 145, 83, 0.13), transparent 55%),
+    #f7f6f2;
+  color: #252b2a;
+  text-align: center;
+}
+
+.maintenance-card {
+  width: min(100%, 620px);
+  padding: 64px 48px;
+  border: 1px solid rgba(37, 43, 42, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 24px 70px rgba(37, 43, 42, 0.08);
+}
+
+.maintenance-brand {
+  margin: 0;
+  color: #82683d;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+}
+
+.maintenance-divider {
+  width: 48px;
+  height: 2px;
+  margin: 30px auto;
+  background: #b59153;
+}
+
+.maintenance-card h1 {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(32px, 6vw, 46px);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.maintenance-message {
+  max-width: 430px;
+  margin: 20px auto 0;
+  color: #666b68;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+@media (max-width: 480px) {
+  .maintenance-card {
+    padding: 48px 24px;
+  }
+}
