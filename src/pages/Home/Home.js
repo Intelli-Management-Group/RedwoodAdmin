@@ -30,7 +30,13 @@ const Home = () => {
             setTokenLoading(false);
         }, 7000);
 
+        const allowedOrigins = (process.env.REACT_APP_ALLOWED_ORIGINS || "")
+            .split(",")
+            .map((origin) => origin.trim())
+            .filter(Boolean);
+
         const handleTokenMessage = (event) => {
+            if (!allowedOrigins.includes(event.origin)) return;
             const token = event?.data?.token;
             if (token) {
                 const decodedToken = atob(token);

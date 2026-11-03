@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState, } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Form, Alert } from 'react-bootstrap';
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useDropzone } from 'react-dropzone';
 import { notifyError, notifySuccess } from "../Component/ToastComponents/ToastComponents";
-import { ToastContainer } from "react-toastify";
 import PostServices from "../../Services/PostServices";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,12 +28,11 @@ const CreatePost = () => {
   const [editorContent, setEditorContent] = useState('');
   const [defaultContent, setDefaultContent] = useState()
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [successMessage] = useState('');
   const [captions, setCaptions] = useState({});
-  const [draggedIndex, setDraggedIndex] = useState(null);
+
   const [deletedMediaList, setDeletedMediaList] = useState([])
   const [editCaptionsList, setEditCaptionsList] = useState([])
-  const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
   const MAX_FILE_SIZE = 3 * 1024 * 1024;
   const maxFileSizeInMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(1);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -218,10 +216,6 @@ const CreatePost = () => {
       }
       formdata.append("image_caption_data", captionData);
 
-      // Debugging: Log FormData key-value pairs
-      for (let [key, value] of formdata.entries()) {
-        //console.log(`${key}:`, value);
-      }
 
 
       const resp = await PostServices.uploadPost(formdata);
@@ -282,9 +276,6 @@ const CreatePost = () => {
       formdata.append("id_disabled", "");
       const deletedMediaString = deletedMediaList.join(",");
       formdata.append("delete_media", deletedMediaString);
-      for (let [key, value] of formdata.entries()) {
-        //console.log(`${key}:`, value);
-      }
       const resp = await PostServices.updatePost(formdata)
       if (resp?.status_code === 200) {
         //console.log(resp);

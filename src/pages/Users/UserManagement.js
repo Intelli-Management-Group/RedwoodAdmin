@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
 import Skeleton from "../Component/SkeletonComponent/SkeletonComponent";
-import AddUserModal from "../Component/UserModal/UserModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp, faPencilSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AdminServices from "../../Services/AdminServices";
@@ -15,7 +14,6 @@ import { Form } from 'react-bootstrap';
 import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 
 const UserManagement = () => {
-    const location = useLocation();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -23,7 +21,6 @@ const UserManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const perPageRecords = (10)
     const [totalRecords, setTotalRecords] = useState()
-    const [selectedUser, setSelectedUser] = useState(null);
     const [userData, setUserData] = useState([])
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
     const [filter, SetFilter] = useState("")
@@ -31,8 +28,6 @@ const UserManagement = () => {
     const [action, setAction] = useState("")
     const [roleAction, setRoleAction] = useState("")
     const [statusWiseUser, setStatusWiseUser] = useState([]);
-    const { state } = location;
-    const status = state?.status || "all";
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isActionsOpen, setIsActionsOpen] = useState(false);
     const [isRolesOpen, setIsRolesOpen] = useState(false);
@@ -543,8 +538,9 @@ const UserManagement = () => {
                                                             {user.status === "pending" && "Pending"}
                                                             {user.status === "rejected" && "Rejected"}
                                                             {user.status === "deactivate" && "Deactivate"}
+                                                            {user.status === "inActive" && "Deactivate"}
 
-                                                            {!(user.status === "approve" || user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
+                                                            {!(user.status === "approve" || user.status === "inActive"  ||  user.status === "deactivate" || user.status === "pending" || user.status === "rejected") && "Unknown Status"}
 
                                                         </td>
                                                         <td className="d-flex flex-column flex-sm-row justify-content-center align-items-center">

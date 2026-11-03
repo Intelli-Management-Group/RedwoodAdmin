@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const instance = axios.create({
-  baseURL: `https://dev.jackychee.com/api`,
+  baseURL: process.env.REACT_APP_API_URL || `http://127.0.0.1:8001/api`,
   timeout: 50000,
   headers: {
     Accept: 'application/json',
@@ -12,10 +12,6 @@ const instance = axios.create({
 
 
 instance.interceptors.request.use(function (config) {
-  let token;
-  if (Cookies.get('userToken')) {
-    token = JSON.parse(Cookies.get('userToken')).token; // Ensure you're accessing the correct field
-  }
   const isAuthenticated = localStorage.getItem('token');
   //console.log("TOKEN ====>>", token);
 
@@ -36,10 +32,13 @@ instance.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       // Clear authentication data (cookies/localStorage)
       localStorage.removeItem('authToken');
+      localStorage.removeItem('token');
       localStorage.removeItem('userData');
       Cookies.remove('authToken');
 
-      window.location.href = '/';
+      if (window.location.pathname !== '/') {
+        window.location.href = '/';
+      }
 
       // Optionally, you can redirect to the login page
     }
