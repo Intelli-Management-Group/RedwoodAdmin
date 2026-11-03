@@ -28,7 +28,8 @@ const Navbar = ({ toggleSidebar }) => {
 
   const handleRedirectWithToken = () => {
     const token = encodeToken(storedToken)
-    const targetDomain = 'https://frontend.jackychee.com/'
+    // const targetDomain = 'https://frontend.jackychee.com/'
+    const targetDomain = 'https://redwoodpeak.com/'
 
     const newWindow = window.open(targetDomain, '_blank')
 
