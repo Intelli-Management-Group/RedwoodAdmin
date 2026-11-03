@@ -11,12 +11,11 @@ function UploadMedia() {
 
     const navigate = useNavigate();
 
-    const [show, setShow] = useState(false);
+    const [, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
     const [selectedFile, setSelectedFile] = useState(null);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-    const [loading, setLoading] = useState(true)
+    const [, setLoading] = useState(true)
 
     const [previewUrl, setPreviewUrl] = useState("");
     const [uploadLoading, setUploadLoading] = useState(false);
