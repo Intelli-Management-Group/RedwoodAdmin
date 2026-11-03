@@ -24,7 +24,7 @@ const Post = () => {
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [posts, setPosts] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedPosts, setSelectedPosts] = useState([]);
+    const [, setSelectedPosts] = useState([]);
     const [tableActions, setTableActions] = useState("");
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
     const perPageRecords = (10);

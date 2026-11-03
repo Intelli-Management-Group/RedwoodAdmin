@@ -12,7 +12,7 @@ import countryList from 'react-select-country-list'
 function AddUserModal({ show, onHide, userData }) {
   const navigate = useNavigate()
   const options = useMemo(() => countryList().getData(), [])
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [isRoleOpen, setIsRoleOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const roleRef = useRef();
@@ -69,7 +69,6 @@ function AddUserModal({ show, onHide, userData }) {
     });
   };
   const validateForm = () => {
-    const contactRegex = /^[0-9]{10}$/;
     if (!formData.first_name.trim()) return "FirstName is required.";
     if (!formData.last_name.trim()) return "LastName is required.";
 

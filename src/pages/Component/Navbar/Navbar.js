@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify'
-import Cookies from 'js-cookie'
+import { ToastContainer } from 'react-toastify'
 import { notifySuccess } from '../ToastComponents/ToastComponents'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
