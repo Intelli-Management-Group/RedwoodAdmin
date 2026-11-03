@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
 import Button from "../Component/ButtonComponents/ButtonComponents";
@@ -14,7 +14,7 @@ import MetaTitle from "../Component/MetaTitleComponents/MetaTitleComponents";
 
 const Pages = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1);
   const perPageRecords = (10)
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -58,11 +58,6 @@ const Pages = () => {
     }
   }, [documentType, postingYear, hedgeFundReportstypes, searchString])
 
-  const logFormData = (formData) => {
-    for (const [key, value] of formData.entries()) {
-      //console.log(`${key}: ${value}`);
-    }
-  };
 
   const fetchPagesWithFilter = async (page, documentType, year, hedgeFundReportstypes, search) => {
     try {
@@ -72,7 +67,6 @@ const Pages = () => {
       if (search) formData.append("text", search);
       if (hedgeFundReportstypes) formData.append("hedge_fund_report_type", hedgeFundReportstypes)
 
-      logFormData(formData);
 
       const resp = await PageServices.getPageListFilter({
         page: page,
