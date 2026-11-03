@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 // import './UserProfile.css'; // Add custom styles if needed
 import Sidebar from '../Component/Sidebar/Sidebar';
 import Navbar from '../Component/Navbar/Navbar';
-import Button from "../Component/ButtonComponents/ButtonComponents";
-import { Link, } from "react-router-dom";
 import "../Users/userStyle.css"
 import AddUserModal from "../Component/UserModal/UserModal";
 import userImage from "../../Assetes/images/user.png";
@@ -12,7 +10,6 @@ import userImage from "../../Assetes/images/user.png";
 const UserProfile = () => {
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
-    const [isLoading, setIsLoading] = useState(true);
     const user = JSON.parse(localStorage.getItem('userData'));
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
